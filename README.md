@@ -5,6 +5,9 @@ Diseño completo en [docs/GDD.md](docs/GDD.md) · plan de hitos en [docs/ROADMAP
 números para balancear en [docs/BALANCE.md](docs/BALANCE.md) ·
 lista de sprites y medidas en [assets/README.md](assets/README.md).
 
+**Diseño vivo en Obsidian:** abrí la carpeta `docs/` como vault y empezá por `Inicio.md`
+(una nota por mecánica, ideas, versiones y el mapa `Sistemas.canvas`).
+
 ## Cómo correrlo
 Abrí `project.godot` con Godot 4.7.1 y apretá F5. Arranca en el menú principal.
 

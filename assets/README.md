@@ -1,5 +1,8 @@
 # Arte — lista de sprites
 
+> Esta lista es el contrato técnico de lo que **ya existe**. Para la guía completa (dirección de arte,
+> lo que viene en la 0.2, sonido y orden sugerido) mirá [docs/GUIA_ARTE_Y_SONIDO.md](../docs/GUIA_ARTE_Y_SONIDO.md).
+
 Todos los PNG de esta carpeta empiezan como **placeholders con las medidas exactas** que espera el código.
 Para reemplazar uno: **pisá el archivo con el mismo nombre y el mismo tamaño**. Godot lo reimporta
 solo al abrir el editor y el código no cambia.

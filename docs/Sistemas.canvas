@@ -1,0 +1,570 @@
+{
+	"nodes": [
+		{
+			"id": "g0",
+			"type": "group",
+			"label": "Tiempo",
+			"x": 0,
+			"y": 0,
+			"width": 600,
+			"height": 312
+		},
+		{
+			"id": "reloj",
+			"type": "text",
+			"text": "**[[Reloj]]**\n30 s = 1 h · dificultad y rareza por hora",
+			"x": 30,
+			"y": 50,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "energia",
+			"type": "text",
+			"text": "**[[Energía y sueño]]**\nbaja con el tiempo y las acciones",
+			"x": 320,
+			"y": 50,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "noche",
+			"type": "text",
+			"text": "**[[Noche y linterna]]**\nvisión reducida · aceite",
+			"x": 30,
+			"y": 186,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "fin",
+			"type": "text",
+			"text": "**[[Fin del run]]**\nvolver · colapsar 25% · morir 50%",
+			"x": 320,
+			"y": 186,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "g1",
+			"type": "group",
+			"label": "Bosque",
+			"x": 660,
+			"y": 0,
+			"width": 600,
+			"height": 448
+		},
+		{
+			"id": "bosque",
+			"type": "text",
+			"text": "**[[Bosque procedural]]**\nzonas 40×40 bajo demanda",
+			"x": 690,
+			"y": 50,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "presupuesto",
+			"type": "text",
+			"text": "**[[Presupuesto de dificultad]]**\n(6 + 3·prof) × hora",
+			"x": 980,
+			"y": 50,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "recoleccion",
+			"type": "text",
+			"text": "**[[Recolección]]**\ndureza vs poder",
+			"x": 690,
+			"y": 186,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "enemigos",
+			"type": "text",
+			"text": "**[[Enemigos]]**\nbásico · 0.2: lanzador y embestidor",
+			"x": 980,
+			"y": 186,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "plantillas",
+			"type": "text",
+			"text": "**[[Plantillas de zona y eventos]]**\n0.2 · hito 9",
+			"x": 690,
+			"y": 322,
+			"width": 250,
+			"height": 96,
+			"color": "2"
+		},
+		{
+			"id": "g2",
+			"type": "group",
+			"label": "Pueblo",
+			"x": 1320,
+			"y": 0,
+			"width": 600,
+			"height": 312
+		},
+		{
+			"id": "pueblo",
+			"type": "text",
+			"text": "**[[Pueblo]]**\nhub seguro · resetea el bosque",
+			"x": 1350,
+			"y": 50,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "guardado",
+			"type": "text",
+			"text": "**[[Guardado]]**\nautoguardado en el pueblo",
+			"x": 1640,
+			"y": 50,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "tablon",
+			"type": "text",
+			"text": "**[[Tablón de misiones]]**\nentregar · profundidad · cazar",
+			"x": 1350,
+			"y": 186,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "mejoras",
+			"type": "text",
+			"text": "**[[Mejoras permanentes]]**\n+kg · +energía · +corazón",
+			"x": 1640,
+			"y": 186,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "g3",
+			"type": "group",
+			"label": "Jugador",
+			"x": 0,
+			"y": 520,
+			"width": 310,
+			"height": 176
+		},
+		{
+			"id": "combate",
+			"type": "text",
+			"text": "**[[Combate]]**\narco 120° · dash con i-frames",
+			"x": 30,
+			"y": 570,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "g4",
+			"type": "group",
+			"label": "Ítems",
+			"x": 660,
+			"y": 560,
+			"width": 600,
+			"height": 448
+		},
+		{
+			"id": "adn",
+			"type": "text",
+			"text": "**[[ADN de recursos]]**\nstats al azar · calidad",
+			"x": 690,
+			"y": 610,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "inventario",
+			"type": "text",
+			"text": "**[[Inventario y peso]]**\ngrilla 6×4 · 18 kg · almacén",
+			"x": 980,
+			"y": 610,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "herramientas",
+			"type": "text",
+			"text": "**[[Herramientas y durabilidad]]**\nnivel · poder · se gastan",
+			"x": 690,
+			"y": 746,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "crafting",
+			"type": "text",
+			"text": "**[[Crafting]]**\nlos materiales definen el resultado",
+			"x": 980,
+			"y": 746,
+			"width": 250,
+			"height": 96,
+			"color": "4"
+		},
+		{
+			"id": "rasgos",
+			"type": "text",
+			"text": "**[[Rasgos raros]]**\n0.2 · hito 11",
+			"x": 690,
+			"y": 882,
+			"width": 250,
+			"height": 96,
+			"color": "2"
+		},
+		{
+			"id": "cristal",
+			"type": "text",
+			"text": "**[[Tercer escalón - cristal]]**\n0.2 · hito 11",
+			"x": 980,
+			"y": 882,
+			"width": 250,
+			"height": 96,
+			"color": "2"
+		},
+		{
+			"id": "g5",
+			"type": "group",
+			"label": "Futuro",
+			"x": 1320,
+			"y": 560,
+			"width": 600,
+			"height": 448
+		},
+		{
+			"id": "motor",
+			"type": "text",
+			"text": "**[[Motor para volver al bosque]]**\npregunta abierta",
+			"x": 1350,
+			"y": 610,
+			"width": 250,
+			"height": 96,
+			"color": "1"
+		},
+		{
+			"id": "xp",
+			"type": "text",
+			"text": "**[[Ideas para la 0.3#Ramas de experiencia|Ramas de XP]]**\n0.3",
+			"x": 1640,
+			"y": 610,
+			"width": 250,
+			"height": 96,
+			"color": "6"
+		},
+		{
+			"id": "jefes",
+			"type": "text",
+			"text": "**[[Ideas para la 0.3#Jefes|Jefes]]**\n0.3",
+			"x": 1350,
+			"y": 746,
+			"width": 250,
+			"height": 96,
+			"color": "6"
+		},
+		{
+			"id": "biomas",
+			"type": "text",
+			"text": "**[[Ideas para la 0.3#Biomas|Biomas]]**\n0.3",
+			"x": 1640,
+			"y": 746,
+			"width": 250,
+			"height": 96,
+			"color": "6"
+		},
+		{
+			"id": "clima",
+			"type": "text",
+			"text": "**[[Ideas para la 0.3#Clima|Clima]]**\n0.3",
+			"x": 1350,
+			"y": 882,
+			"width": 250,
+			"height": 96,
+			"color": "6"
+		},
+		{
+			"id": "comida",
+			"type": "text",
+			"text": "**[[Ideas para la 0.3#Comida|Comida]]**\n0.3",
+			"x": 1640,
+			"y": 882,
+			"width": 250,
+			"height": 96,
+			"color": "6"
+		},
+		{
+			"id": "titulo",
+			"type": "text",
+			"x": 0,
+			"y": -230,
+			"width": 620,
+			"height": 170,
+			"text": "# Forrest — mapa de sistemas\n[[Inicio]] · [[Pilares y objetivos]] · [[v0.2 - Un bosque que da ganas de volver|Plan 0.2]]\n\nLas flechas dicen qué alimenta a qué."
+		},
+		{
+			"id": "leyenda",
+			"type": "text",
+			"x": 660,
+			"y": -230,
+			"width": 330,
+			"height": 170,
+			"text": "**Leyenda**\n- verde: hecho\n- naranja: planeado 0.2\n- violeta: idea para después\n- rojo: pregunta abierta"
+		}
+	],
+	"edges": [
+		{
+			"id": "e0",
+			"fromNode": "pueblo",
+			"fromSide": "left",
+			"toNode": "bosque",
+			"toSide": "right",
+			"label": "salir / volver resetea"
+		},
+		{
+			"id": "e1",
+			"fromNode": "bosque",
+			"fromSide": "right",
+			"toNode": "presupuesto",
+			"toSide": "left",
+			"label": "llena cada zona"
+		},
+		{
+			"id": "e2",
+			"fromNode": "reloj",
+			"fromSide": "right",
+			"toNode": "presupuesto",
+			"toSide": "left",
+			"label": "×dificultad y +rareza"
+		},
+		{
+			"id": "e3",
+			"fromNode": "presupuesto",
+			"fromSide": "left",
+			"toNode": "recoleccion",
+			"toSide": "right",
+			"label": "recursos"
+		},
+		{
+			"id": "e4",
+			"fromNode": "presupuesto",
+			"fromSide": "bottom",
+			"toNode": "enemigos",
+			"toSide": "top",
+			"label": "enemigos"
+		},
+		{
+			"id": "e5",
+			"fromNode": "recoleccion",
+			"fromSide": "bottom",
+			"toNode": "adn",
+			"toSide": "top",
+			"label": "cada recurso tira stats"
+		},
+		{
+			"id": "e6",
+			"fromNode": "herramientas",
+			"fromSide": "top",
+			"toNode": "recoleccion",
+			"toSide": "bottom",
+			"label": "poder y nivel"
+		},
+		{
+			"id": "e7",
+			"fromNode": "adn",
+			"fromSide": "right",
+			"toNode": "inventario",
+			"toSide": "left",
+			"label": "peso"
+		},
+		{
+			"id": "e8",
+			"fromNode": "adn",
+			"fromSide": "right",
+			"toNode": "crafting",
+			"toSide": "left",
+			"label": "stats de materiales"
+		},
+		{
+			"id": "e9",
+			"fromNode": "crafting",
+			"fromSide": "left",
+			"toNode": "herramientas",
+			"toSide": "right",
+			"label": "fabrica y repara"
+		},
+		{
+			"id": "e10",
+			"fromNode": "crafting",
+			"fromSide": "left",
+			"toNode": "noche",
+			"toSide": "right",
+			"label": "linterna y aceite"
+		},
+		{
+			"id": "e11",
+			"fromNode": "herramientas",
+			"fromSide": "left",
+			"toNode": "combate",
+			"toSide": "right",
+			"label": "espada = daño"
+		},
+		{
+			"id": "e12",
+			"fromNode": "combate",
+			"fromSide": "right",
+			"toNode": "enemigos",
+			"toSide": "left",
+			"label": "pelea"
+		},
+		{
+			"id": "e13",
+			"fromNode": "reloj",
+			"fromSide": "right",
+			"toNode": "energia",
+			"toSide": "left",
+			"label": "drenaje por hora"
+		},
+		{
+			"id": "e14",
+			"fromNode": "reloj",
+			"fromSide": "bottom",
+			"toNode": "noche",
+			"toSide": "top",
+			"label": "oscurece 18-05"
+		},
+		{
+			"id": "e15",
+			"fromNode": "energia",
+			"fromSide": "bottom",
+			"toNode": "fin",
+			"toSide": "top",
+			"label": "colapso"
+		},
+		{
+			"id": "e16",
+			"fromNode": "combate",
+			"fromSide": "top",
+			"toNode": "fin",
+			"toSide": "bottom",
+			"label": "muerte"
+		},
+		{
+			"id": "e17",
+			"fromNode": "fin",
+			"fromSide": "right",
+			"toNode": "inventario",
+			"toSide": "left",
+			"label": "pierde lo cargado"
+		},
+		{
+			"id": "e18",
+			"fromNode": "pueblo",
+			"fromSide": "left",
+			"toNode": "energia",
+			"toSide": "right",
+			"label": "dormir recarga"
+		},
+		{
+			"id": "e19",
+			"fromNode": "tablon",
+			"fromSide": "right",
+			"toNode": "mejoras",
+			"toSide": "left",
+			"label": "recompensa"
+		},
+		{
+			"id": "e20",
+			"fromNode": "adn",
+			"fromSide": "right",
+			"toNode": "tablon",
+			"toSide": "left",
+			"label": "calidad mínima"
+		},
+		{
+			"id": "e21",
+			"fromNode": "enemigos",
+			"fromSide": "right",
+			"toNode": "tablon",
+			"toSide": "left",
+			"label": "cazar"
+		},
+		{
+			"id": "e22",
+			"fromNode": "mejoras",
+			"fromSide": "left",
+			"toNode": "inventario",
+			"toSide": "right",
+			"label": "+kg"
+		},
+		{
+			"id": "e23",
+			"fromNode": "guardado",
+			"fromSide": "left",
+			"toNode": "pueblo",
+			"toSide": "right",
+			"label": "solo en el pueblo"
+		},
+		{
+			"id": "e24",
+			"fromNode": "plantillas",
+			"fromSide": "top",
+			"toNode": "bosque",
+			"toSide": "bottom",
+			"label": "personalidad"
+		},
+		{
+			"id": "e25",
+			"fromNode": "rasgos",
+			"fromSide": "right",
+			"toNode": "crafting",
+			"toSide": "left",
+			"label": "se heredan"
+		},
+		{
+			"id": "e26",
+			"fromNode": "adn",
+			"fromSide": "bottom",
+			"toNode": "rasgos",
+			"toSide": "top",
+			"label": "a veces sale uno"
+		},
+		{
+			"id": "e27",
+			"fromNode": "cristal",
+			"fromSide": "left",
+			"toNode": "herramientas",
+			"toSide": "right",
+			"label": "pide pico de hierro"
+		},
+		{
+			"id": "e28",
+			"fromNode": "motor",
+			"fromSide": "top",
+			"toNode": "mejoras",
+			"toSide": "bottom",
+			"label": "¿alcanza?"
+		}
+	]
+}

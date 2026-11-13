@@ -1,0 +1,23 @@
+filters:
+  or:
+    - file.inFolder("Mecánicas")
+    - file.inFolder("Ideas")
+views:
+  - type: table
+    name: Todas
+    order:
+      - file.name
+      - tipo
+      - estado
+      - version
+      - hito
+  - type: table
+    name: Pendientes
+    filters:
+      and:
+        - estado != "hecho"
+    order:
+      - file.name
+      - estado
+      - version
+      - hito

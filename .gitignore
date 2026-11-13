@@ -1,3 +1,7 @@
 # Cache del editor de Godot (se regenera solo)
 .godot/
 /android/
+
+# Obsidian (vault en docs/): se versiona la config, no el estado de la ventana
+docs/.obsidian/workspace*.json
+docs/.obsidian/cache
