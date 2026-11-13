@@ -116,3 +116,35 @@ func describe() -> String:
 	if not has_durability():
 		lines.append("  profundidad %d" % depth)
 	return "\n".join(lines)
+
+
+# --- Guardado (JSON) -------------------------------------------------------------
+# El tipo se guarda por la ruta de su .tres: si renombrás un .tres, los guardados viejos
+# no van a encontrar ese ítem (se descarta al cargar).
+
+func to_dict() -> Dictionary:
+	return {
+		"data": data.resource_path,
+		"stats": stats,
+		"quality": quality,
+		"depth": depth,
+		"rotated": rotated,
+		"durability": durability,
+		"broken": is_broken,
+	}
+
+
+static func from_dict(d: Dictionary) -> ItemInstance:
+	var path: String = d.get("data", "")
+	if not ResourceLoader.exists(path):
+		push_warning("Guardado: no existe el ítem %s, se descarta" % path)
+		return null
+	var item := ItemInstance.new(load(path))
+	for k: String in d.get("stats", {}):
+		item.stats[k] = float(d.stats[k])
+	item.quality = int(d.get("quality", 0))
+	item.depth = int(d.get("depth", 0))
+	item.rotated = bool(d.get("rotated", false))
+	item.durability = float(d.get("durability", 0.0))
+	item.is_broken = bool(d.get("broken", false))
+	return item

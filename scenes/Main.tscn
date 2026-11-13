@@ -6,6 +6,7 @@
 [ext_resource type="Script" path="res://scenes/ui/inventory_ui.gd" id="4_inventory"]
 [ext_resource type="Script" path="res://scenes/ui/crafting_ui.gd" id="5_crafting"]
 [ext_resource type="Script" path="res://scenes/ui/mission_board_ui.gd" id="6_board"]
+[ext_resource type="Script" path="res://scenes/ui/pause_menu.gd" id="7_pause"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -34,6 +35,11 @@ script = ExtResource("5_crafting")
 process_mode = 3
 layer = 10
 script = ExtResource("6_board")
+
+[node name="PauseMenu" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 15
+script = ExtResource("7_pause")
 
 [node name="Fade" type="CanvasLayer" parent="."]
 process_mode = 3

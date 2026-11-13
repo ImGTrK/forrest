@@ -55,6 +55,10 @@ func _process(delta: float) -> void:
 	time_advanced.emit(minutes)
 
 
+func reset() -> void:
+	total_minutes = START_HOUR * 60.0
+
+
 ## Duerme una cantidad aleatoria de horas. Devuelve cuántas.
 func sleep() -> int:
 	var hours := rng.randi_range(SLEEP_HOURS.x, SLEEP_HOURS.y)

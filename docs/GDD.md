@@ -370,6 +370,17 @@ Port del diseño de ítems e inventario de BarrenRoots (canvas de Obsidian).
 | Escalado | Cada misión reclamada sube la exigencia de las nuevas (más cantidad, más calidad, más profundidad; el hierro aparece desde la 3ª) |
 | Recompensas | Mejoras permanentes al azar: +2 kg de capacidad, +10 de energía máxima o +1 corazón |
 
+## 16. Decisiones de Implementación (Hito 7 — Guardado y menús)
+
+| Tema | Decisión |
+|---|---|
+| Formato | JSON en `user://save.json` (Windows: `%APPDATA%/Godot/app_userdata/Forrest/`). Los ítems referencian su `.tres` por ruta |
+| Qué se guarda | Mochila y almacén (posición, rotación, ADN, calidad, durabilidad), mejoras, runs, misiones con progreso, hora, energía, vida |
+| Qué no | El bosque. Siempre se carga en el pueblo |
+| Cuándo | Al llegar al pueblo, al terminar de dormir/colapsar/morir, al cerrar la ventana o salir al menú **estando en el pueblo** |
+| Cerrar en el bosque | Se vuelve al último guardado: el run en curso se pierde. Evita usar "salir del juego" para zafar de un peligro |
+| Menús | Principal (Continuar / Nueva partida con confirmación / Salir) y pausa con Esc |
+
 ### Aclaración de diseño: energía tras colapsar
 La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. **Resuelto en el hito 2:** el colapso lleva directo a dormir en la cama, así el jugador no queda trabado con energía 0 en el pueblo.
 

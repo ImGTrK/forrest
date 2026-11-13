@@ -166,6 +166,41 @@ func sort() -> bool:
 	return true
 
 
+# --- Guardado ---------------------------------------------------------------------
+
+func to_dict() -> Dictionary:
+	var list := []
+	for item: ItemInstance in _positions:
+		var d := item.to_dict()
+		d["x"] = _positions[item].x
+		d["y"] = _positions[item].y
+		list.append(d)
+	return {"rows": size.y, "items": list}
+
+
+## Reemplaza el contenido por el guardado. Si algo no entra en su lugar, va al primero libre.
+func load_dict(d: Dictionary, base_size: Vector2i) -> void:
+	_positions.clear()
+	_sizes.clear()
+	size = Vector2i(base_size.x, maxi(base_size.y, int(d.get("rows", base_size.y))))
+	_cells.resize(size.x * size.y)
+	_cells.fill(null)
+	for raw: Dictionary in d.get("items", []):
+		var item := ItemInstance.from_dict(raw)
+		if item == null:
+			continue
+		var pos := Vector2i(int(raw.get("x", 0)), int(raw.get("y", 0)))
+		if not add_at(item, pos):
+			add(item)
+	_keep_free_row()
+	changed.emit()
+
+
+## Vacía y vuelve al tamaño inicial (partida nueva).
+func reset(base_size: Vector2i) -> void:
+	load_dict({}, base_size)
+
+
 func _grow(rows: int) -> void:
 	size.y += rows
 	_cells.resize(size.x * size.y)  # las celdas nuevas quedan en null

@@ -16,6 +16,7 @@ const SLEEP_HOLD_TIME := 0.8
 @onready var inventory_ui: InventoryUI = $InventoryUI
 @onready var crafting_ui: CraftingUI = $CraftingUI
 @onready var board_ui: MissionBoardUI = $MissionBoardUI
+@onready var pause_menu: PauseMenu = $PauseMenu
 ## Tiñe todo el canvas del mundo según la hora (el HUD está en otra capa y no se tiñe).
 @onready var ambient: CanvasModulate = $Ambient
 ## Pantalla negra para dormir/colapsar. process_mode = ALWAYS: anima con el juego pausado.
@@ -33,9 +34,38 @@ func _ready() -> void:
 	# destruir/crear áreas en ese momento.
 	Energy.collapsed.connect(_on_collapsed, CONNECT_DEFERRED)
 	player.died.connect(_on_player_died, CONNECT_DEFERRED)
+	# Vida que venía del guardado (si se cargó una partida desde el menú)
+	if SaveSystem.pending_health > 0:
+		player.health.current = mini(SaveSystem.pending_health, player.health.max_health)
+	SaveSystem.pending_health = -1
 	hud.bind_player(player)
 	_build_night_overlay()
+	pause_menu.quit_to_menu.connect(_quit_to_menu)
 	_load_hub("start")
+
+
+# --- Guardado ----------------------------------------------------------------------
+
+func is_in_hub() -> bool:
+	return _area is Hub
+
+
+## Guarda solo en el pueblo (el bosque no se guarda: cerrar ahí = perder el run).
+func autosave() -> bool:
+	if not is_in_hub() or _sleeping:
+		return false
+	return SaveSystem.save_game(player.health.current)
+
+
+func _notification(what: int) -> void:
+	if what == NOTIFICATION_WM_CLOSE_REQUEST:
+		autosave()
+
+
+func _quit_to_menu() -> void:
+	autosave()
+	get_tree().paused = false
+	get_tree().change_scene_to_file("res://scenes/MainMenu.tscn")
 
 
 func _process(_delta: float) -> void:
@@ -99,6 +129,8 @@ func _load_hub(spawn: String) -> void:
 	_swap_area(hub)
 	player.set_camera_limits(hub.get_bounds())
 	player.teleport(hub.get_spawn(spawn))
+	# Diferido: si se llega muriendo/colapsando, primero termina la recuperación
+	autosave.call_deferred()
 	hud.set_hub()
 
 
@@ -202,6 +234,7 @@ func _black_screen(action: Callable) -> void:
 	await _fade_to(0.0)
 	get_tree().paused = false
 	_sleeping = false
+	autosave()  # dormir, colapsar y morir terminan en el pueblo: se guarda acá
 
 
 func is_sleeping() -> bool:

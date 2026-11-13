@@ -34,6 +34,19 @@ func reset() -> void:
 	changed.emit()
 
 
+## Restaura el tablón desde el guardado. Si falta alguna, se completa con nuevas.
+func load_state(p_completed: int, raw: Array) -> void:
+	completed = p_completed
+	active.clear()
+	for d in raw:
+		var m := Mission.from_dict(d)
+		if m:
+			active.append(m)
+	while active.size() < ACTIVE_COUNT:
+		active.append(generate(Mission.Kind.values()[active.size() % 3]))
+	changed.emit()
+
+
 ## Crea una misión del tipo pedido, escalada con `completed`.
 func generate(kind: Mission.Kind) -> Mission:
 	var m := Mission.new()

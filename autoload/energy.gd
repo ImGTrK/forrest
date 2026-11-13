@@ -37,6 +37,13 @@ func _ready() -> void:
 	GameState.upgrades_changed.connect(func() -> void: _change(0.0))
 
 
+func reset() -> void:
+	value = max_value()
+	state = State.NORMAL
+	changed.emit(value, max_value())
+	state_changed.emit(state)
+
+
 ## Máximo actual (base + mejoras del tablón).
 func max_value() -> float:
 	return MAX + GameState.bonus_energy

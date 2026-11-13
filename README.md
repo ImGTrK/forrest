@@ -2,12 +2,16 @@
 
 Roguelite top-down de exploración con hub persistente y bosque procedural. Godot 4.7.1 / GDScript.
 Diseño completo en [docs/GDD.md](docs/GDD.md) · plan de hitos en [docs/ROADMAP.md](docs/ROADMAP.md) ·
+números para balancear en [docs/BALANCE.md](docs/BALANCE.md) ·
 lista de sprites y medidas en [assets/README.md](assets/README.md).
 
 ## Cómo correrlo
-Abrí `project.godot` con Godot 4.7.1 y apretá F5.
+Abrí `project.godot` con Godot 4.7.1 y apretá F5. Arranca en el menú principal.
 
-**Controles:** WASD/flechas mover · clic izquierdo o J atacar · Espacio/Shift dash · E interactuar · L linterna · Tab/I inventario · Esc cerrar menús.
+La partida se guarda sola en el pueblo (`%APPDATA%/Godot/app_userdata/Forrest/save.json`).
+Si cerrás estando en el bosque, volvés al último guardado.
+
+**Controles:** WASD/flechas mover · clic izquierdo o J atacar · Espacio/Shift dash · E interactuar · L linterna · Tab/I inventario · Esc pausa / cerrar menús.
 
 **Inventario:** clic agarrar/soltar (sobre otro ítem: intercambia) · R o clic derecho rotar · Supr/X tirar · Shift+clic pasar entre mochila y almacén · botón "Ordenar" compacta.
 

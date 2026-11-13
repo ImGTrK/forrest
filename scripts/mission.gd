@@ -51,3 +51,27 @@ func qualifying_items() -> Array[ItemInstance]:
 			out.append(it)
 	out.sort_custom(func(a: ItemInstance, b: ItemInstance) -> bool: return a.quality < b.quality)
 	return out
+
+
+func to_dict() -> Dictionary:
+	return {
+		"kind": kind, "reward": String(reward),
+		"item": item.resource_path if item else "",
+		"count": count, "min_quality": min_quality, "target": target, "progress": progress,
+	}
+
+
+static func from_dict(d: Dictionary) -> Mission:
+	var m := Mission.new()
+	m.kind = int(d.get("kind", 0)) as Kind
+	m.reward = StringName(d.get("reward", "weight"))
+	var path: String = d.get("item", "")
+	if path != "" and ResourceLoader.exists(path):
+		m.item = load(path)
+	m.count = int(d.get("count", 0))
+	m.min_quality = int(d.get("min_quality", 0))
+	m.target = int(d.get("target", 0))
+	m.progress = int(d.get("progress", 0))
+	if m.kind == Kind.DELIVER and m.item == null:
+		return null
+	return m

@@ -17,6 +17,9 @@ func _run() -> void:
 	var root := tree.root
 	var gs: Node = GameState
 	var fs: Node = ForestSession
+	# Archivo de guardado propio: Main autoguarda y no hay que pisar la partida real
+	SaveSystem.save_path = "user://test_save.json"
+	SaveSystem.delete_save()
 	var main: Node = load("res://scenes/Main.tscn").instantiate()
 	root.add_child(main)
 	await tree.process_frame
@@ -580,10 +583,95 @@ func _run() -> void:
 	main.board_ui.close()
 	bag.clear()
 
+	# --- Hito 7: guardado, menús ---------------------------------------------------
+	_check(main.is_in_hub() and SaveSystem.has_save(), "llegar al pueblo autoguarda")
+	# Armar un estado reconocible
+	bag.clear()
+	gs.storage.clear()
+	var s_log := DNA.generar_recurso(wood, 4, gs.rng)
+	s_log.rotated = true
+	bag.add_at(s_log, Vector2i(2, 3))
+	var s_axe := Crafting.preview(axe_recipe, {0: [DNA.generar_recurso(wood, 0, gs.rng),
+		DNA.generar_recurso(wood, 0, gs.rng)], 1: hard_stones})
+	s_axe.durability = 7.0
+	bag.add_at(s_axe, Vector2i(0, 0))
+	for i in 25:  # suficiente para que el almacén crezca
+		gs.storage.add(DNA.generar_recurso(stone, i % 5, gs.rng))
+	var s_storage_rows: int = gs.storage.size.y
+	var s_bonus_w: float = gs.bonus_weight
+	var s_bonus_h: int = gs.bonus_health
+	Clock.total_minutes = 1440 * 4 + 15 * 60 + 30
+	Energy.set_value(42.0)
+	player.health.current = 3
+	missions.on_enemy_killed()
+	var s_hunt_progress := 0
+	for m: Mission in missions.active:
+		if m.kind == Mission.Kind.HUNT:
+			s_hunt_progress = m.progress
+	var s_completed: int = missions.completed
+	var s_titles: Array = missions.active.map(func(m: Mission) -> String: return m.title())
+	_check(main.autosave(), "guardar en el pueblo")
+
+	# Romper todo y cargar
+	SaveSystem.new_game()
+	_check(bag.is_empty() and gs.storage.is_empty() and gs.bonus_weight == 0.0
+		and missions.completed == 0, "partida nueva: todo a cero")
+	_check(SaveSystem.load_game(), "cargar el guardado")
+	var l_log: ItemInstance = bag.item_at(Vector2i(2, 3))
+	_check(l_log != null and l_log.rotated and l_log.data == wood and _same_stats(l_log.stats, s_log.stats)
+		and l_log.quality == s_log.quality and bag.position_of(l_log) == Vector2i(2, 3),
+		"madera: misma posición, rotación, ADN y calidad")
+	var l_axe: ItemInstance = bag.item_at(Vector2i(0, 0))
+	_check(l_axe != null and l_axe.data == s_axe.data and l_axe.durability == 7.0
+		and is_equal_approx(l_axe.power(), s_axe.power()), "hacha: tipo, poder y durabilidad")
+	_check(gs.storage.count() == 25 and gs.storage.size.y == s_storage_rows, "almacén: 25 ítems y su tamaño")
+	_check(gs.bonus_weight == s_bonus_w and gs.bonus_health == s_bonus_h, "mejoras permanentes")
+	_check(Clock.total_minutes == 1440 * 4 + 15 * 60 + 30 and is_equal_approx(Energy.value, 42.0),
+		"hora y energía")
+	_check(SaveSystem.pending_health == 3, "vida guardada (la aplica Main al crearse)")
+	var l_hunt_progress := -1
+	for m: Mission in missions.active:
+		if m.kind == Mission.Kind.HUNT:
+			l_hunt_progress = m.progress
+	_check(missions.completed == s_completed and l_hunt_progress == s_hunt_progress
+		and missions.active.map(func(m: Mission) -> String: return m.title()) == s_titles,
+		"misiones: las mismas, con su progreso")
+	SaveSystem.pending_health = -1
+
+	# En el bosque no se guarda
+	var save_time := FileAccess.get_modified_time(ProjectSettings.globalize_path(SaveSystem.save_path))
+	main._handle_leave(Vector2i.RIGHT)
+	await tree.physics_frame
+	_check(not main.autosave(), "en el bosque no se guarda")
+	_check(FileAccess.get_modified_time(ProjectSettings.globalize_path(SaveSystem.save_path)) == save_time,
+		"el archivo no cambió")
+	for n in tree.get_nodes_in_group("enemy"):
+		n.queue_free()
+
+	# Guardado roto: no rompe el juego
+	var f := FileAccess.open(SaveSystem.save_path, FileAccess.WRITE)
+	f.store_string("{esto no es json")
+	f.close()
+	var bag_count_before: int = bag.count()
+	_check(not SaveSystem.load_game() and bag.count() == bag_count_before,
+		"guardado ilegible: no carga y no toca el estado")
+
+	# Menús
+	main.pause_menu.open(false)
+	_check(tree.paused and main.pause_menu.is_open(), "el menú de pausa pausa")
+	main.pause_menu.close()
+	_check(not tree.paused, "cerrar la pausa")
+	SaveSystem.delete_save()
+	var menu: Control = load("res://scenes/MainMenu.tscn").instantiate()
+	root.add_child(menu)
+	_check(menu._continue.disabled, "menú: sin guardado, Continuar deshabilitado")
+	menu.queue_free()
+
 	# Dejar correr algunos frames reales
 	for i in 30:
 		await tree.physics_frame
 
+	SaveSystem.delete_save()
 	print("RESULTADO: ", "OK" if _failures == 0 else "%d FALLAS" % _failures)
 	tree.quit(1 if _failures > 0 else 0)
 
@@ -602,6 +690,15 @@ func _spawn_harvestable(main: Node, entry: SpawnEntry) -> Harvestable:
 	main._area.add_child(h)
 	h.global_position = main.player.global_position + Vector2(40, 40)
 	return h
+
+
+func _same_stats(a: Dictionary, b: Dictionary) -> bool:
+	if a.size() != b.size():
+		return false
+	for k in a:
+		if not b.has(k) or not is_equal_approx(float(a[k]), float(b[k])):
+			return false
+	return true
 
 
 func _wait_sleep(main: Node) -> void:

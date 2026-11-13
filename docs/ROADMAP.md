@@ -73,11 +73,26 @@ Rama: `hito-6-noche-misiones`. Implementación funcional; lo visual queda para d
 - [x] Recompensas = mejoras permanentes: +2 kg de capacidad, +10 de energía máxima o +1 corazón. Cada misión reclamada sube la dificultad de las nuevas
 - [x] Fix: el almacén deja 2 filas libres (antes 1) para que siempre entre una madera parada
 
-## 🔜 Hito 7 — Pulido del MVP
-- [ ] Guardado en disco del estado persistente (va primero: sin esto no hay partida que dure)
-- [ ] Menú principal / nueva partida
-- [ ] Arte final integrado, sonido básico (post-MVP según lo acordado: primero sistemas, después estética)
-- [ ] Balance de números (drenaje, % de pérdida, presupuesto) jugando
+## ✅ Hito 7 — Guardado y menús (cierre del MVP)
+Rama: `hito-7-guardado-menu`.
+- [x] Guardado en disco (JSON, `user://save.json`): mochila y almacén con posición, rotación, ADN y durabilidad;
+      mejoras, misiones, hora, energía y vida
+- [x] Autoguardado al llegar al pueblo, al terminar de dormir/colapsar/morir y al cerrar la ventana en el pueblo.
+      Cerrar en el bosque = volver al último guardado (el run se pierde)
+- [x] Menú principal (Continuar / Nueva partida con confirmación / Salir) y menú de pausa (Esc)
+- [x] Números de balance documentados en [BALANCE.md](BALANCE.md) para ajustarlos jugando
+
+## 🎯 MVP completo — siguiente: jugar y balancear
+- [ ] Partidas largas de prueba: ajustar [BALANCE.md](BALANCE.md) según cómo se siente
+
+## ⬜ Post-MVP (acordado: primero sistemas, después estética)
+- [ ] Arte final integrado (los placeholders ya tienen las medidas exactas, ver assets/README.md)
+- [ ] Efecto de noche lindo (luz con degradé, parpadeo de la linterna), animación del dash con `PlayerDash.ase`
+- [ ] Sonido y música
+- [ ] Hub pintado a mano en el editor (hoy es ASCII en `hub.gd`)
+- [ ] Del backlog del GDD §7: NPC con diálogo para el tablón, variantes de recursos, más biomas,
+      consumibles de energía (recarga parcial), meta-progresión avanzada
+- [ ] Dejar el ítem tirado en el piso en vez de destruirlo (si se quiere)
 
 ---
 

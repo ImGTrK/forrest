@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Forrest"
-run/main_scene="res://scenes/Main.tscn"
+run/main_scene="res://scenes/MainMenu.tscn"
 config/features=PackedStringArray("4.7", "GL Compatibility")
 
 [autoload]
@@ -22,6 +22,7 @@ Clock="*res://autoload/clock.gd"
 Energy="*res://autoload/energy.gd"
 ForestSession="*res://autoload/forest_session.gd"
 Missions="*res://autoload/missions.gd"
+SaveSystem="*res://autoload/save_system.gd"
 
 [display]
 

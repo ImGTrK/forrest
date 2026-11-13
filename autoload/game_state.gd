@@ -55,6 +55,20 @@ func _ready() -> void:
 	storage.changed.connect(storage_changed.emit)
 
 
+## Partida nueva.
+func reset() -> void:
+	bag.reset(BAG_SIZE)
+	storage.reset(STORAGE_SIZE)
+	runs_completed = 0
+	bonus_weight = 0.0
+	bonus_energy = 0.0
+	bonus_health = 0
+	lantern_on = false
+	upgrades_changed.emit()
+	storage_changed.emit()
+	lantern_changed.emit()
+
+
 func can_carry(data: ItemData) -> bool:
 	return bag.has_space(data.grid_size)
 
