@@ -1,0 +1,5 @@
+# Godot usa LF; evita diffs gigantes en Windows
+* text=auto eol=lf
+*.png binary
+*.wav binary
+*.ogg binary

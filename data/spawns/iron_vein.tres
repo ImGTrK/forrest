@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3]
+
+[ext_resource type="Script" path="res://data/spawn_entry.gd" id="1_se"]
+[ext_resource type="Resource" path="res://data/resources/iron.tres" id="2_res"]
+
+[resource]
+script = ExtResource("1_se")
+id = &"iron_vein"
+cost = 4
+weight = 0.5
+weight_per_depth = 0.4
+min_depth = 2
+resource_type = ExtResource("2_res")
+hits = 4
+color = Color(0.62, 0.32, 0.22, 1)
+size = Vector2i(1, 1)

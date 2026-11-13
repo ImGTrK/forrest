@@ -1,0 +1,3 @@
+# Cache del editor de Godot (se regenera solo)
+.godot/
+/android/

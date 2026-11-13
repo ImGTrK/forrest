@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3]
+
+[ext_resource type="Script" path="res://data/spawn_entry.gd" id="1_se"]
+[ext_resource type="Resource" path="res://data/resources/stone.tres" id="2_res"]
+
+[resource]
+script = ExtResource("1_se")
+id = &"rock"
+cost = 2
+weight = 3.0
+weight_per_depth = 0.1
+min_depth = 0
+resource_type = ExtResource("2_res")
+hits = 2
+color = Color(0.5, 0.5, 0.52, 1)
+size = Vector2i(1, 1)
