@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://data/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/iron.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"iron"
+display_name = "Hierro"
+icon = ExtResource("2_icon")
+color = Color(0.72, 0.45, 0.35, 1)
+item_type = 0
+grid_size = Vector2i(1, 1)
+weight_stat = "peso"
+stats = {
+"conductividad": Vector2(1, 10),
+"dureza": Vector2(5, 15),
+"pureza": Vector2(1, 10),
+"peso": Vector2(1.5, 3.5)
+}
+inverted_stats = PackedStringArray("peso")

@@ -36,24 +36,22 @@ Rama: `hito-3-combate`. Port de `PlayerController.cs`, `EnemyAI.cs`, `HealthSyst
 - [x] HUD con corazones
 - [x] Zonas de 40×40 (antes 50×50): ancho exacto de pantalla, menos vacío, más ritmo
 
-## 🔜 Hito 4 — Ítems e inventario (rescatado de BarrenRoots)
-Base de ítems e inventario diseñada en el canvas de Obsidian de BarrenRoots
-(`ItemData`, `ItemInstance`, "Inventario del Jugador", "Almacén del Pueblo", "UI Inventario").
-Va antes que herramientas y crafting porque ambos necesitan ítems "de verdad".
-- [ ] `ItemData` (Resource ≈ ScriptableObject) reemplaza a `ResourceType`: id, nombre, ícono,
-      `item_type` (recurso / herramienta / arma / consumible), tamaño en grilla, rangos de stats (ADN),
-      tipo y nivel de herramienta si aplica
-- [ ] `ItemInstance` (clase runtime) reemplaza a los Dictionary actuales: referencia al `ItemData`,
-      stats rolados, peso (sale del ADN), durabilidad y `is_broken` para herramientas
-- [ ] Peso en el ADN de cada recurso (stat `peso`, "más bajo = mejor" → hay que soportar stats invertidos)
-- [ ] Inventario del jugador: grilla 6×4, cada ítem ocupa su tamaño; `add / remove / has_space`
-- [ ] Límite de peso + debuff de sobrepeso (velocidad ×0.5, como en BarrenRoots)
-- [ ] Inventario lleno → no se puede recolectar (o el ítem queda en el piso)
-- [ ] UI: grilla con íconos, tooltip con stats al pasar el mouse, barra de peso; almacén con depositar/retirar
-- [ ] Muerte/colapso pierden ítems del inventario (ya existe, se adapta)
-- Sprites nuevos: slot de grilla, fondo del panel, ícono de peso
+## ✅ Hito 4 — Ítems e inventario (rescatado de BarrenRoots)
+Rama: `hito-4-inventario`. Basado en `ItemData`, `ItemInstance`, "Inventario del Jugador",
+"Almacén del Pueblo" y "UI Inventario" del canvas de Obsidian de BarrenRoots.
+- [x] `ItemData` (Resource ≈ ScriptableObject) reemplaza a `ResourceType`: tipo de ítem, tamaño en grilla,
+      rangos de ADN, stats invertidos, campos de herramienta para el hito 5. Los datos viven en `data/items/`
+- [x] `ItemInstance` reemplaza a los Dictionary: stats rolados, calidad, peso, durabilidad (hito 5)
+- [x] Stat `peso` en el ADN, invertido (menos es mejor): lo profundo pesa menos
+- [x] Mochila en grilla 6×4 (`GridInventory`), cada ítem ocupa su tamaño (madera 1×2)
+- [x] Límite 18 kg + debuff de sobrepeso ×0.5 (se acumula con el de energía)
+- [x] Mochila llena → no se puede golpear el recurso (ni gasta energía)
+- [x] UI: grilla con íconos y marca de calidad, tooltip con stats, barra de peso
+- [x] Agarrar/soltar con vista previa (verde/amarillo/rojo), intercambio, rotar (R / clic der.), tirar (Supr/X), ordenar
+- [x] Almacén en grilla al lado de la mochila, crece solo; Shift+clic para pasar directo
+- [x] Nada se guarda automáticamente al volver: el jugador decide qué guarda y qué arriesga. El equipo nunca se pierde
 
-## ⬜ Hito 5 — Herramientas y durabilidad
+## 🔜 Hito 5 — Herramientas y durabilidad
 - [ ] Hacha / pico con nivel; cada recurso exige herramienta y nivel mínimo
 - [ ] Durabilidad Buena (>60%) → Desgastada (20-60%) → Rota (0%); reparar en el hub
 - [ ] Slots de herramienta y arma equipadas en el HUD

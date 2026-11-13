@@ -100,7 +100,8 @@ func _physics_process(delta: float) -> void:
 		_knock_t -= delta
 		velocity = _knock_vel
 	else:
-		velocity = input_dir * speed * Energy.speed_multiplier()
+		# Debuffs: energía baja (×0.7) y sobrepeso (×0.5) se acumulan
+		velocity = input_dir * speed * Energy.speed_multiplier() * GameState.speed_multiplier()
 		if input_dir != Vector2.ZERO and not is_attacking():
 			facing = input_dir
 	move_and_slide()

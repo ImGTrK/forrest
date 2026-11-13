@@ -325,6 +325,24 @@ Port de BarrenRoots (1 unidad de Unity = 16 px).
 | Muerte | Pierde 50% de lo cargado (colapso: 25%), guarda el resto, vuelve al hub con vida llena. No duerme: la hora y la energía siguen igual |
 | Controles | WASD mover · clic izq./J atacar · Espacio/Shift dash · E interactuar · Tab inventario |
 
+## 13. Decisiones de Implementación (Hito 4 — Ítems e inventario)
+
+Port del diseño de ítems e inventario de BarrenRoots (canvas de Obsidian).
+
+| Tema | Decisión |
+|---|---|
+| Datos | `ItemData` (Resource en `data/items/`) define el tipo; `ItemInstance` es cada ejemplar con su ADN |
+| Mochila | Grilla 6×4; cada ítem ocupa su `grid_size` (madera 1×2, piedra y hierro 1×1) |
+| Peso | Sale del ADN (stat `peso`, invertido). Madera 0.6-1.8 kg, piedra 1-2.5, hierro 1.5-3.5 |
+| Sobrepeso | Límite 18 kg; por encima, velocidad ×0.5. Se puede seguir cargando: el castigo es la lentitud |
+| Mochila llena | No se puede golpear el recurso (y no gasta energía) |
+| Almacén | También en grilla (10 columnas), **crece sola** y siempre deja una fila libre: sigue sin límite. En el cofre se ve al lado de la mochila |
+| Manejo | Clic agarra/suelta (soltar sobre UN ítem los intercambia), R o clic derecho rota (1×2 ↔ 2×1), Shift+clic pasa directo a la otra grilla, Supr/X o el botón "Tirar" descarta, "Ordenar" compacta la grilla |
+| Tirar | El ítem desaparece (no queda en el piso). Sirve para hacer lugar o descartar ADN malo |
+| Fin del run | **Nada se guarda solo.** Volver, colapsar o morir deja lo cargado en la mochila; guardarlo en el almacén es decisión del jugador (si salís de nuevo sin guardar, lo arriesgás). Atajo: botón "Guardar todos los recursos" |
+| Pérdidas | Colapso 25% / muerte 50% de lo cargado, **sin contar el equipo** |
+| Calidad visible | Marca dorada (≥80%) o verde (≥55%) en la esquina del ícono |
+
 ### Aclaración de diseño: energía tras colapsar
 La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. **Resuelto en el hito 2:** el colapso lleva directo a dormir en la cama, así el jugador no queda trabado con energía 0 en el pueblo.
 

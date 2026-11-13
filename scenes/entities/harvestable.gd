@@ -1,6 +1,6 @@
 class_name Harvestable
 extends StaticBody2D
-## Árbol / roca / veta (o arbusto decorativo si no tiene resource_type).
+## Árbol / roca / veta (o arbusto decorativo si no tiene item).
 ## Se construye por código a partir de un SpawnEntry: es el "prefab" de todas las entidades
 ## recolectables. El sprite sale de SpawnEntry.texture (mide exactamente size * 16 px,
 ## con el origen en la esquina superior izquierda).
@@ -36,7 +36,7 @@ func _ready() -> void:
 		_sprite.texture = entry.texture
 		_sprite.centered = false
 		add_child(_sprite)
-	if entry.resource_type != null:
+	if entry.item != null:
 		add_to_group("interactable")
 
 
@@ -50,14 +50,18 @@ func set_focused(value: bool) -> void:
 
 
 func interact(_by: Node) -> void:
+	# Sin lugar en la mochila no se golpea (y no se gasta energía).
+	if not GameState.can_carry(entry.item):
+		GameState.notify("La mochila está llena: no entra %s" % entry.item.display_name)
+		return
 	Energy.spend_action()
 	_hits_left -= 1
 	_flash = 1.0
 	if _hits_left > 0:
 		return
-	var item := DNA.generar_recurso(entry.resource_type, depth, ForestSession.rng)
+	var item := DNA.generar_recurso(entry.item, depth, ForestSession.rng)
 	entity.alive = false
-	GameState.add_to_run(item)
+	GameState.pick_up(item)
 	queue_free()
 
 

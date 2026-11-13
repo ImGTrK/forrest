@@ -9,7 +9,7 @@ const SLEEP_HOLD_TIME := 0.8
 @onready var world: Node2D = $World
 @onready var player: Player = $Player
 @onready var hud: GameHUD = $HUD
-@onready var storage_ui: StorageUI = $StorageUI
+@onready var inventory_ui: InventoryUI = $InventoryUI
 ## Tiñe todo el canvas del mundo según la hora (el HUD está en otra capa y no se tiñe).
 @onready var ambient: CanvasModulate = $Ambient
 ## Pantalla negra para dormir/colapsar. process_mode = ALWAYS: anima con el juego pausado.
@@ -45,7 +45,7 @@ func _swap_area(new_area: Node2D) -> void:
 func _load_hub(spawn: String) -> void:
 	var hub := Hub.new()
 	hub.player = player
-	hub.chest_opened.connect(storage_ui.open_storage)
+	hub.chest_opened.connect(inventory_ui.open_chest)
 	hub.bed_used.connect(sleep)
 	_swap_area(hub)
 	player.set_camera_limits(hub.get_bounds())
@@ -84,12 +84,14 @@ func _handle_leave(dir: Vector2i) -> void:
 	_busy = false
 
 
-## Volver voluntariamente: sin penalización (GDD §4). Se deposita todo y el bosque se borra.
+## Volver voluntariamente: sin penalización (GDD §4). El bosque se borra; lo cargado
+## sigue en la mochila hasta que el jugador lo guarde en el cofre.
 func _return_to_hub() -> void:
-	var deposited := GameState.deposit_run()
+	GameState.end_run()
 	ForestSession.reset()
 	_load_hub("forest")
-	GameState.notify("Volviste al pueblo · %d recursos al almacén" % deposited)
+	var n := GameState.bag.count()
+	GameState.notify("Volviste al pueblo" + (" · guardá lo que traés en el almacén" if n > 0 else ""))
 
 
 ## Energía en 0 (GDD §4): "muerte suave". En el bosque se pierde un % menor de lo cargado
@@ -100,10 +102,10 @@ func _on_collapsed() -> void:
 	var summary := "Te desmayaste de cansancio."
 	if ForestSession.in_forest:
 		var lost := GameState.lose_run_fraction(GameState.COLLAPSE_LOSS, GameState.rng)
-		var kept := GameState.deposit_run()
+		GameState.end_run()
 		ForestSession.reset()
 		_load_hub("bed")
-		summary = "Te desmayaste en el bosque · perdiste %d, guardaste %d." % [lost, kept]
+		summary = "Te desmayaste en el bosque · perdiste %d ítems." % lost
 	else:
 		player.teleport(_hub().get_spawn("bed"))
 	sleep(summary)
@@ -118,11 +120,11 @@ func _on_player_died() -> void:
 	var summary := {}
 	await _black_screen(func() -> void:
 		var lost := GameState.lose_run_fraction(GameState.DEATH_LOSS, GameState.rng)
-		var kept := GameState.deposit_run()
+		GameState.end_run()
 		ForestSession.reset()
 		_load_hub("bed")
 		player.revive()
-		summary.text = "Caíste en combate · perdiste %d, guardaste %d." % [lost, kept])
+		summary.text = "Caíste en combate · perdiste %d ítems." % lost)
 	GameState.notify(summary.text)
 
 

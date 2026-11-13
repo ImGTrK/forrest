@@ -56,13 +56,19 @@ var SPRITES := [
 		"colors": [Color("8a2a2a")]},
 	{"path": "assets/sprites/ui/hearts/heart_empty.png", "size": Vector2i(T, T), "style": "body",
 		"colors": [Color("3a2a2a")]},
+	# Hito 4: inventario
+	{"path": "assets/sprites/ui/slot.png", "size": Vector2i(18, 18), "style": "tile",
+		"colors": [Color("2b2b33")]},
+	{"path": "assets/sprites/ui/icon_weight.png", "size": Vector2i(8, 8), "style": "body",
+		"colors": [Color("9aa4b8")]},
 	{"path": "assets/sprites/ui/energy_bar_under.png", "size": Vector2i(64, 8), "style": "tile",
 		"colors": [Color("2a2a2a")]},
 	{"path": "assets/sprites/ui/energy_bar_fill.png", "size": Vector2i(64, 8), "style": "tile",
 		"colors": [Color("e6e6e6")]},  # claro: el HUD lo tiñe
 
 	# --- Íconos de ítems (inventario/almacén) ---
-	{"path": "assets/sprites/items/wood.png", "size": Vector2i(T, T), "style": "body",
+	# El ícono mide grid_size * 16 px (madera ocupa 1x2 celdas en la mochila)
+	{"path": "assets/sprites/items/wood.png", "size": Vector2i(T, T * 2), "style": "body",
 		"colors": [Color("8c5c2e")]},
 	{"path": "assets/sprites/items/stone.png", "size": Vector2i(T, T), "style": "body",
 		"colors": [Color("9a9a9e")]},

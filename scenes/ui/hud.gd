@@ -26,6 +26,7 @@ var _toast: Label
 var _hint: Label
 var _minimap: Minimap
 var _toast_tween: Tween
+var _in_hub := false
 
 
 func _ready() -> void:
@@ -85,7 +86,10 @@ func _ready() -> void:
 	_hint.text = "WASD mover · Clic/J atacar · Espacio dash · E interactuar · Tab inventario"
 	add_child(_hint)
 
-	GameState.run_inventory_changed.connect(_refresh_carried)
+	GameState.bag_changed.connect(_refresh_carried)
+	GameState.storage_changed.connect(func() -> void:
+		if _in_hub:
+			set_hub())
 	GameState.message.connect(show_toast)
 	ForestSession.zone_entered.connect(_on_zone_entered)
 	Clock.time_advanced.connect(func(_m: float) -> void: refresh_clock())
@@ -149,11 +153,13 @@ func _icon(tex: Texture2D) -> TextureRect:
 
 
 func set_hub() -> void:
-	_location.text = "Pueblo  ·  almacén: %d ítems" % GameState.storage.size()
+	_in_hub = true
+	_location.text = "Pueblo  ·  almacén: %d ítems" % GameState.storage.count()
 	_minimap.visible = false
 
 
 func _on_zone_entered(coord: Vector2i) -> void:
+	_in_hub = false
 	var z: ZoneData = ForestSession.zones[coord]
 	var text := "Bosque (%d, %d) · prof. %d · presupuesto %d" % [coord.x, coord.y, z.depth, z.budget]
 	if z.rarity > 0:
@@ -163,16 +169,20 @@ func _on_zone_entered(coord: Vector2i) -> void:
 
 
 func _refresh_carried() -> void:
-	if GameState.run_inventory.is_empty():
-		_carried.text = "Cargando: nada"
+	var bag := GameState.bag
+	var weight := "%.1f/%.0f kg" % [GameState.carried_weight(), GameState.MAX_WEIGHT]
+	_carried.modulate = Color(1, 0.45, 0.4) if GameState.is_overweight() else Color.WHITE
+	if bag.is_empty():
+		_carried.text = "Mochila vacía"
 		return
 	var counts := {}
-	for item in GameState.run_inventory:
-		counts[item.name] = counts.get(item.name, 0) + 1
+	for item in bag.items():
+		counts[item.display_name()] = counts.get(item.display_name(), 0) + 1
 	var parts: PackedStringArray = []
 	for item_name: String in counts:
 		parts.append("%s ×%d" % [item_name, counts[item_name]])
-	_carried.text = "Cargando: " + ", ".join(parts)
+	_carried.text = "Mochila: %s · %s%s" % [", ".join(parts), weight,
+		"  (sobrepeso)" if GameState.is_overweight() else ""]
 
 
 func show_toast(text: String) -> void:

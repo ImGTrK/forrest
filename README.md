@@ -9,12 +9,14 @@ Abrí `project.godot` con Godot 4.7.1 y apretá F5.
 
 **Controles:** WASD/flechas mover · clic izquierdo o J atacar · Espacio/Shift dash · E interactuar · Tab/I inventario · Esc cerrar menús.
 
+**Inventario:** clic agarrar/soltar (sobre otro ítem: intercambia) · R o clic derecho rotar · Supr/X tirar · Shift+clic pasar entre mochila y almacén · botón "Ordenar" compacta.
+
 ## Estructura
 | Carpeta | Qué hay |
 |---|---|
 | `autoload/` | Singletons globales: `GameState` (persistente), `ForestSession` (cache del bosque), `InputSetup` |
-| `data/` | Definiciones (`ResourceType`, `SpawnEntry`) y sus `.tres`: acá se ajustan stats, costos y pesos sin tocar código |
-| `scripts/` | Lógica pura: `ZoneGenerator` (presupuesto + tabla ponderada), `DNA`, `ZoneData`, `TerrainTiles` |
+| `data/` | Definiciones (`ItemData`, `SpawnEntry`) y sus `.tres` en `data/items/` y `data/spawns/`: acá se ajustan stats, tamaños, pesos y costos sin tocar código |
+| `scripts/` | Lógica pura: `ZoneGenerator` (presupuesto + tabla ponderada), `DNA`, `ItemInstance`, `GridInventory`, `Health`, `ZoneData`, `TerrainTiles` |
 | `scenes/` | `Main`, jugador, hub, zona del bosque, entidades y UI |
 | `tests/` | Tests headless |
 | `assets/` | Sprites y tilesets (placeholders con medidas exactas, reemplazables) |

@@ -87,7 +87,7 @@ func _init() -> void:
 	_check(iron_at_night > 0, "la rareza por hora no habilita hierro cerca del hub")
 
 	# ADN: la profundidad mejora la calidad promedio
-	var wood: ResourceType = load("res://data/resources/wood.tres")
+	var wood: ItemData = load("res://data/items/wood.tres")
 	var rng2 := RandomNumberGenerator.new()
 	rng2.seed = 1
 	var q0 := 0.0

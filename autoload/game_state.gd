@@ -2,52 +2,121 @@ extends Node
 ## Estado PERSISTENTE entre runs (vive en el hub).
 ## Autoload = singleton global: accesible desde cualquier script como `GameState`.
 ##
-## Los ítems son Dictionaries simples generados por DNA.generar_recurso():
-## { "type": &"wood", "name": "Madera", "stats": {...}, "quality": 0-100, "depth": int }
+## - `bag`: la mochila del jugador, grilla 6×4 con límite de peso (diseño de BarrenRoots).
+##   Lo que hay adentro se puede perder al morir o colapsar (salvo el equipo).
+## - `storage`: el almacén del pueblo, también en grilla (para acomodar a mano), sin límite
+##   de peso y que crece sola: siempre deja una fila libre abajo.
+## Nada se guarda solo: el jugador decide qué deja en el almacén y qué se lleva.
 
-signal run_inventory_changed
+signal bag_changed
 signal storage_changed
 signal message(text: String)
 
 ## % de lo cargado que se pierde según cómo termina el run (GDD §4).
 const COLLAPSE_LOSS := 0.25
-const DEATH_LOSS := 0.5  # se usa en el hito 3 (combate)
+const DEATH_LOSS := 0.5
 
-## Lo que el jugador carga durante el run actual (se puede perder al morir/colapsar).
-var run_inventory: Array[Dictionary] = []
-## Almacén del hub (persistente).
-var storage: Array[Dictionary] = []
+# --- Mochila (BarrenRoots: grilla 6×4 + peso, debuff de sobrepeso ×0.5) ----------
+const BAG_SIZE := Vector2i(6, 4)
+const MAX_WEIGHT := 18.0
+const OVERWEIGHT_SPEED_MULT := 0.5
+const STORAGE_SIZE := Vector2i(10, 6)  # columnas fijas; las filas crecen
+
+var bag := GridInventory.new(BAG_SIZE)
+var storage := GridInventory.new(STORAGE_SIZE, true)
 var runs_completed: int = 0
 var rng := RandomNumberGenerator.new()
 
 
 func _ready() -> void:
 	rng.randomize()
+	bag.changed.connect(bag_changed.emit)
+	storage.changed.connect(storage_changed.emit)
 
 
-func add_to_run(item: Dictionary) -> void:
-	run_inventory.append(item)
-	run_inventory_changed.emit()
-	notify("+ %s  (calidad %d%%)" % [item.name, item.quality])
+func can_carry(data: ItemData) -> bool:
+	return bag.has_space(data.grid_size)
 
 
-## Pasa todo lo cargado al almacén. Devuelve cuántos ítems se depositaron.
-func deposit_run() -> int:
-	var count := run_inventory.size()
-	storage.append_array(run_inventory)
-	run_inventory.clear()
+## Mete un ítem recién obtenido en la mochila. Devuelve false si no hay lugar.
+func pick_up(item: ItemInstance) -> bool:
+	var was_overweight := is_overweight()
+	if not bag.add(item):
+		notify("La mochila está llena")
+		return false
+	notify("+ %s  (calidad %d%%)" % [item.display_name(), item.quality])
+	if is_overweight() and not was_overweight:
+		notify("Voy muy cargado: me muevo más lento")
+	return true
+
+
+func carried_weight() -> float:
+	return bag.total_weight()
+
+
+func is_overweight() -> bool:
+	return carried_weight() > MAX_WEIGHT
+
+
+func speed_multiplier() -> float:
+	return OVERWEIGHT_SPEED_MULT if is_overweight() else 1.0
+
+
+## Mochila -> almacén (en el primer lugar libre).
+func deposit(item: ItemInstance) -> bool:
+	return _transfer(item, bag, storage)
+
+
+## Almacén -> mochila (si hay lugar).
+func withdraw(item: ItemInstance) -> bool:
+	return _transfer(item, storage, bag)
+
+
+## Mueve un ítem de una grilla a la otra. Si no entra, queda donde estaba.
+func _transfer(item: ItemInstance, from: GridInventory, to: GridInventory) -> bool:
+	if not from.has(item):
+		return false
+	var old_pos := from.position_of(item)
+	var old_rot := item.rotated
+	from.remove(item)
+	if to.add(item):
+		return true
+	item.rotated = old_rot
+	from.add_at(item, old_pos)
+	notify("No hay lugar en la mochila" if to == bag else "No hay lugar en el almacén")
+	return false
+
+
+## Atajo del cofre: guarda todos los recursos de la mochila. El equipo se queda encima.
+func deposit_resources() -> int:
+	var moved := 0
+	for item in bag.items():
+		if item.is_resource() and deposit(item):
+			moved += 1
+	return moved
+
+
+## Tirar un ítem (desaparece).
+func discard(item: ItemInstance) -> void:
+	notify("Tiraste %s (calidad %d%%)" % [item.display_name(), item.quality])
+
+
+## Fin de un run (volver, colapsar o morir). Lo cargado se queda en la mochila:
+## guardarlo en el almacén es decisión del jugador.
+func end_run() -> void:
 	runs_completed += 1
-	run_inventory_changed.emit()
-	storage_changed.emit()
-	return count
 
 
-## Para colapso por energía / muerte (siguientes hitos): pierde una fracción al azar.
-func lose_run_fraction(fraction: float, rng: RandomNumberGenerator) -> int:
-	var to_lose := floori(run_inventory.size() * clampf(fraction, 0.0, 1.0))
+## Colapso / muerte: pierde una fracción al azar de lo cargado. El equipo nunca se pierde.
+func lose_run_fraction(fraction: float, p_rng: RandomNumberGenerator) -> int:
+	var losable: Array[ItemInstance] = []
+	for item in bag.items():
+		if not item.data.is_equipment():
+			losable.append(item)
+	var to_lose := floori(losable.size() * clampf(fraction, 0.0, 1.0))
 	for i in to_lose:
-		run_inventory.remove_at(rng.randi_range(0, run_inventory.size() - 1))
-	run_inventory_changed.emit()
+		var item: ItemInstance = losable.pop_at(p_rng.randi_range(0, losable.size() - 1))
+		bag.remove(item)
 	return to_lose
 
 

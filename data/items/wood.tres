@@ -1,0 +1,21 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://data/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/wood.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"wood"
+display_name = "Madera"
+icon = ExtResource("2_icon")
+color = Color(0.55, 0.36, 0.18, 1)
+item_type = 0
+grid_size = Vector2i(1, 2)
+weight_stat = "peso"
+stats = {
+"densidad": Vector2(1, 10),
+"dureza": Vector2(1, 10),
+"flexibilidad": Vector2(1, 10),
+"peso": Vector2(0.6, 1.8)
+}
+inverted_stats = PackedStringArray("peso")

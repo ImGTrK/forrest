@@ -42,9 +42,11 @@ solo al abrir el editor y el código no cambia.
 
 ## Íconos de ítems — `assets/sprites/items/`
 
+El ícono mide **`grid_size` × 16 px** del ítem (lo que ocupa en la mochila). En el almacén se achica a una celda.
+
 | Archivo | Tamaño | Usado en |
 |---|---|---|
-| `wood.png` | **16×16** | Madera en inventario/almacén (`data/resources/wood.tres`) |
+| `wood.png` | **16×32** | Madera: ocupa **1×2 celdas** en la mochila (`data/items/wood.tres`) |
 | `stone.png` | **16×16** | Piedra |
 | `iron.png` | **16×16** | Hierro |
 
@@ -57,6 +59,8 @@ La UI se ve al doble (viewport 640×360 escalado a 1280×720), así que 8 px de 
 | `hearts/heart_full.png` | **16×16** | Corazón lleno (= 2 de vida) — de BarrenRoots |
 | `hearts/heart_half.png` | **16×16** | Medio corazón |
 | `hearts/heart_empty.png` | **16×16** | Corazón vacío |
+| `slot.png` | **18×18** | Celda vacía de la grilla de inventario (16 px de ícono + 1 px de borde por lado) |
+| `icon_weight.png` | **8×8** | Ícono junto a la barra de peso (la barra reusa `energy_bar_*`, teñida azul/rojo) |
 | `icon_clock.png` | **8×8** | Ícono junto a la hora |
 | `icon_energy.png` | **8×8** | Ícono junto a la barra de energía |
 | `energy_bar_under.png` | **64×8** | Fondo/marco de la barra de energía |
