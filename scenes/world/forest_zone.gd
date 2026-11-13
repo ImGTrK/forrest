@@ -6,7 +6,7 @@ extends Node2D
 
 signal leave(dir: Vector2i)
 
-const TILE := PlaceholderTiles.TILE
+const TILE := TerrainTiles.TILE
 const SIZE := ZoneGenerator.ZONE_TILES
 
 var zone: ZoneData
@@ -19,7 +19,7 @@ func setup(p_zone: ZoneData, p_player: Player) -> void:
 
 
 func _ready() -> void:
-	var layer := PlaceholderTiles.make_layer()
+	var layer := TerrainTiles.make_layer()
 	# Más profundo = más oscuro: la dificultad se ve, no es sólo un número.
 	layer.modulate = Color.WHITE.darkened(clampf(zone.depth * 0.05, 0.0, 0.45))
 	add_child(layer)
@@ -28,11 +28,11 @@ func _ready() -> void:
 	for y in SIZE:
 		for x in SIZE:
 			var c := Vector2i(x, y)
-			var tile := PlaceholderTiles.GRASS
+			var tile := TerrainTiles.GRASS
 			if ZoneGenerator.is_wall(zone, c):
-				tile = PlaceholderTiles.WALL
+				tile = TerrainTiles.WALL
 			elif paths.has(c):
-				tile = PlaceholderTiles.PATH
+				tile = TerrainTiles.PATH
 			layer.set_cell(c, 0, Vector2i(tile, 0))
 
 	for e in zone.entities:

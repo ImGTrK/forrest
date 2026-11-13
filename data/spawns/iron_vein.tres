@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://data/spawn_entry.gd" id="1_se"]
 [ext_resource type="Resource" path="res://data/resources/iron.tres" id="2_res"]
+[ext_resource type="Texture2D" path="res://assets/sprites/world/iron_vein.png" id="3_tex"]
 
 [resource]
 script = ExtResource("1_se")
@@ -14,3 +15,4 @@ resource_type = ExtResource("2_res")
 hits = 4
 color = Color(0.62, 0.32, 0.22, 1)
 size = Vector2i(1, 1)
+texture = ExtResource("3_tex")

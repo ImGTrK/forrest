@@ -15,13 +15,15 @@ var facing := Vector2.DOWN
 var _focus: Variant = null
 
 @onready var camera: Camera2D = $Camera2D
+## Spritesheet 64x16: 4 frames de 16x16 -> 0 abajo, 1 arriba, 2 izquierda, 3 derecha.
+@onready var sprite: Sprite2D = $Sprite2D
 
 
 func _physics_process(_delta: float) -> void:
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if dir != Vector2.ZERO and not dir.is_equal_approx(facing):
 		facing = dir
-		queue_redraw()
+		sprite.frame = _frame_for(facing)
 	velocity = dir * speed
 	move_and_slide()
 	_update_focus()
@@ -67,8 +69,8 @@ func teleport(pos: Vector2) -> void:
 	camera.reset_smoothing()
 
 
-func _draw() -> void:
-	# Placeholder: cuerpo + "ojo" que indica hacia dónde mira.
-	draw_rect(Rect2(-5, -9, 10, 14), Color("e8d29a"))
-	draw_rect(Rect2(-5, -9, 10, 14), Color("3a2a1a"), false, 1.0)
-	draw_circle(facing.normalized() * 4.0 + Vector2(0, -3), 1.5, Color("3a2a1a"))
+## Elige el frame según el eje dominante de la dirección.
+static func _frame_for(dir: Vector2) -> int:
+	if absf(dir.x) > absf(dir.y):
+		return 3 if dir.x > 0 else 2
+	return 0 if dir.y > 0 else 1

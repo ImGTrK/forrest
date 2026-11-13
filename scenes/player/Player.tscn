@@ -1,6 +1,7 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scenes/player/player.gd" id="1_pl"]
+[ext_resource type="Texture2D" path="res://assets/sprites/player/player.png" id="2_tex"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(10, 6)
@@ -12,6 +13,11 @@ script = ExtResource("1_pl")
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 2)
 shape = SubResource("RectangleShape2D_body")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -2)
+texture = ExtResource("2_tex")
+hframes = 4
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true

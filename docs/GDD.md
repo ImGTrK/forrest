@@ -294,7 +294,7 @@ Tomadas al arrancar el proyecto (2026-11-12). Motor: **Godot 4.7.1, GDScript**.
 | ADN por profundidad | Cada stat se tira como "mejor de N", con N = 1 + profundidad/3 (máx. 3). Calidad = promedio normalizado de los stats (0-100%) |
 | Recolectado | Se marca en la cache de la zona: si volvés a esa zona en el mismo run, no reaparece |
 | Menús | Pausan el juego (`get_tree().paused`), como pide §4.1 |
-| Arte | Placeholders generados por código (`PlaceholderTiles`). Reemplazables sin tocar la lógica |
+| Arte | PNG placeholders con medidas exactas en `assets/` (lista en `assets/README.md`). Se reemplazan pisando el archivo, sin tocar código |
 
 ### Aclaración de diseño: energía tras colapsar
 La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. Esto es intencional (refuerza la penalización), pero hay que confirmarlo al implementar el hito de energía.

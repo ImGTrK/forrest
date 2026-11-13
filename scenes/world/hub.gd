@@ -12,7 +12,7 @@ extends Node2D
 signal leave(dir: Vector2i)
 signal chest_opened
 
-const TILE := PlaceholderTiles.TILE
+const TILE := TerrainTiles.TILE
 
 const LAYOUT: Array[String] = [
 	"WWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWWW",
@@ -49,7 +49,7 @@ var _chest_cell := Vector2i.ZERO
 
 
 func _ready() -> void:
-	var layer := PlaceholderTiles.make_layer()
+	var layer := TerrainTiles.make_layer()
 	add_child(layer)
 	_size = Vector2i(LAYOUT[0].length(), LAYOUT.size())
 
@@ -60,13 +60,13 @@ func _ready() -> void:
 		for x in row.length():
 			var cell := Vector2i(x, y)
 			var ch := row[x]
-			var tile := PlaceholderTiles.FLOOR
+			var tile := TerrainTiles.FLOOR
 			if ch == "W":
-				tile = PlaceholderTiles.WALL
+				tile = TerrainTiles.WALL
 			elif ch == "g":
-				tile = PlaceholderTiles.GRASS
+				tile = TerrainTiles.GRASS
 			elif ch == "p" or ch == "F":
-				tile = PlaceholderTiles.PATH
+				tile = TerrainTiles.PATH
 			layer.set_cell(cell, 0, Vector2i(tile, 0))
 
 			var center := Vector2(cell * TILE) + Vector2(TILE, TILE) / 2.0

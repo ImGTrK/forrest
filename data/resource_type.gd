@@ -7,5 +7,7 @@ extends Resource
 @export var id: StringName
 @export var display_name: String = ""
 @export var color: Color = Color.WHITE
+## Ícono 16x16 para inventario/almacén (assets/sprites/items/).
+@export var icon: Texture2D
 ## nombre_del_stat -> Vector2(min, max). Todos los stats son "más alto = mejor".
 @export var stats: Dictionary = {}

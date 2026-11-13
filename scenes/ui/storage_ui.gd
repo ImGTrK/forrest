@@ -71,14 +71,19 @@ static func _format(items: Array[Dictionary]) -> String:
 	if items.is_empty():
 		return "[i]Vacío.[/i]"
 	var by_type := {}
+	var icons := {}
 	for item in items:
 		if not by_type.has(item.name):
 			by_type[item.name] = []
+			icons[item.name] = _icon_path(item.type)
 		by_type[item.name].append(item)
 	var out := ""
 	for type_name: String in by_type:
 		var list: Array = by_type[type_name]
 		list.sort_custom(func(a: Dictionary, b: Dictionary) -> bool: return a.quality > b.quality)
+		var icon: String = icons[type_name]
+		if icon != "":
+			out += "[img=16x16]%s[/img] " % icon
 		out += "[b]%s[/b] ×%d\n" % [type_name, list.size()]
 		for item: Dictionary in list:
 			var stats: PackedStringArray = []
@@ -88,6 +93,15 @@ static func _format(items: Array[Dictionary]) -> String:
 				_quality_color(item.quality), item.quality, "  ·  ".join(stats), item.depth]
 		out += "\n"
 	return out
+
+
+## Ícono del tipo de recurso (data/resources/<id>.tres -> icon).
+static func _icon_path(type_id: StringName) -> String:
+	var path := "res://data/resources/%s.tres" % type_id
+	if not ResourceLoader.exists(path):
+		return ""
+	var res: ResourceType = load(path)
+	return res.icon.resource_path if res.icon else ""
 
 
 static func _quality_color(q: int) -> String:

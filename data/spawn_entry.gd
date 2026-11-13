@@ -18,5 +18,7 @@ extends Resource
 ## Golpes necesarios para recolectarlo (las herramientas llegarán en otro hito).
 @export var hits: int = 1
 @export var color: Color = Color.WHITE
-## Tamaño en tiles.
+## Tamaño en tiles. El sprite tiene que medir exactamente size * 16 px.
 @export var size: Vector2i = Vector2i.ONE
+## Sprite en el mundo (assets/sprites/world/). Si es null se dibuja un rectángulo de color.
+@export var texture: Texture2D
