@@ -33,5 +33,6 @@ Si cerrás estando en el bosque, volvés al último guardado.
 ```bash
 GODOT="/d/Desktop/Archivos/Godot/Godot_v4.7.1-stable_win64_console.exe"
 "$GODOT" --headless --path . --script res://tests/test_generation.gd   # reglas del generador, 200 runs
-"$GODOT" --headless --path . res://tests/TestLoop.tscn                 # loop completo con el juego real
+"$GODOT" --headless --path . res://tests/RunTests.tscn                 # 8 suites con el juego real
+"$GODOT" --headless --path . res://tests/RunTests.tscn -- --suite=combat   # una sola suite
 ```

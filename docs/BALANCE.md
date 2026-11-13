@@ -46,7 +46,7 @@ Los `.tres` se editan desde el Inspector de Godot; las constantes, en el script.
 | Ataque | arco 120°, alcance 22 px, cooldown 0.35 s, puños 1 de daño | `player.gd` → `ATTACK_*`, `FIST_DAMAGE` |
 | Dash | 288 px/s, 0.15 s, cooldown 1.5 s | `player.gd` → `DASH_*` |
 | I-frames al recibir daño | 0.6 s | `player.gd` → `HURT_IFRAMES` |
-| Enemigo básico | 48 px/s, percepción 80 px, amago 0.35 s, 1 de daño, vida 3 (+1 c/3 de profundidad) | `scenes/entities/enemy.gd` |
+| Enemigo básico | 48 px/s, percepción 80 px, amago 0.35 s, 1 de daño, vida 3 (+1 c/3 de profundidad) | `scenes/entities/enemies/enemy_basic.gd` (valores por defecto y knockback en `enemy.gd`) |
 
 ## Crafting y herramientas
 | Qué | Dónde |

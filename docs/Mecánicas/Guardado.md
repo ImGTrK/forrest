@@ -23,4 +23,6 @@ hito: 7
 `autoload/save_system.gd` · `scenes/ui/main_menu.gd`, `pause_menu.gd`.
 
 ## Ideas y pendientes
-- **0.2 (hito 8):** versionar el guardado para que una actualización no rompa partidas viejas (importante al pasarle el `.exe` a amigos).
+- ✅ **Hito 8:** versionado. Formato 2 (`version` + `game_version`); los guardados de la 0.1 se migran solos;
+  uno de una versión más nueva no se carga y el menú explica por qué. Cambiar el formato = subir `VERSION` y
+  agregar `_migrate_N` en `autoload/save_system.gd`.

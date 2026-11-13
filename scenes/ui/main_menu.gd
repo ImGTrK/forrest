@@ -46,7 +46,7 @@ func continue_game() -> void:
 	if SaveSystem.load_game():
 		get_tree().change_scene_to_file(GAME_SCENE)
 	else:
-		_info.text = "No se pudo cargar la partida guardada"
+		_info.text = SaveSystem.last_error if SaveSystem.last_error != "" else "No se pudo cargar la partida guardada"
 
 
 func new_game() -> void:

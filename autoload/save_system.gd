@@ -7,12 +7,28 @@ extends Node
 ## Qué NO: el bosque. Siempre se carga en el pueblo; si cerrás en el bosque, volvés
 ## al último guardado (el run en curso se pierde).
 ## Cuándo: al llegar al pueblo, después de dormir y al cerrar la ventana en el pueblo (Main).
+##
+## Versionado: cada guardado lleva `version` (formato del archivo) y `game_version` (versión
+## del juego que lo escribió). Al cargar uno viejo se le aplican las migraciones en orden
+## (1→2, 2→3…) hasta llegar a VERSION, así una actualización no rompe partidas.
+## Para cambiar el formato: subir VERSION y agregar `_migrate_N` a MIGRATIONS.
 
-const VERSION := 1
+const VERSION := 2
 
 var save_path := "user://save.json"
 ## Vida del jugador leída del guardado; Main la aplica al crear al jugador (-1 = llena).
 var pending_health := -1
+## Por qué falló el último load_game() ("" si no falló). Lo muestra el menú.
+var last_error := ""
+
+## versión de origen -> función que la lleva a la siguiente.
+var MIGRATIONS := {
+	1: _migrate_1,
+}
+
+
+static func game_version() -> String:
+	return str(ProjectSettings.get_setting("application/config/version", "dev"))
 
 
 func has_save() -> bool:
@@ -37,6 +53,7 @@ func new_game() -> void:
 func save_game(player_health: int = -1) -> bool:
 	var data := {
 		"version": VERSION,
+		"game_version": game_version(),
 		"saved_at": Time.get_datetime_string_from_system(),
 		"game": {
 			"bag": GameState.bag.to_dict(),
@@ -64,12 +81,18 @@ func save_game(player_health: int = -1) -> bool:
 
 ## Carga el guardado. Devuelve false si no hay archivo o está roto (no toca el estado).
 func load_game() -> bool:
+	last_error = ""
 	if not has_save():
+		last_error = "No hay partida guardada"
 		return false
 	var text := FileAccess.get_file_as_string(save_path)
-	var data: Variant = JSON.parse_string(text)
-	if typeof(data) != TYPE_DICTIONARY:
+	var parsed: Variant = JSON.parse_string(text)
+	if typeof(parsed) != TYPE_DICTIONARY:
+		last_error = "El guardado está dañado"
 		push_error("Guardado ilegible: %s" % save_path)
+		return false
+	var data := migrate(parsed)
+	if data.is_empty():
 		return false
 	new_game()
 	var game: Dictionary = data.get("game", {})
@@ -87,3 +110,31 @@ func load_game() -> bool:
 	var ms: Dictionary = data.get("missions", {})
 	Missions.load_state(int(ms.get("completed", 0)), ms.get("active", []))
 	return true
+
+
+# --- Versionado ------------------------------------------------------------------
+
+## Lleva un guardado de cualquier versión vieja a la actual. Devuelve {} si no se puede
+## (versión más nueva que el juego, o falta una migración); el motivo queda en last_error.
+func migrate(data: Dictionary) -> Dictionary:
+	var v := int(data.get("version", 1))
+	if v > VERSION:
+		last_error = "El guardado es de una versión más nueva del juego (%s)" % data.get("game_version", "?")
+		push_error(last_error)
+		return {}
+	while v < VERSION:
+		if not MIGRATIONS.has(v):
+			last_error = "No se puede actualizar un guardado de la versión %d" % v
+			push_error(last_error)
+			return {}
+		data = MIGRATIONS[v].call(data)
+		v += 1
+		data["version"] = v
+	return data
+
+
+## 1 → 2: el guardado empieza a registrar qué versión del juego lo escribió.
+## (Los guardados de la 0.1 no lo tenían.)
+func _migrate_1(data: Dictionary) -> Dictionary:
+	data["game_version"] = data.get("game_version", "0.1")
+	return data

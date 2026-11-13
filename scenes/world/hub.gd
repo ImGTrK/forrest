@@ -50,7 +50,6 @@ var player: Player
 
 var _size := Vector2i.ZERO
 var _spawns := {}
-var _chest_cell := Vector2i.ZERO
 
 
 func _ready() -> void:
@@ -90,7 +89,6 @@ func _ready() -> void:
 				layer.set_cell(cell, 0, Vector2i(tile, 0))
 				_spawn_board(cell)
 
-	_add_label("Almacén  [E]", _spawns_chest_label_pos())
 	_add_label("Bosque  →", Vector2((_size.x - 7) * TILE, 9 * TILE))
 
 
@@ -108,10 +106,9 @@ func _physics_process(_delta: float) -> void:
 
 
 func _spawn_chest(cell: Vector2i) -> void:
-	_chest_cell = cell
 	var chest := Chest.new()
 	chest.position = Vector2(cell * TILE)
-	chest.opened.connect(chest_opened.emit)
+	chest.used.connect(chest_opened.emit)
 	add_child(chest)
 
 
@@ -122,7 +119,6 @@ func _spawn_bed(cell: Vector2i) -> void:
 	add_child(bed)
 	# Al despertar / colapsar se aparece al pie de la cama
 	_spawns["bed"] = Vector2(cell * TILE) + Vector2(TILE / 2.0, TILE * 2.5)
-	_add_label("Cama  [E]", Vector2(cell * TILE) + Vector2(-8, -12))
 
 
 func _spawn_bench(cell: Vector2i) -> void:
@@ -130,7 +126,6 @@ func _spawn_bench(cell: Vector2i) -> void:
 	bench.position = Vector2(cell * TILE)
 	bench.used.connect(bench_used.emit)
 	add_child(bench)
-	_add_label("Mesa  [E]", Vector2(cell * TILE) + Vector2(2, -12))
 
 
 func _spawn_board(cell: Vector2i) -> void:
@@ -138,11 +133,6 @@ func _spawn_board(cell: Vector2i) -> void:
 	board.position = Vector2(cell * TILE)
 	board.used.connect(board_used.emit)
 	add_child(board)
-	_add_label("Misiones  [E]", Vector2(cell * TILE) + Vector2(-6, -22))
-
-
-func _spawns_chest_label_pos() -> Vector2:
-	return Vector2(_chest_cell * TILE) + Vector2(-16, -14)
 
 
 func _add_label(text: String, pos: Vector2) -> void:

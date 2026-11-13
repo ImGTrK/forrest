@@ -98,18 +98,25 @@ y las notas del vault (`Inicio.md`) para el diseño.
 **Criterio de cierre de cada hito:** se prueba con F5, los tests headless pasan, las notas del vault y
 [BALANCE.md](BALANCE.md) quedan al día, y los placeholders nuevos están en `assets/README.md`.
 
-## 🔜 Hito 8 — Base sólida
+## ✅ Hito 8 — Base sólida
 Rama: `hito-8-base-solida`. Preparar el código para sumar contenido sin duplicar lógica.
-- [ ] Clase base `Interactable` (nombre, aviso "E", `interact()`, alcance); cofre, cama, mesa, tablón y recursos heredan
-- [ ] Clase base `Enemy` con la máquina idle → chase → windup → attack → recover, vida, drop y muerte.
-      Los hijos sobrescriben `move()` y `attack()`. El enemigo básico pasa a ser el primer hijo, sin cambiar cómo se juega
-- [ ] Componentes reutilizables donde convenga en vez de herencia (`Health` ya lo es; knockback y flash de daño)
-- [ ] Guardado versionado: `VERSION` 2 + migración desde la 1 (las partidas actuales siguen cargando)
-- [ ] Tests partidos por sistema (generación, inventario, crafting, misiones, guardado, combate) con un runner común
-- [ ] Partir `GameState` si sigue creciendo: inventario/equipo vs. mejoras
+- [x] Clase base `Interactable` (colisión, sprite, cartel, foco, señal `used`); cofre, cama, mesa, tablón y
+      recursos heredan y solo sobrescriben lo que cambia (`_on_interact`, `_collision_rect`, `_draw_overlay`)
+- [x] Clase base `Enemy` con la máquina idle → chase → windup → attack → recover (+ knockback, stunned, dead),
+      vida, drop y muerte. Los hijos sobrescriben `_chase_velocity`, `_wants_attack`, `_attack`, `_attack_velocity`,
+      `_animate`, `_drop`… `EnemyBasic` es el primer hijo, sin cambiar cómo se juega
+- [x] `SpawnEntry.enemy_script` elige qué hijo de `Enemy` aparece (sin tocar el generador para sumar enemigos)
+- [x] Componente `HitFlash` (destello + sacudida) compartido por recursos y enemigos. `Health` ya lo era;
+      el knockback queda en la base `Enemy` (lo heredan todos)
+- [x] Guardado versionado: formato 2 con `game_version`, migraciones en cadena desde la 1 (las partidas de la 0.1
+      siguen cargando) y rechazo con mensaje de guardados de una versión más nueva
+- [x] Tests partidos en 8 suites (loop, tiempo/energía, combate, inventario, crafting, noche/misiones, guardado,
+      entidades) con un runner común; se puede correr una sola con `-- --suite=nombre`. 159 checks
+- [ ] ~~Partir `GameState`~~: evaluado, no hace falta todavía (325 líneas, una sola responsabilidad: lo que
+      persiste). Se revisa si el hito 11 lo hace crecer
 - Sin arte nuevo
 
-## ⬜ Hito 9 — Bosque vivo
+## 🔜 Hito 9 — Bosque vivo
 Rama: `hito-9-bosque-vivo`. Ataca "se siente vacío".
 - [ ] `terrain.png` a 128×64 con variantes de pasto, tierra, pasto oscuro, agua y ruinas (orden en la guía §2.1);
       el generador elige variantes al azar

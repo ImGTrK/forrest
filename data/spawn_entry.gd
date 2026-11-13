@@ -15,6 +15,8 @@ extends Resource
 @export var min_depth: int = 0
 ## true = se instancia como Enemy en vez de Harvestable (también cuesta presupuesto).
 @export var is_enemy: bool = false
+## Script del enemigo (hijo de Enemy, ej. enemy_basic.gd). Vacío = EnemyBasic.
+@export var enemy_script: Script
 ## Qué ítem da al recolectarse. null = decoración no recolectable.
 @export var item: ItemData
 ## Dureza: "vida" del recurso. Cada golpe resta el poder de la herramienta

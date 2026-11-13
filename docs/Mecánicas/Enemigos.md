@@ -25,10 +25,10 @@ hito: 3
 [[BALANCE]] § Combate.
 
 ## Código
-`scenes/entities/enemy.gd` · `data/spawns/enemy_basic.tres`.
+`scenes/entities/enemies/enemy.gd` (base) · `enemy_basic.gd` · `data/spawns/enemy_basic.tres`. Cómo sumar uno: [[Arquitectura]].
 
 ## Ideas y pendientes
-- **0.2 (hito 8):** clase base `Enemy` con idle/chase/attack; cada tipo hereda y sobrescribe cómo se mueve y ataca.
+- ✅ **Hito 8:** clase base `Enemy`; `EnemyBasic` es su primer hijo. El tipo sale de `SpawnEntry.enemy_script`.
 - **0.2 (hito 10):** **Lanzador** (quieto, dispara esporas a distancia) y **Embestidor** (raspa el piso, embiste en línea recta, se aturde si choca).
 - Campamento enemigo como evento: [[Plantillas de zona y eventos]].
 - Jefes y voladores: [[Ideas para la 0.3]].

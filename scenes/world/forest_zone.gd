@@ -40,7 +40,7 @@ func _ready() -> void:
 			continue  # ya recolectado en este run
 		var entry: SpawnEntry = e.entry
 		if entry.is_enemy:
-			var enemy := Enemy.new()
+			var enemy := make_enemy(entry)
 			enemy.setup(e, player, zone.loot_depth())
 			enemy.position = Vector2(e.tile * TILE) + Vector2(TILE, TILE) / 2.0
 			add_child(enemy)
@@ -49,6 +49,12 @@ func _ready() -> void:
 		h.setup(entry, e, zone.loot_depth())
 		h.position = Vector2(e.tile * TILE)
 		add_child(h)
+
+
+## Instancia el tipo de enemigo de la entrada (su script hereda de Enemy).
+static func make_enemy(entry: SpawnEntry) -> Enemy:
+	var script: Script = entry.enemy_script if entry.enemy_script else EnemyBasic
+	return script.new() as Enemy
 
 
 func get_bounds() -> Rect2:

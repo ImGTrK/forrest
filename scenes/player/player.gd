@@ -153,7 +153,7 @@ func attack(aim: Vector2) -> void:
 	var hit_any := false
 	for enemy: Enemy in get_tree().get_nodes_in_group("enemy"):
 		var to := enemy.global_position - global_position
-		var in_reach := to.length() <= ATTACK_REACH + Enemy.RADIUS
+		var in_reach := to.length() <= ATTACK_REACH + enemy.radius
 		var in_arc := to.length() < 8.0 or absf(_attack_dir.angle_to(to)) <= ATTACK_ARC / 2.0
 		if in_reach and in_arc:
 			enemy.take_hit(damage, to.normalized() * ATTACK_KNOCKBACK)

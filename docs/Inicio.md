@@ -39,6 +39,7 @@ Pueblo: guardar, fabricar, reclamar misiones, dormir
 - [[ROADMAP]]: checklist de hitos.
 - [[BALANCE]]: todos los números ajustables y dónde se cambian.
 - [[GUIA_ARTE_Y_SONIDO]]: sprites, tiles y sonidos, hechos y por hacer.
+- [[Arquitectura]]: clases base, componentes y cómo sumar enemigos o interactuables.
 
 ## Cómo usar el vault
 - **Estado** de cada nota (propiedad `estado`): `hecho` · `planeado` · `idea` · `abierto` (pregunta sin resolver).

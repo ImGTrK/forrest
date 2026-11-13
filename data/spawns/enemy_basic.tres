@@ -2,6 +2,7 @@
 
 [ext_resource type="Script" path="res://data/spawn_entry.gd" id="1_se"]
 [ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_basic.png" id="3_tex"]
+[ext_resource type="Script" path="res://scenes/entities/enemies/enemy_basic.gd" id="4_enemy"]
 
 [resource]
 script = ExtResource("1_se")
@@ -11,6 +12,7 @@ weight = 1.5
 weight_per_depth = 0.3
 min_depth = 1
 is_enemy = true
+enemy_script = ExtResource("4_enemy")
 hardness = 1.0
 tool_type = &""
 min_tool_level = 0
