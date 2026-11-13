@@ -1,18 +1,19 @@
 class_name Hub
 extends Node2D
 ## Hub fijo y persistente (GDD §3): dos "casillas" diseñadas a mano.
-##   - Izquierda: casilla de gestión (almacén C, cama B).
+##   - Izquierda: casilla de gestión (almacén C, cama B, mesa M).
 ##   - Derecha: casilla de acceso al bosque (salida por el borde este).
 ##
 ## El layout está en ASCII para poder leerlo/editarlo rápido. Cuando tengas tu tileset,
 ## lo ideal es pintarlo a mano en el editor con un TileMapLayer y borrar LAYOUT.
 ##   W pared   . piso   g pasto   p camino
-##   C almacén   B cama (ocupa esta celda y la de abajo)
+##   C almacén   B cama (ocupa esta celda y la de abajo)   M mesa de crafting (esta y la de la derecha)
 ##   P inicio del juego   F llegada al volver del bosque
 
 signal leave(dir: Vector2i)
 signal chest_opened
 signal bed_used
+signal bench_used
 
 const TILE := TerrainTiles.TILE
 
@@ -25,7 +26,7 @@ const LAYOUT: Array[String] = [
 	"W......................WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
-	"W.....C................WgggggggggggggggggggggggW",
+	"W.....C....M...........WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
 	"W.......................ggggggggggggggggpppppppp",
@@ -80,6 +81,8 @@ func _ready() -> void:
 				_spawns["forest"] = center
 			elif ch == "B":
 				_spawn_bed(cell)
+			elif ch == "M":
+				_spawn_bench(cell)
 
 	_add_label("Almacén  [E]", _spawns_chest_label_pos())
 	_add_label("Bosque  →", Vector2((_size.x - 7) * TILE, 9 * TILE))
@@ -114,6 +117,14 @@ func _spawn_bed(cell: Vector2i) -> void:
 	# Al despertar / colapsar se aparece al pie de la cama
 	_spawns["bed"] = Vector2(cell * TILE) + Vector2(TILE / 2.0, TILE * 2.5)
 	_add_label("Cama  [E]", Vector2(cell * TILE) + Vector2(-8, -12))
+
+
+func _spawn_bench(cell: Vector2i) -> void:
+	var bench := Bench.new()
+	bench.position = Vector2(cell * TILE)
+	bench.used.connect(bench_used.emit)
+	add_child(bench)
+	_add_label("Mesa  [E]", Vector2(cell * TILE) + Vector2(2, -12))
 
 
 func _spawns_chest_label_pos() -> Vector2:

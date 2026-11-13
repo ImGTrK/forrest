@@ -343,6 +343,21 @@ Port del diseño de ítems e inventario de BarrenRoots (canvas de Obsidian).
 | Pérdidas | Colapso 25% / muerte 50% de lo cargado, **sin contar el equipo** |
 | Calidad visible | Marca dorada (≥80%) o verde (≥55%) en la esquina del ícono |
 
+## 14. Decisiones de Implementación (Hito 5 — Herramientas y crafting)
+
+| Tema | Decisión |
+|---|---|
+| Orden | Herramientas y crafting en un mismo hito: arrancás con las manos y lo primero es fabricar hacha/pico |
+| Golpes | Cada recurso tiene dureza; cada golpe resta el poder de la herramienta. A mano el poder es 1.5 |
+| Requisitos | Árbol (dureza 6, hacha) y roca (5, pico) se pueden a mano. Veta de hierro (12) exige pico **nivel 1**. Nivel 2 (hierro) queda para recursos futuros más profundos |
+| Equipo | Sin slots: se usa automáticamente la mejor herramienta/arma de la **mochila** (mayor nivel, después más poder). Llevarla cuesta lugar y peso |
+| Recetas | Hacha piedra (2 madera + 2 piedra), pico piedra (2+3), espada madera (3 madera), hacha hierro (2 madera + 2 hierro), pico hierro (2+3), espada hierro (1 madera + 3 hierro) |
+| Fórmula | `stat = base × lerp(min, max, t)`, con `t` = promedio normalizado de un stat del material elegido (ej. poder del hacha ← dureza de la piedra; durabilidad ← flexibilidad de la madera). Peso = 50% del peso de los materiales |
+| Mesa | En el pueblo. Usa materiales de la mochila **y** del almacén. Auto-elige los mejores; clic para cambiar. Vista previa comparada con la mejor que ya tenés del mismo tipo |
+| Durabilidad | 1 por golpe (herramienta) o por golpe que conecta (arma). Buena >60%, Desgastada 20-60%, Rota 0%: rota no se usa (como a mano) hasta repararla |
+| Reparar | En la mesa, deja la herramienta como nueva y consume 1 ejemplar (el de peor calidad) de su material principal |
+| Armas | Daño = poder del arma redondeado; sin arma, puños de 1 de daño |
+
 ### Aclaración de diseño: energía tras colapsar
 La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. **Resuelto en el hito 2:** el colapso lleva directo a dormir en la cama, así el jugador no queda trabado con energía 0 en el pueblo.
 

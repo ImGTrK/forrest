@@ -38,6 +38,7 @@ solo al abrir el editor y el código no cambia.
 | `rock.png` | **16×16** | Roca, da Piedra (`data/spawns/rock.tres`) |
 | `iron_vein.png` | **16×16** | Veta, da Hierro (`data/spawns/iron_vein.tres`) |
 | `bush.png` | **16×16** | Arbusto decorativo, bloquea el paso (`data/spawns/bush.tres`) |
+| `bench.png` | **32×16** | Mesa de trabajo (crafting), horizontal, 2×1 tiles (`scenes/entities/bench.gd`) |
 | `bed.png` | **16×32** | Cama del pueblo, vertical, ocupa 1×2 tiles (`scenes/entities/bed.gd`) |
 
 ## Íconos de ítems — `assets/sprites/items/`
@@ -49,6 +50,12 @@ El ícono mide **`grid_size` × 16 px** del ítem (lo que ocupa en la mochila). 
 | `wood.png` | **16×32** | Madera: ocupa **1×2 celdas** en la mochila (`data/items/wood.tres`) |
 | `stone.png` | **16×16** | Piedra |
 | `iron.png` | **16×16** | Hierro |
+| `stone_axe.png` | **16×32** | Hacha de piedra (1×2 en la mochila). Equipo: **mango abajo, cabeza arriba** |
+| `stone_pickaxe.png` | **16×32** | Pico de piedra |
+| `wood_sword.png` | **16×32** | Espada de madera |
+| `iron_axe.png` | **16×32** | Hacha de hierro |
+| `iron_pickaxe.png` | **16×32** | Pico de hierro |
+| `iron_sword.png` | **16×32** | Espada de hierro (el sprite del swing sigue siendo `player/sword.png`) |
 
 ## UI / HUD — `assets/sprites/ui/`
 

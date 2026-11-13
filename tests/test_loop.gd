@@ -33,8 +33,10 @@ func _run() -> void:
 	# Recolectar todo lo recolectable de la zona (golpeando hasta romper)
 	var harvested := 0
 	for node in main._area.get_children():
-		if node is Harvestable and node.entry.item != null:
-			for i in node.entry.hits:
+		if node is Harvestable and node.entry.item != null and node.entry.min_tool_level == 0:
+			for i in 20:  # a mano: golpear hasta que se rompa
+				if node.is_queued_for_deletion():
+					break
 				node.interact(main.player)
 			harvested += 1
 	_check(harvested > 0, "había algo para recolectar")
@@ -95,7 +97,7 @@ func _run() -> void:
 	# Golpear gasta energía (además del drenaje por tiempo)
 	var e0: float = Energy.value
 	for node in main._area.get_children():
-		if node is Harvestable and node.entry.item != null:
+		if node is Harvestable and node.entry.item != null and node.entry.min_tool_level == 0:
 			node.interact(main.player)
 			break
 	_check(Energy.value <= e0 - Energy.ACTION_COST + 0.01, "golpear gasta energía")
@@ -249,7 +251,7 @@ func _run() -> void:
 	rock.setup(rock_entry, {"alive": true}, 0)
 	main._area.add_child(rock)
 	var energy_before: float = Energy.value
-	for i in rock_entry.hits:
+	for i in 10:
 		rock.interact(player)
 	_check(is_instance_valid(rock) and not rock.is_queued_for_deletion(), "mochila llena: la roca no se rompe")
 	_check(Energy.value >= energy_before - 0.01, "mochila llena: no gasta energía")
@@ -366,6 +368,115 @@ func _run() -> void:
 	main.inventory_ui.close()
 	_check(not tree.paused, "cerrar la mochila despausa")
 
+	# --- Hito 5: herramientas, durabilidad y crafting ---------------------------
+	bag.clear()
+	gs.storage.clear()
+	var tree_entry: SpawnEntry = load("res://data/spawns/tree.tres")
+	var vein_entry: SpawnEntry = load("res://data/spawns/iron_vein.tres")
+	var axe_recipe: RecipeData = load("res://data/recipes/stone_axe.tres")
+	var pick_recipe: RecipeData = load("res://data/recipes/stone_pickaxe.tres")
+	var sword_recipe: RecipeData = load("res://data/recipes/iron_sword.tres")
+
+	# A mano: el árbol se puede, lento. La veta de hierro no.
+	var tree_node := _spawn_harvestable(main, tree_entry)
+	_check(tree_node.hits_left() == 4, "a mano: árbol en 4 golpes (%d)" % tree_node.hits_left())
+	var vein := _spawn_harvestable(main, vein_entry)
+	var e_vein: float = Energy.value
+	vein.interact(player)
+	_check(vein._hp == vein_entry.hardness and Energy.value >= e_vein - 0.01,
+		"sin pico: la veta de hierro no se puede (ni gasta energía)")
+
+	# Crafting: materiales en mochila y almacén; auto-selección = los de mejor calidad
+	for i in 3:
+		bag.add(DNA.generar_recurso(wood, 0, gs.rng))
+	for i in 4:
+		gs.storage.add(DNA.generar_recurso(wood, 0, gs.rng))
+	for i in 6:
+		gs.storage.add(DNA.generar_recurso(stone, i, gs.rng))
+	var owned: Array[ItemInstance] = gs.owned_items()
+	var sel := Crafting.auto_select(axe_recipe, owned)
+	var best_wood: int = Crafting.candidates(axe_recipe, 0, owned)[0].quality
+	_check(Crafting.is_complete(axe_recipe, sel) and sel[0][0].quality == best_wood,
+		"auto-selección: los mejores materiales")
+	_check(Crafting.preview(axe_recipe, {0: sel[0], 1: []}) == null, "selección incompleta: sin resultado")
+	var prev := Crafting.preview(axe_recipe, sel)
+	_check(prev.power() >= 2.1 and prev.power() <= 3.9 and prev.max_durability() >= 24.0
+		and prev.durability == prev.max_durability(), "preview: stats dentro de los rangos de la receta")
+	var owned_before: int = gs.owned_items().size()
+	var axe_item := Crafting.craft(axe_recipe, sel)
+	_check(axe_item != null and gs.owned_items().size() == owned_before - 4 + 1 and bag.has(axe_item),
+		"craftear consume 4 materiales y el hacha va a la mochila")
+	_check(is_equal_approx(axe_item.power(), prev.power()), "el resultado coincide con la vista previa")
+
+	# Mejores materiales = mejor herramienta
+	var hard_stones: Array[ItemInstance] = []
+	var soft_stones: Array[ItemInstance] = []
+	for i in 2:
+		var h := DNA.generar_recurso(stone, 0, gs.rng)
+		h.stats["dureza"] = 12.0
+		hard_stones.append(h)
+		var s2 := DNA.generar_recurso(stone, 0, gs.rng)
+		s2.stats["dureza"] = 2.0
+		soft_stones.append(s2)
+	var two_wood: Array = sel[0]
+	_check(Crafting.preview(axe_recipe, {0: two_wood, 1: hard_stones}).power()
+		> Crafting.preview(axe_recipe, {0: two_wood, 1: soft_stones}).power(),
+		"piedra más dura = hacha con más poder")
+
+	# Con hacha: menos golpes y gasta durabilidad
+	_check(gs.best_tool(&"axe") == axe_item, "el hacha de la mochila se usa sola")
+	var hits_axe := tree_node.hits_left()
+	_check(hits_axe < 4, "con hacha: menos golpes (%d)" % hits_axe)
+	var dur0 := axe_item.durability
+	tree_node.interact(player)
+	_check(axe_item.durability == dur0 - 1, "cada golpe gasta 1 de durabilidad")
+
+	# Pico: habilita la veta de hierro
+	var pick_item := Crafting.craft(pick_recipe, Crafting.auto_select(pick_recipe, gs.owned_items()))
+	_check(pick_item != null and pick_item.data.tool_level == 1, "pico de piedra fabricado (nivel 1)")
+	vein.interact(player)
+	_check(vein._hp < vein_entry.hardness, "con pico: la veta de hierro se puede picar")
+
+	# Romper y reparar
+	axe_item.durability = 1
+	tree_node.interact(player)
+	_check(axe_item.is_broken and gs.best_tool(&"axe") == null, "hacha rota: deja de usarse")
+	_check(tree_node.hits_left() == ceili(tree_node._hp / Harvestable.HAND_POWER), "rota = como a mano")
+	gs.storage.add(DNA.generar_recurso(stone, 0, gs.rng))
+	var stones_before := Crafting.candidates(axe_recipe, 1, gs.owned_items()).size()
+	_check(Crafting.repair(axe_item) and not axe_item.is_broken
+		and axe_item.durability == axe_item.max_durability(), "reparar deja el hacha como nueva")
+	_check(Crafting.candidates(axe_recipe, 1, gs.owned_items()).size() == stones_before - 1,
+		"reparar consume 1 piedra")
+	tree_node.queue_free()
+	vein.queue_free()
+
+	# Arma: el daño sale del poder de la espada, y se gasta al pegar
+	var sword := ItemInstance.new(sword_recipe.result)
+	sword.stats = {"poder": 3.0, "durabilidad": 50.0, "peso": 2.0}
+	sword.repair_full()
+	bag.add(sword)
+	var ent3 := {"entry": enemy_entry, "tile": Vector2i.ZERO, "alive": true}
+	var target := _spawn_enemy(main, ent3, player.global_position + Vector2(14, 0))
+	player._attack_cd = 0.0
+	player.attack(Vector2.RIGHT)
+	_check(ent3.alive == false, "espada de poder 3: el enemigo básico cae de un golpe")
+	_check(sword.durability == 49.0, "pegar gasta durabilidad de la espada")
+
+	# UI de la mesa
+	var cui: CraftingUI = main.crafting_ui
+	cui.open()
+	_check(tree.paused and cui.is_open(), "la mesa pausa el juego")
+	cui.select_recipe(axe_recipe)
+	var chosen_stone: ItemInstance = cui.selection()[1][0]
+	cui.toggle_material(1, chosen_stone)
+	_check(not cui.selection()[1].has(chosen_stone) and cui._craft_button.disabled,
+		"quitar un material deshabilita Fabricar")
+	cui.close()
+	_check(not tree.paused, "cerrar la mesa despausa")
+	bag.clear()
+	gs.storage.clear()
+
 	# Dejar correr algunos frames reales
 	for i in 30:
 		await tree.physics_frame
@@ -380,6 +491,14 @@ func _spawn_enemy(main: Node, ent: Dictionary, pos: Vector2) -> Enemy:
 	main._area.add_child(enemy)
 	enemy.global_position = pos
 	return enemy
+
+
+func _spawn_harvestable(main: Node, entry: SpawnEntry) -> Harvestable:
+	var h := Harvestable.new()
+	h.setup(entry, {"alive": true}, 0)
+	main._area.add_child(h)
+	h.global_position = main.player.global_position + Vector2(40, 40)
+	return h
 
 
 func _wait_sleep(main: Node) -> void:

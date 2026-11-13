@@ -17,8 +17,13 @@ extends Resource
 @export var is_enemy: bool = false
 ## Qué ítem da al recolectarse. null = decoración no recolectable.
 @export var item: ItemData
-## Golpes necesarios para recolectarlo (las herramientas llegarán en otro hito).
-@export var hits: int = 1
+## Dureza: "vida" del recurso. Cada golpe resta el poder de la herramienta
+## (o Harvestable.HAND_POWER a mano). Golpes = ceil(dureza / poder).
+@export var hardness: float = 1.0
+## Herramienta que sirve para este recurso (&"axe", &"pickaxe"). Vacío = ninguna.
+@export var tool_type: StringName = &""
+## 0 = se puede a mano (lento). >0 = exige una herramienta de ese nivel.
+@export var min_tool_level: int = 0
 @export var color: Color = Color.WHITE
 ## Tamaño en tiles. El sprite tiene que medir exactamente size * 16 px.
 @export var size: Vector2i = Vector2i.ONE

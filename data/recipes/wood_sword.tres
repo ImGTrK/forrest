@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="RecipeData" format=3]
+
+[ext_resource type="Script" path="res://data/recipe_data.gd" id="1_recipe"]
+[ext_resource type="Resource" path="res://data/items/wood_sword.tres" id="2_result"]
+[ext_resource type="Resource" path="res://data/items/wood.tres" id="3_m0"]
+
+[resource]
+script = ExtResource("1_recipe")
+id = &"wood_sword"
+result = ExtResource("2_result")
+ingredients = [{"count": 3, "item": ExtResource("3_m0")}]
+formulas = [{"base": 2.0, "from": 0, "max": 1.5, "min": 0.75, "source": "densidad", "stat": "poder"}, {"base": 30.0, "from": 0, "max": 1.4, "min": 0.6, "source": "flexibilidad", "stat": "durabilidad"}]
+weight_factor = 0.5
+repair_material = ExtResource("3_m0")

@@ -10,6 +10,8 @@ extends Node
 
 signal bag_changed
 signal storage_changed
+## Cambió la durabilidad o el set de herramientas/armas disponibles.
+signal equipment_changed
 signal message(text: String)
 
 ## % de lo cargado que se pierde según cómo termina el run (GDD §4).
@@ -31,6 +33,7 @@ var rng := RandomNumberGenerator.new()
 func _ready() -> void:
 	rng.randomize()
 	bag.changed.connect(bag_changed.emit)
+	bag.changed.connect(equipment_changed.emit)
 	storage.changed.connect(storage_changed.emit)
 
 
@@ -105,6 +108,68 @@ func discard(item: ItemInstance) -> void:
 ## guardarlo en el almacén es decisión del jugador.
 func end_run() -> void:
 	runs_completed += 1
+
+
+# --- Herramientas y armas -----------------------------------------------------
+# No hay slots de equipo: se usa automáticamente la mejor herramienta/arma que esté
+# en la MOCHILA (no rota). Llevarla cuesta lugar y peso: es parte de la decisión.
+
+## Mejor herramienta del tipo (&"axe", &"pickaxe") en la mochila: mayor nivel, después más poder.
+func best_tool(tool_type: StringName) -> ItemInstance:
+	if tool_type == &"":
+		return null
+	return _best_in(bag.items(), func(it: ItemInstance) -> bool:
+		return it.data.item_type == ItemData.ItemType.TOOL and it.data.tool_type == tool_type)
+
+
+func best_weapon() -> ItemInstance:
+	return _best_in(bag.items(), func(it: ItemInstance) -> bool:
+		return it.data.item_type == ItemData.ItemType.WEAPON)
+
+
+## Igual que best_tool pero mirando también el almacén (para comparar en el crafting).
+func best_owned_like(data: ItemData) -> ItemInstance:
+	return _best_in(owned_items(), func(it: ItemInstance) -> bool:
+		return it.data.item_type == data.item_type and it.data.tool_type == data.tool_type)
+
+
+func _best_in(items: Array[ItemInstance], filter: Callable) -> ItemInstance:
+	var best: ItemInstance = null
+	for it in items:
+		if it.is_broken or not filter.call(it):
+			continue
+		if best == null or it.data.tool_level > best.data.tool_level 				or (it.data.tool_level == best.data.tool_level and it.power() > best.power()):
+			best = it
+	return best
+
+
+## Gasta durabilidad de una herramienta/arma y avisa si se rompió.
+func wear(item: ItemInstance, amount: float = 1.0) -> void:
+	if item == null:
+		return
+	if item.wear(amount):
+		notify("¡Se rompió %s! Repará en la mesa del pueblo" % item.display_name())
+	equipment_changed.emit()
+
+
+## Todo lo que el jugador tiene (mochila + almacén), para el crafting en el pueblo.
+func owned_items() -> Array[ItemInstance]:
+	var all := bag.items()
+	all.append_array(storage.items())
+	return all
+
+
+## Saca un ítem de donde esté (mochila o almacén).
+func remove_owned(item: ItemInstance) -> bool:
+	return bag.remove(item) or storage.remove(item)
+
+
+## Ítem nuevo (crafteado): a la mochila; si no entra, al almacén.
+func receive(item: ItemInstance) -> String:
+	if bag.add(item):
+		return "mochila"
+	storage.add(item)
+	return "almacén"
 
 
 ## Colapso / muerte: pierde una fracción al azar de lo cargado. El equipo nunca se pierde.

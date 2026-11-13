@@ -15,8 +15,8 @@ Abrí `project.godot` con Godot 4.7.1 y apretá F5.
 | Carpeta | Qué hay |
 |---|---|
 | `autoload/` | Singletons globales: `GameState` (persistente), `ForestSession` (cache del bosque), `InputSetup` |
-| `data/` | Definiciones (`ItemData`, `SpawnEntry`) y sus `.tres` en `data/items/` y `data/spawns/`: acá se ajustan stats, tamaños, pesos y costos sin tocar código |
-| `scripts/` | Lógica pura: `ZoneGenerator` (presupuesto + tabla ponderada), `DNA`, `ItemInstance`, `GridInventory`, `Health`, `ZoneData`, `TerrainTiles` |
+| `data/` | Definiciones (`ItemData`, `SpawnEntry`, `RecipeData`) y sus `.tres` en `data/items/`, `data/spawns/` y `data/recipes/`: acá se ajustan stats, tamaños, pesos, costos y recetas sin tocar código |
+| `scripts/` | Lógica pura: `ZoneGenerator` (presupuesto + tabla ponderada), `DNA`, `ItemInstance`, `GridInventory`, `Crafting`, `Health`, `ZoneData`, `TerrainTiles` |
 | `scenes/` | `Main`, jugador, hub, zona del bosque, entidades y UI |
 | `tests/` | Tests headless |
 | `assets/` | Sprites y tilesets (placeholders con medidas exactas, reemplazables) |

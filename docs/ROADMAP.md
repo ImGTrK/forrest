@@ -51,25 +51,25 @@ Rama: `hito-4-inventario`. Basado en `ItemData`, `ItemInstance`, "Inventario del
 - [x] Almacén en grilla al lado de la mochila, crece solo; Shift+clic para pasar directo
 - [x] Nada se guarda automáticamente al volver: el jugador decide qué guarda y qué arriesga. El equipo nunca se pierde
 
-## 🔜 Hito 5 — Herramientas y durabilidad
-- [ ] Hacha / pico con nivel; cada recurso exige herramienta y nivel mínimo
-- [ ] Durabilidad Buena (>60%) → Desgastada (20-60%) → Rota (0%); reparar en el hub
-- [ ] Slots de herramienta y arma equipadas en el HUD
-- [ ] Reemplaza el `hits` fijo de `SpawnEntry` por daño de herramienta vs. dureza
-- Sprites nuevos: íconos de herramientas
+## ✅ Hito 5 — Herramientas, durabilidad y crafting (juntos)
+Rama: `hito-5-herramientas-crafting`. Se juntaron porque las herramientas salen del crafting y el
+crafting necesita algo útil que fabricar. Diseño de "Sistema de Crafting", "RecipeData", "UI de Crafting",
+"Durabilidad" y "Slot de Herramienta" del canvas de BarrenRoots.
+- [x] Recursos con dureza y herramienta requerida; golpes = dureza / poder (a mano: poder 1.5)
+- [x] Árbol y roca se pueden a mano (lento); la veta de hierro exige pico nivel 1
+- [x] Hacha, pico y espada de piedra/madera (nivel 1) y de hierro (nivel 2): 6 recetas en `data/recipes/`
+- [x] Stats del resultado = promedio ponderado de los stats de los materiales elegidos
+- [x] Mesa de trabajo en el pueblo: recetas → elegir ejemplares (mochila + almacén) → vista previa con ±
+- [x] Durabilidad Buena (>60%) / Desgastada / Rota; 1 por golpe; rota = como a mano. Reparar en la mesa (1 material)
+- [x] Sin slots: se usa sola la mejor herramienta/arma de la mochila. HUD con hacha, pico y arma + durabilidad
+- [x] La espada pasa a ser un ítem: daño = su poder (sin arma: puños, 1 de daño)
 
-## ⬜ Hito 6 — Crafting
-Diseño de BarrenRoots: 3 paneles (recetas → materiales → preview con ▲▼), promedio ponderado de stats.
-- [ ] `RecipeData` (Resource), mesa de crafting en el hub, `craft()` y `preview()` con la misma fórmula
-- [ ] Primeras recetas: herramientas mejores, linterna
-- Sprites nuevos: mesa de crafting, íconos de ítems crafteados
-
-## ⬜ Hito 7 — Noche y misiones
+## 🔜 Hito 6 — Noche y misiones
 - [ ] Visibilidad nocturna (shader/overlay), linterna que consume aceite
 - [ ] Tablón de misiones (sin NPC): "traer X de Y", "llegar a profundidad N"
 - Sprites nuevos: tablón, linterna, máscara de luz
 
-## ⬜ Hito 8 — Pulido del MVP
+## ⬜ Hito 7 — Pulido del MVP
 - [ ] Arte final integrado, sonido básico, menú principal
 - [ ] Guardado en disco del estado persistente (JSON, como el diseño de BarrenRoots)
 - [ ] Balance de números (drenaje, % de pérdida, presupuesto) jugando

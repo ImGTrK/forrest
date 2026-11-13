@@ -16,6 +16,12 @@ const HEART_FULL := preload("res://assets/sprites/ui/hearts/heart_full.png")
 const HEART_HALF := preload("res://assets/sprites/ui/hearts/heart_half.png")
 const HEART_EMPTY := preload("res://assets/sprites/ui/hearts/heart_empty.png")
 
+## Casillas de equipo: [tipo de herramienta o &"weapon", letra si está vacía]
+const EQUIP_SLOTS := [[&"axe", "H"], [&"pickaxe", "P"], [&"weapon", "E"]]
+const EQUIP_CELL := 18
+const SLOT := preload("res://assets/sprites/ui/slot.png")
+
+var _equip: Control
 var _hearts: HBoxContainer
 var _clock: Label
 var _energy_bar: TextureProgressBar
@@ -86,6 +92,21 @@ func _ready() -> void:
 	_hint.text = "WASD mover · Clic/J atacar · Espacio dash · E interactuar · Tab inventario"
 	add_child(_hint)
 
+	# Equipo en uso (abajo a la derecha): hacha, pico, arma
+	_equip = Control.new()
+	_equip.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	_equip.anchor_left = 1.0
+	_equip.anchor_right = 1.0
+	_equip.anchor_top = 1.0
+	_equip.anchor_bottom = 1.0
+	_equip.offset_left = -(EQUIP_SLOTS.size() * (EQUIP_CELL + 2)) - 6
+	_equip.offset_top = -EQUIP_CELL - 10
+	_equip.offset_right = -6
+	_equip.offset_bottom = -6
+	_equip.draw.connect(_draw_equipment)
+	add_child(_equip)
+	GameState.equipment_changed.connect(_equip.queue_redraw)
+
 	GameState.bag_changed.connect(_refresh_carried)
 	GameState.storage_changed.connect(func() -> void:
 		if _in_hub:
@@ -142,6 +163,40 @@ func _on_energy_changed(value: float, _max_value: float) -> void:
 
 func _on_energy_state(state: int) -> void:
 	_energy_bar.tint_progress = BAR_TINTS[state]
+
+
+## Dibuja la mejor herramienta/arma de cada tipo que hay en la mochila, con su durabilidad.
+func _draw_equipment() -> void:
+	var font := ThemeDB.fallback_font
+	for k in EQUIP_SLOTS.size():
+		var kind: StringName = EQUIP_SLOTS[k][0]
+		var pos := Vector2(k * (EQUIP_CELL + 2), 0)
+		_equip.draw_texture(SLOT, pos)
+		var item := GameState.best_weapon() if kind == &"weapon" else GameState.best_tool(kind)
+		if item == null:
+			item = _broken_in_bag(kind)  # mostrarla en rojo para que se sepa que hay que repararla
+		var cell := Rect2(pos + Vector2.ONE, Vector2(EQUIP_CELL - 2, EQUIP_CELL - 2))
+		if item == null:
+			_equip.draw_string(font, pos + Vector2(6, 13), EQUIP_SLOTS[k][1],
+				HORIZONTAL_ALIGNMENT_LEFT, -1, 8, Color(1, 1, 1, 0.3))
+			continue
+		var tex := item.data.icon.get_size()
+		var s := tex * minf(cell.size.x / tex.x, cell.size.y / tex.y)
+		_equip.draw_texture_rect(item.data.icon, Rect2(cell.position + (cell.size - s) / 2.0, s), false)
+		var bar := Rect2(pos + Vector2(1, EQUIP_CELL + 1), Vector2(EQUIP_CELL - 2, 2))
+		_equip.draw_rect(bar, Color(0, 0, 0, 0.6))
+		bar.size.x *= item.durability_ratio()
+		_equip.draw_rect(bar, item.condition_color())
+
+
+func _broken_in_bag(kind: StringName) -> ItemInstance:
+	for it in GameState.bag.items():
+		if not it.is_broken:
+			continue
+		var is_weapon := it.data.item_type == ItemData.ItemType.WEAPON
+		if (kind == &"weapon" and is_weapon) or (not is_weapon and it.data.tool_type == kind):
+			return it
+	return null
 
 
 func _icon(tex: Texture2D) -> TextureRect:

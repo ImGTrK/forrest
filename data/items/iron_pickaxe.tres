@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="ItemData" format=3]
+
+[ext_resource type="Script" path="res://data/item_data.gd" id="1_item"]
+[ext_resource type="Texture2D" path="res://assets/sprites/items/iron_pickaxe.png" id="2_icon"]
+
+[resource]
+script = ExtResource("1_item")
+id = &"iron_pickaxe"
+display_name = "Pico de hierro"
+description = "Pica hierro rápido. Nivel 2."
+icon = ExtResource("2_icon")
+item_type = 1
+grid_size = Vector2i(1, 2)
+weight_stat = "peso"
+tool_type = &"pickaxe"
+tool_level = 2

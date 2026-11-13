@@ -24,7 +24,8 @@ const ANIM_FPS := 4.0  # 0.25 s por frame, como los .anim de Unity
 
 # --- Combate ---------------------------------------------------------------------
 const MAX_HEALTH := 6  # 3 corazones (cada corazón = 2)
-const ATTACK_DAMAGE := 1
+## Daño sin arma. Con arma, el daño es su stat "poder" (redondeado).
+const FIST_DAMAGE := 1
 const ATTACK_DURATION := 0.2  # BarrenRoots: attackDuration
 const ATTACK_COOLDOWN := 0.35
 const ATTACK_REACH := 22.0  # px desde el centro del jugador
@@ -142,13 +143,19 @@ func attack(aim: Vector2) -> void:
 	_attack_t = ATTACK_DURATION
 	_attack_cd = ATTACK_COOLDOWN * Energy.cooldown_multiplier()
 	Energy.spend_action()
-	_sword.visible = true
+	var weapon := GameState.best_weapon()
+	var damage := maxi(1, roundi(weapon.power())) if weapon else FIST_DAMAGE
+	_sword.visible = weapon != null  # a puño limpio solo se ve la estela
+	var hit_any := false
 	for enemy: Enemy in get_tree().get_nodes_in_group("enemy"):
 		var to := enemy.global_position - global_position
 		var in_reach := to.length() <= ATTACK_REACH + Enemy.RADIUS
 		var in_arc := to.length() < 8.0 or absf(_attack_dir.angle_to(to)) <= ATTACK_ARC / 2.0
 		if in_reach and in_arc:
-			enemy.take_hit(ATTACK_DAMAGE, to.normalized() * ATTACK_KNOCKBACK)
+			enemy.take_hit(damage, to.normalized() * ATTACK_KNOCKBACK)
+			hit_any = true
+	if hit_any:
+		GameState.wear(weapon)
 
 
 func _update_attack(delta: float) -> void:

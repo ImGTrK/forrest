@@ -10,6 +10,7 @@ const SLEEP_HOLD_TIME := 0.8
 @onready var player: Player = $Player
 @onready var hud: GameHUD = $HUD
 @onready var inventory_ui: InventoryUI = $InventoryUI
+@onready var crafting_ui: CraftingUI = $CraftingUI
 ## Tiñe todo el canvas del mundo según la hora (el HUD está en otra capa y no se tiñe).
 @onready var ambient: CanvasModulate = $Ambient
 ## Pantalla negra para dormir/colapsar. process_mode = ALWAYS: anima con el juego pausado.
@@ -47,6 +48,7 @@ func _load_hub(spawn: String) -> void:
 	hub.player = player
 	hub.chest_opened.connect(inventory_ui.open_chest)
 	hub.bed_used.connect(sleep)
+	hub.bench_used.connect(crafting_ui.open)
 	_swap_area(hub)
 	player.set_camera_limits(hub.get_bounds())
 	player.teleport(hub.get_spawn(spawn))

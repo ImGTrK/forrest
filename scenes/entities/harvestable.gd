@@ -9,7 +9,11 @@ var entry: SpawnEntry
 var entity: Dictionary  # referencia al dict dentro de ZoneData (para marcar alive = false)
 var depth: int = 0
 
-var _hits_left: int = 1
+## Poder de golpe a mano (sin herramienta). Árbol (dureza 6) = 4 golpes a mano.
+const HAND_POWER := 1.5
+const TOOL_NAMES := {&"axe": "un hacha", &"pickaxe": "un pico"}
+
+var _hp: float = 1.0
 var _flash: float = 0.0
 var _focused := false
 var _px_size := Vector2.ZERO
@@ -24,7 +28,7 @@ func setup(p_entry: SpawnEntry, p_entity: Dictionary, p_depth: int) -> void:
 
 func _ready() -> void:
 	_px_size = Vector2(entry.size * TerrainTiles.TILE)
-	_hits_left = entry.hits
+	_hp = entry.hardness
 	var shape := RectangleShape2D.new()
 	shape.size = _px_size - Vector2(4, 4)
 	var col := CollisionShape2D.new()
@@ -49,15 +53,29 @@ func set_focused(value: bool) -> void:
 	queue_redraw()
 
 
+## Golpes que faltan con la herramienta actual (para tests y feedback).
+func hits_left() -> int:
+	var tool := GameState.best_tool(entry.tool_type)
+	return ceili(_hp / (tool.power() if tool else HAND_POWER))
+
+
 func interact(_by: Node) -> void:
 	# Sin lugar en la mochila no se golpea (y no se gasta energía).
 	if not GameState.can_carry(entry.item):
 		GameState.notify("La mochila está llena: no entra %s" % entry.item.display_name)
 		return
+	# Herramienta: la mejor del tipo que haya en la mochila (no rota)
+	var tool := GameState.best_tool(entry.tool_type)
+	var level := tool.data.tool_level if tool else 0
+	if level < entry.min_tool_level:
+		GameState.notify("Necesito %s de nivel %d o más" % [
+			TOOL_NAMES.get(entry.tool_type, "una herramienta"), entry.min_tool_level])
+		return
 	Energy.spend_action()
-	_hits_left -= 1
+	_hp -= tool.power() if tool else HAND_POWER
+	GameState.wear(tool)
 	_flash = 1.0
-	if _hits_left > 0:
+	if _hp > 0.0:
 		return
 	var item := DNA.generar_recurso(entry.item, depth, ForestSession.rng)
 	entity.alive = false

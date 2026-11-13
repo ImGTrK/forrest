@@ -66,6 +66,23 @@ var SPRITES := [
 	{"path": "assets/sprites/ui/energy_bar_fill.png", "size": Vector2i(64, 8), "style": "tile",
 		"colors": [Color("e6e6e6")]},  # claro: el HUD lo tiñe
 
+	# --- Hito 5: herramientas, armas y mesa de crafting ---
+	# Equipo: 16x32 (ocupa 1x2 en la mochila). Mango abajo, cabeza arriba (color de acento).
+	{"path": "assets/sprites/items/stone_axe.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("8c5c2e")], "accent": Color("9a9a9e")},
+	{"path": "assets/sprites/items/stone_pickaxe.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("7a4f28")], "accent": Color("9a9a9e")},
+	{"path": "assets/sprites/items/wood_sword.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("b07a44")], "accent": Color("6b4423")},
+	{"path": "assets/sprites/items/iron_axe.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("8c5c2e")], "accent": Color("c8ccd4")},
+	{"path": "assets/sprites/items/iron_pickaxe.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("7a4f28")], "accent": Color("c8ccd4")},
+	{"path": "assets/sprites/items/iron_sword.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("c8ccd4")], "accent": Color("6b4423")},
+	{"path": "assets/sprites/world/bench.png", "size": Vector2i(T * 2, T), "style": "body",
+		"colors": [Color("9c6b3c")], "accent": Color("c8ccd4")},
+
 	# --- Íconos de ítems (inventario/almacén) ---
 	# El ícono mide grid_size * 16 px (madera ocupa 1x2 celdas en la mochila)
 	{"path": "assets/sprites/items/wood.png", "size": Vector2i(T, T * 2), "style": "body",
