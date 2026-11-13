@@ -13,18 +13,19 @@ Hub fijo, bosque procedural con cortes tipo Isaac, presupuesto de dificultad por
 cache de sesión, recolección con ADN, almacén, minimapa, inventario que pausa.
 Rama: `hito-1-loop-minimo`.
 
-## 🔜 Hito 2 — Reloj y energía (GDD §4.1)
-La identidad del juego. Al terminar, el jugador tiene que decidir cuándo volver.
-- [ ] Reloj continuo (autoload `Clock`), pausado en menús; HUD con la hora
-- [ ] Energía: drenaje base por tiempo + costo extra por golpe
-- [ ] Rampa de aviso: 50% mensaje, 20% debuffs (golpes más lentos), 0% colapso
-- [ ] Colapso → al hub perdiendo un % menor de lo cargado (`GameState.lose_run_fraction`)
-- [ ] Cama en el hub: dormir pasa 5-9 horas al azar y recarga proporcional
-- [ ] Curva por hora: `ZoneGenerator.DIFFICULTY_MULTIPLIER` pasa a depender del reloj
-- [ ] Tinte día/noche simple (CanvasModulate) — la niebla real va en el hito 6
-- Sprites nuevos: cama, ícono de energía, ícono de reloj
+## ✅ Hito 2 — Reloj y energía (GDD §4.1)
+Rama: `hito-2-reloj-energia`. Números de balance en `autoload/clock.gd` y `autoload/energy.gd`.
+- [x] Reloj continuo (autoload `Clock`, 30 s reales = 1 h), pausado en menús; HUD con día, hora y franja
+- [x] Energía: drenaje base 5/h + 0.4 por golpe
+- [x] Rampa: 50% aviso · 20% debuffs (−30% velocidad, golpes 2× más lentos) · 0% colapso
+- [x] Colapso → pierde 25% de lo cargado, guarda el resto, vuelve al hub y duerme a la fuerza
+- [x] Cama en el hub: dormir pasa 5-9 h al azar y recarga 12/h
+- [x] Curva por hora: multiplicador de presupuesto (×1 → ×2) y bonus de rareza (+0 → +3) en `Clock`
+- [x] Tinte día/noche (CanvasModulate) — la niebla real va en el hito 6
+- [x] Fix: tamaño de fuente del HUD (Theme propio en `scenes/ui/theme.tres`)
+- Sprites nuevos: `bed.png`, `icon_clock.png`, `icon_energy.png`, `energy_bar_under.png`, `energy_bar_fill.png`
 
-## ⬜ Hito 3 — Combate (GDD §5)
+## 🔜 Hito 3 — Combate (GDD §5)
 - [ ] Vida del jugador, swing en arco (Area2D), dash con i-frames
 - [ ] Enemigo básico en la tabla de spawn (cuesta presupuesto), IA de persecución simple
 - [ ] Muerte → al hub perdiendo un % mayor de lo cargado

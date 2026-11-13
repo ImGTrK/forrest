@@ -1,8 +1,19 @@
 class_name GameHUD
 extends CanvasLayer
-## HUD: ubicación, resumen de lo cargado, mensajes y minimapa.
+## HUD: reloj, energía, ubicación, resumen de lo cargado, mensajes y minimapa.
 ## CanvasLayer ≈ un Canvas de Unity en Screen Space Overlay.
 
+const ICON_CLOCK := preload("res://assets/sprites/ui/icon_clock.png")    # 8x8
+const ICON_ENERGY := preload("res://assets/sprites/ui/icon_energy.png")  # 8x8
+const BAR_UNDER := preload("res://assets/sprites/ui/energy_bar_under.png")  # 64x8
+const BAR_FILL := preload("res://assets/sprites/ui/energy_bar_fill.png")    # 64x8
+## Tinte de la barra por estado de energía (Energy.State). El PNG del relleno es claro
+## (blanco/gris) para que el tinte decida el color: normal, cansado, agotado, desmayado.
+const BAR_TINTS := [Color(0.45, 0.85, 0.35), Color(0.95, 0.8, 0.25), Color(0.95, 0.35, 0.25), Color(0.95, 0.35, 0.25)]
+
+var _clock: Label
+var _energy_bar: TextureProgressBar
+var _last_minute := -1
 var _location: Label
 var _carried: Label
 var _toast: Label
@@ -15,6 +26,24 @@ func _ready() -> void:
 	var box := VBoxContainer.new()
 	box.position = Vector2(8, 6)
 	add_child(box)
+
+	var clock_row := HBoxContainer.new()
+	clock_row.add_child(_icon(ICON_CLOCK))
+	_clock = Label.new()
+	clock_row.add_child(_clock)
+	box.add_child(clock_row)
+
+	var energy_row := HBoxContainer.new()
+	energy_row.add_child(_icon(ICON_ENERGY))
+	_energy_bar = TextureProgressBar.new()
+	_energy_bar.texture_under = BAR_UNDER
+	_energy_bar.texture_progress = BAR_FILL
+	_energy_bar.max_value = Energy.MAX
+	_energy_bar.step = 0.01
+	_energy_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	energy_row.add_child(_energy_bar)
+	box.add_child(energy_row)
+
 	_location = Label.new()
 	_carried = Label.new()
 	box.add_child(_location)
@@ -49,7 +78,37 @@ func _ready() -> void:
 	GameState.run_inventory_changed.connect(_refresh_carried)
 	GameState.message.connect(show_toast)
 	ForestSession.zone_entered.connect(_on_zone_entered)
+	Clock.time_advanced.connect(func(_m: float) -> void: refresh_clock())
+	Energy.changed.connect(_on_energy_changed)
+	Energy.state_changed.connect(_on_energy_state)
 	_refresh_carried()
+	refresh_clock()
+	_on_energy_changed(Energy.value, Energy.MAX)
+	_on_energy_state(Energy.state)
+
+
+func refresh_clock() -> void:
+	var minute := floori(Clock.total_minutes)
+	if minute == _last_minute:
+		return
+	_last_minute = minute
+	_clock.text = "Día %d  ·  %s  ·  %s" % [Clock.day(), Clock.time_string(), Clock.period_name()]
+
+
+func _on_energy_changed(value: float, _max_value: float) -> void:
+	_energy_bar.value = value
+
+
+func _on_energy_state(state: int) -> void:
+	_energy_bar.tint_progress = BAR_TINTS[state]
+
+
+func _icon(tex: Texture2D) -> TextureRect:
+	var r := TextureRect.new()
+	r.texture = tex
+	r.stretch_mode = TextureRect.STRETCH_KEEP_CENTERED
+	r.size_flags_vertical = Control.SIZE_SHRINK_CENTER
+	return r
 
 
 func set_hub() -> void:
@@ -59,8 +118,11 @@ func set_hub() -> void:
 
 func _on_zone_entered(coord: Vector2i) -> void:
 	var z: ZoneData = ForestSession.zones[coord]
-	_location.text = "Bosque (%d, %d)  ·  profundidad %d  ·  presupuesto %d" % [
-		coord.x, coord.y, z.depth, z.budget]
+	var extra := ""
+	if z.difficulty > 1.01 or z.rarity > 0:
+		extra = "  (×%.2f, rareza +%d por la hora)" % [z.difficulty, z.rarity]
+	_location.text = "Bosque (%d, %d)  ·  profundidad %d  ·  presupuesto %d%s" % [
+		coord.x, coord.y, z.depth, z.budget, extra]
 	_minimap.visible = true
 
 

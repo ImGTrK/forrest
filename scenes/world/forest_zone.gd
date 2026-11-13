@@ -39,7 +39,7 @@ func _ready() -> void:
 		if not e.alive:
 			continue  # ya recolectado en este run
 		var h := Harvestable.new()
-		h.setup(e.entry, e, zone.depth)
+		h.setup(e.entry, e, zone.loot_depth())
 		h.position = Vector2(e.tile * TILE)
 		add_child(h)
 

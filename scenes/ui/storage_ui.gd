@@ -61,7 +61,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				or event.is_action_pressed("toggle_inventory"):
 			close()
 			get_viewport().set_input_as_handled()
-	elif event.is_action_pressed("toggle_inventory"):
+	elif event.is_action_pressed("toggle_inventory") and not get_tree().paused:
+		# Si el juego ya está pausado por otra cosa (ej. durmiendo), no abrir encima.
 		open_run_inventory()
 		get_viewport().set_input_as_handled()
 

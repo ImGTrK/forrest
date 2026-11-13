@@ -33,6 +33,19 @@ var SPRITES := [
 		"colors": [Color("5e4a44")], "accent": Color("b8735a")},
 	{"path": "assets/sprites/world/bush.png", "size": Vector2i(T, T), "style": "body",
 		"colors": [Color("33501f")]},
+	# Hito 2
+	{"path": "assets/sprites/world/bed.png", "size": Vector2i(T, T * 2), "style": "body",
+		"colors": [Color("7a4a3a")], "accent": Color("e8e2d0")},
+
+	# --- UI / HUD (hito 2) ---
+	{"path": "assets/sprites/ui/icon_clock.png", "size": Vector2i(8, 8), "style": "body",
+		"colors": [Color("e8e2d0")]},
+	{"path": "assets/sprites/ui/icon_energy.png", "size": Vector2i(8, 8), "style": "body",
+		"colors": [Color("f2c94c")]},
+	{"path": "assets/sprites/ui/energy_bar_under.png", "size": Vector2i(64, 8), "style": "tile",
+		"colors": [Color("2a2a2a")]},
+	{"path": "assets/sprites/ui/energy_bar_fill.png", "size": Vector2i(64, 8), "style": "tile",
+		"colors": [Color("e6e6e6")]},  # claro: el HUD lo tiñe
 
 	# --- Íconos de ítems (inventario/almacén) ---
 	{"path": "assets/sprites/items/wood.png", "size": Vector2i(T, T), "style": "body",

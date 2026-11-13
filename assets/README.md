@@ -31,6 +31,7 @@ solo al abrir el editor y el código no cambia.
 | `rock.png` | **16×16** | Roca, da Piedra (`data/spawns/rock.tres`) |
 | `iron_vein.png` | **16×16** | Veta, da Hierro (`data/spawns/iron_vein.tres`) |
 | `bush.png` | **16×16** | Arbusto decorativo, bloquea el paso (`data/spawns/bush.tres`) |
+| `bed.png` | **16×32** | Cama del pueblo, vertical, ocupa 1×2 tiles (`scenes/entities/bed.gd`) |
 
 ## Íconos de ítems — `assets/sprites/items/`
 
@@ -39,6 +40,17 @@ solo al abrir el editor y el código no cambia.
 | `wood.png` | **16×16** | Madera en inventario/almacén (`data/resources/wood.tres`) |
 | `stone.png` | **16×16** | Piedra |
 | `iron.png` | **16×16** | Hierro |
+
+## UI / HUD — `assets/sprites/ui/`
+
+La UI se ve al doble (viewport 640×360 escalado a 1280×720), así que 8 px de ícono ≈ alto de una línea de texto.
+
+| Archivo | Tamaño | Contenido |
+|---|---|---|
+| `icon_clock.png` | **8×8** | Ícono junto a la hora |
+| `icon_energy.png` | **8×8** | Ícono junto a la barra de energía |
+| `energy_bar_under.png` | **64×8** | Fondo/marco de la barra de energía |
+| `energy_bar_fill.png` | **64×8** | Relleno de la barra. **Dibujalo en blanco/grises**: el HUD lo tiñe verde → amarillo → rojo según el cansancio |
 
 ## Regenerar placeholders
 Si borrás un PNG y querés que vuelva el placeholder (nunca pisa archivos existentes):

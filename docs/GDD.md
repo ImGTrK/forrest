@@ -296,8 +296,22 @@ Tomadas al arrancar el proyecto (2026-11-12). Motor: **Godot 4.7.1, GDScript**.
 | Menús | Pausan el juego (`get_tree().paused`), como pide §4.1 |
 | Arte | PNG placeholders con medidas exactas en `assets/` (lista en `assets/README.md`). Se reemplazan pisando el archivo, sin tocar código |
 
+## 11. Decisiones de Implementación (Hito 2 — Reloj y energía)
+
+| Tema | Decisión |
+|---|---|
+| Velocidad del reloj | 30 s reales = 1 h de juego (18 h despierto ≈ 9 min) |
+| Energía | Máx. 100 · drenaje 5/h · 0.4 por golpe · dormir recarga 12/h |
+| Sueño | 5-9 h al azar, solo en la cama del hub |
+| Rampa | 50%: mensaje · 20%: −30% velocidad y golpes 2× más lentos · 0%: colapso |
+| Colapso | En el bosque: pierde 25% de lo cargado (muerte será 50%), guarda el resto, vuelve al hub y **duerme automáticamente**. En el hub: duerme automáticamente |
+| Curva por hora | Presupuesto ×1.0 (mañana) → ×1.25 (18 h) → ×1.5 (22 h) → ×1.8 (2 h) → ×2.0 (6 h). Rareza +0 → +3 en los mismos puntos |
+| Cómo afecta la rareza | Se suma a la profundidad para los pesos de la tabla, `min_depth` y el ADN: de madrugada puede salir hierro al lado del pueblo |
+| Cuándo se fija | Cada zona toma la dificultad de la hora en que se pisa **por primera vez** en el run |
+| Visual | Tinte del mundo con CanvasModulate según la hora (el HUD no se tiñe) |
+
 ### Aclaración de diseño: energía tras colapsar
-La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. Esto es intencional (refuerza la penalización), pero hay que confirmarlo al implementar el hito de energía.
+La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. **Resuelto en el hito 2:** el colapso lleva directo a dormir en la cama, así el jugador no queda trabado con energía 0 en el pueblo.
 
 ### Próximos hitos sugeridos
 1. Reloj continuo + energía (drenaje por tiempo y por acción, dormir en el hub, avisos escalonados, colapso → `GameState.lose_run_fraction`)

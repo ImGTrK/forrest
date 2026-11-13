@@ -9,11 +9,20 @@ signal run_inventory_changed
 signal storage_changed
 signal message(text: String)
 
+## % de lo cargado que se pierde según cómo termina el run (GDD §4).
+const COLLAPSE_LOSS := 0.25
+const DEATH_LOSS := 0.5  # se usa en el hito 3 (combate)
+
 ## Lo que el jugador carga durante el run actual (se puede perder al morir/colapsar).
 var run_inventory: Array[Dictionary] = []
 ## Almacén del hub (persistente).
 var storage: Array[Dictionary] = []
 var runs_completed: int = 0
+var rng := RandomNumberGenerator.new()
+
+
+func _ready() -> void:
+	rng.randomize()
 
 
 func add_to_run(item: Dictionary) -> void:

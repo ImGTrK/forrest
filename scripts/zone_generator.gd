@@ -2,7 +2,8 @@ class_name ZoneGenerator
 extends RefCounted
 ## Generación procedural por PRESUPUESTO DE DIFICULTAD (GDD §2).
 ##
-##   presupuesto = BASE_BUDGET + profundidad * BUDGET_PER_DEPTH
+##   presupuesto = (BASE_BUDGET + profundidad * BUDGET_PER_DEPTH) * dificultad_por_hora
+##   rareza      = profundidad + bonus_por_hora   (pesos, min_depth y ADN)
 ##
 ## El presupuesto se "gasta" tirando entidades de una tabla ponderada hasta agotarlo.
 ## Escalar la dificultad = cambiar un número; no hacen falta tablas por nivel.
@@ -13,8 +14,6 @@ const DOOR_MAX := 26
 const DOOR_CHANCE := 0.45
 const BASE_BUDGET := 6
 const BUDGET_PER_DEPTH := 3
-## Hook para el reloj (GDD §4.1): la hora del día multiplicará el presupuesto.
-const DIFFICULTY_MULTIPLIER := 1.0
 const DECORATION_RANGE := Vector2i(8, 16)
 
 const DIRS: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
@@ -27,11 +26,16 @@ const SPAWN_TABLE := [
 ]
 
 
+## `difficulty` y `rarity` vienen del reloj (Clock); el generador no lo conoce para
+## poder testearse solo.
 static func generate(coord: Vector2i, entry_dir: Vector2i, zones: Dictionary,
-		rng: RandomNumberGenerator, hub_coord: Vector2i) -> ZoneData:
+		rng: RandomNumberGenerator, hub_coord: Vector2i,
+		difficulty: float = 1.0, rarity: int = 0) -> ZoneData:
 	var z := ZoneData.new()
 	z.coord = coord
 	z.depth = absi(coord.x) + absi(coord.y)
+	z.difficulty = difficulty
+	z.rarity = rarity
 	_roll_doors(z, entry_dir, zones, rng, hub_coord)
 	_populate(z, rng)
 	return z
@@ -109,7 +113,8 @@ static func corridor_cells(z: ZoneData) -> Dictionary:
 
 static func _populate(z: ZoneData, rng: RandomNumberGenerator) -> void:
 	var occupied := corridor_cells(z)
-	var budget := roundi((BASE_BUDGET + z.depth * BUDGET_PER_DEPTH) * DIFFICULTY_MULTIPLIER)
+	var budget := roundi((BASE_BUDGET + z.depth * BUDGET_PER_DEPTH) * z.difficulty)
+	var loot := z.loot_depth()
 	z.budget = budget
 
 	var buyable: Array[SpawnEntry] = []
@@ -117,7 +122,7 @@ static func _populate(z: ZoneData, rng: RandomNumberGenerator) -> void:
 	for e: SpawnEntry in SPAWN_TABLE:
 		if e.cost <= 0:
 			decorations.append(e)
-		elif z.depth >= e.min_depth:
+		elif loot >= e.min_depth:
 			buyable.append(e)
 
 	# Gastar el presupuesto
@@ -125,7 +130,7 @@ static func _populate(z: ZoneData, rng: RandomNumberGenerator) -> void:
 		var options := buyable.filter(func(e: SpawnEntry) -> bool: return e.cost <= budget)
 		if options.is_empty():
 			break
-		var entry := _weighted_pick(options, z.depth, rng)
+		var entry := _weighted_pick(options, loot, rng)
 		var tile := _find_free_tile(entry.size, occupied, rng)
 		if tile.x < 0:
 			break  # zona llena

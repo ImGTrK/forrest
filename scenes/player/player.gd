@@ -5,6 +5,8 @@ extends CharacterBody2D
 ## seteás `velocity` y llamás move_and_slide(), que resuelve colisiones.
 
 const INTERACT_RANGE := 14.0
+## Tiempo mínimo entre golpes/interacciones. Con energía baja se multiplica (Energy).
+const INTERACT_COOLDOWN := 0.25
 
 @export var speed: float = 95.0
 
@@ -13,24 +15,27 @@ var facing := Vector2.DOWN
 ## que implemente get_interact_rect(), set_focused(bool) e interact(by) sirve (duck typing,
 ## como una interfaz de C# pero sin declararla).
 var _focus: Variant = null
+var _cooldown := 0.0
 
 @onready var camera: Camera2D = $Camera2D
 ## Spritesheet 64x16: 4 frames de 16x16 -> 0 abajo, 1 arriba, 2 izquierda, 3 derecha.
 @onready var sprite: Sprite2D = $Sprite2D
 
 
-func _physics_process(_delta: float) -> void:
+func _physics_process(delta: float) -> void:
+	_cooldown = maxf(_cooldown - delta, 0.0)
 	var dir := Input.get_vector("move_left", "move_right", "move_up", "move_down")
 	if dir != Vector2.ZERO and not dir.is_equal_approx(facing):
 		facing = dir
 		sprite.frame = _frame_for(facing)
-	velocity = dir * speed
+	velocity = dir * speed * Energy.speed_multiplier()
 	move_and_slide()
 	_update_focus()
 
 
 func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed("interact") and is_instance_valid(_focus):
+	if event.is_action_pressed("interact") and is_instance_valid(_focus) and _cooldown <= 0.0:
+		_cooldown = INTERACT_COOLDOWN * Energy.cooldown_multiplier()
 		_focus.interact(self)
 		get_viewport().set_input_as_handled()
 

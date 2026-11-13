@@ -38,7 +38,9 @@ func reset() -> void:
 ## Si la zona no existe en la cache, se genera ahora.
 func enter(coord: Vector2i, entry_dir: Vector2i) -> ZoneData:
 	if not zones.has(coord):
-		zones[coord] = ZoneGenerator.generate(coord, entry_dir, zones, rng, HUB_COORD)
+		# La hora a la que se pisa la zona por primera vez fija su dificultad y rareza.
+		zones[coord] = ZoneGenerator.generate(coord, entry_dir, zones, rng, HUB_COORD,
+				Clock.difficulty_multiplier(), Clock.rarity_bonus())
 	current = coord
 	zone_entered.emit(coord)
 	return zones[coord]

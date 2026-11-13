@@ -50,6 +50,7 @@ func set_focused(value: bool) -> void:
 
 
 func interact(_by: Node) -> void:
+	Energy.spend_action()
 	_hits_left -= 1
 	_flash = 1.0
 	if _hits_left > 0:

@@ -70,6 +70,22 @@ func _init() -> void:
 		_check(avg >= prev - 0.5, "el contenido no escala con la profundidad (%d)" % depth)
 		prev = avg
 
+	# Hora del día: más dificultad => más presupuesto; más rareza => hierro desde el inicio
+	var rng_h := RandomNumberGenerator.new()
+	rng_h.seed = 99
+	var day_zone := ZoneGenerator.generate(Vector2i(1, 0), Vector2i.LEFT, {}, rng_h, HUB, 1.0, 0)
+	var night_zone := ZoneGenerator.generate(Vector2i(1, 0), Vector2i.LEFT, {}, rng_h, HUB, 2.0, 3)
+	print("presupuesto zona prof. 1: día = %d, madrugada = %d" % [day_zone.budget, night_zone.budget])
+	_check(night_zone.budget > day_zone.budget, "la hora no escala el presupuesto")
+	var iron_at_night := 0
+	for i in 100:
+		var z := ZoneGenerator.generate(Vector2i.ZERO, Vector2i.LEFT, {}, rng_h, HUB, 2.0, 3)
+		for e in z.entities:
+			if (e.entry as SpawnEntry).id == &"iron_vein":
+				iron_at_night += 1
+	print("vetas de hierro en la zona (0,0) de madrugada, 100 tiradas: %d" % iron_at_night)
+	_check(iron_at_night > 0, "la rareza por hora no habilita hierro cerca del hub")
+
 	# ADN: la profundidad mejora la calidad promedio
 	var wood: ResourceType = load("res://data/resources/wood.tres")
 	var rng2 := RandomNumberGenerator.new()
