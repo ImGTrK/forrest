@@ -82,17 +82,91 @@ Rama: `hito-7-guardado-menu`.
 - [x] Menú principal (Continuar / Nueva partida con confirmación / Salir) y menú de pausa (Esc)
 - [x] Números de balance documentados en [BALANCE.md](BALANCE.md) para ajustarlos jugando
 
-## 🎯 MVP completo — siguiente: jugar y balancear
-- [ ] Partidas largas de prueba: ajustar [BALANCE.md](BALANCE.md) según cómo se siente
+## 🎯 v0.1 — MVP completo
+Los 7 hitos en `main`. Primer playtest: va por buen camino, pero el bosque se siente vacío y falta
+algo que empuje a volver (ver `Ideas/Motor para volver al bosque.md` en el vault).
 
-## ⬜ Post-MVP (acordado: primero sistemas, después estética)
-- [ ] Arte final integrado (los placeholders ya tienen las medidas exactas, ver assets/README.md)
-- [ ] Efecto de noche lindo (luz con degradé, parpadeo de la linterna), animación del dash con `PlayerDash.ase`
-- [ ] Sonido y música
-- [ ] Hub pintado a mano en el editor (hoy es ASCII en `hub.gd`)
-- [ ] Del backlog del GDD §7: NPC con diálogo para el tablón, variantes de recursos, más biomas,
-      consumibles de energía (recarga parcial), meta-progresión avanzada
-- [ ] Dejar el ítem tirado en el piso en vez de destruirlo (si se quiere)
+---
+
+# v0.2 — Un bosque que da ganas de volver
+
+**Objetivo:** runs cortas (**5-10 min**) donde siempre haya chance de encontrar algo raro del que estar
+orgulloso, y un `.exe` para que lo prueben amigos. Reparto ~60% mecánicas / ~40% gráficos.
+Detrás de cada hito: [GUIA_ARTE_Y_SONIDO.md](GUIA_ARTE_Y_SONIDO.md) para el arte y el sonido que necesita,
+y las notas del vault (`Inicio.md`) para el diseño.
+
+**Criterio de cierre de cada hito:** se prueba con F5, los tests headless pasan, las notas del vault y
+[BALANCE.md](BALANCE.md) quedan al día, y los placeholders nuevos están en `assets/README.md`.
+
+## 🔜 Hito 8 — Base sólida
+Rama: `hito-8-base-solida`. Preparar el código para sumar contenido sin duplicar lógica.
+- [ ] Clase base `Interactable` (nombre, aviso "E", `interact()`, alcance); cofre, cama, mesa, tablón y recursos heredan
+- [ ] Clase base `Enemy` con la máquina idle → chase → windup → attack → recover, vida, drop y muerte.
+      Los hijos sobrescriben `move()` y `attack()`. El enemigo básico pasa a ser el primer hijo, sin cambiar cómo se juega
+- [ ] Componentes reutilizables donde convenga en vez de herencia (`Health` ya lo es; knockback y flash de daño)
+- [ ] Guardado versionado: `VERSION` 2 + migración desde la 1 (las partidas actuales siguen cargando)
+- [ ] Tests partidos por sistema (generación, inventario, crafting, misiones, guardado, combate) con un runner común
+- [ ] Partir `GameState` si sigue creciendo: inventario/equipo vs. mejoras
+- Sin arte nuevo
+
+## ⬜ Hito 9 — Bosque vivo
+Rama: `hito-9-bosque-vivo`. Ataca "se siente vacío".
+- [ ] `terrain.png` a 128×64 con variantes de pasto, tierra, pasto oscuro, agua y ruinas (orden en la guía §2.1);
+      el generador elige variantes al azar
+- [ ] Variantes de árbol, roca y arbusto (hojas de 3)
+- [ ] Decoración agrupada en manchones: flores, pasto alto animado, hongos (se pisan); tocón, tronco caído (bloquean)
+- [ ] **Plantillas de zona**: claro, arboleda densa, estanque, ruinas, pedregal. Cada una cambia el piso,
+      la decoración y los pesos de la tabla de spawns. Se eligen con peso según la profundidad
+- [ ] **Eventos raros** (pocos por run, visibles de lejos): árbol antiguo, cofre perdido, veta brillante,
+      campamento enemigo. El minimapa marca la zona al descubrirlos
+- [ ] Tests: todas las plantillas respetan puertas, corredores y anti-encierro; frecuencia de eventos en 200 runs
+- Placeholders nuevos: guía §2.1, §5.2, §5.3, §5.4
+
+## ⬜ Hito 10 — Combate con peso
+Rama: `hito-10-combate`.
+- [ ] **Lanzador**: se queda a distancia, apunta (amago visible) y dispara una espora; huye si te acercás
+- [ ] **Embestidor**: raspa el piso (amago largo), embiste en línea recta; si choca con un árbol o una pared queda aturdido
+- [ ] Proyectiles como escena propia (los puede reusar un jefe a futuro)
+- [ ] Feedback: números de daño, flash blanco, sacudida de cámara corta, freno de 2-3 frames al golpear,
+      partículas de impacto y astillas al recolectar, barra de vida sobre el enemigo herido
+- [ ] Animaciones del jugador: ataque y dash (columnas 8-15 de `player.png`) y muerte
+- [ ] Hoja estándar de enemigo (4 filas: quieto, moverse, amago+ataque, muerte)
+- [ ] Sistema de audio: `AudioManager` con buses (música, efectos, UI), variantes al azar y primeros efectos de combate
+- [ ] Balance: dónde y desde qué profundidad aparece cada enemigo
+- Placeholders nuevos: guía §3, §4, §8 · Sonidos: guía §9.2 "Jugador y combate"
+
+## ⬜ Hito 11 — Rasgos, cristal y tablón
+Rama: `hito-11-rasgos`. Ataca "el crafting es básico" y "el tablón no deja elegir".
+- [ ] **Rasgos raros**: 2-3 por material, como datos (`TraitData` .tres). Chance según profundidad, hora y eventos
+- [ ] Al fabricar, la herramienta **hereda** los rasgos de los ingredientes elegidos; la vista previa los muestra
+- [ ] Marca de rasgo y borde de rareza en los íconos; jingle de "hallazgo raro"
+- [ ] **Veta de cristal** (pico nivel 2) y el cristal como material; decidir herramientas nivel 3 o mejora de las existentes
+- [ ] **Tablón**: al reclamar se elige qué entregar (preseleccionados los peores); se ve la recompensa antes;
+      misiones nuevas: "fabricá una herramienta de calidad ≥ X" y "traé un ítem con rasgo"
+- [ ] Guardado: rasgos en el JSON (migración si hace falta)
+- Placeholders nuevos: guía §5.5, §6 (cristal), §7 (`icon_trait`, `mission_icons`)
+
+## ⬜ Hito 12 — Pulido y build
+Rama: `hito-12-build`.
+- [ ] Balance para runs de **5-10 min**: reloj, drenaje de energía, presupuesto, pérdidas (con partidas de prueba)
+- [ ] Música y ambientes de día/noche con cruce suave; el resto de los efectos de la guía §9
+- [ ] UI con arte: panel y botones en 9 partes, íconos de equipo, aviso de tecla "E", logo y fondo del menú
+- [ ] Opciones: volumen por bus, pantalla completa, (opcional) reasignar teclas
+- [ ] `docs/CREDITOS.md` con autor y licencia de cada asset de terceros (fuente incluida)
+- [ ] Export de Windows: preset, ícono del `.exe`, nombre y versión visibles en el menú
+- [ ] Checklist de prueba antes de pasarlo a amigos (partida nueva, cargar, morir, colapsar, cerrar en el bosque)
+- Placeholders nuevos: guía §7 (UI) · Sonidos: el resto de la guía §9
+
+## Abierto para la 0.2 o una 0.2.1
+- [ ] **Motor para volver al bosque**: meta a largo plazo, colección, récords, pueblo que crece… se define
+      charlando y puede sumar un hito entre el 11 y el 12
+
+---
+
+## ⬜ v0.3 y después (ideas, sin orden)
+Ramas de experiencia · jefes · biomas · clima · comida (recarga parcial de energía) · NPC del tablón ·
+efecto de noche lindo (luz con degradé, parpadeo) · pueblo pintado en el editor · dejar ítems tirados en el piso.
+Detalle en `Ideas/Ideas para la 0.3.md`.
 
 ---
 
