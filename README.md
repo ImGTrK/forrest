@@ -7,7 +7,7 @@ lista de sprites y medidas en [assets/README.md](assets/README.md).
 ## Cómo correrlo
 Abrí `project.godot` con Godot 4.7.1 y apretá F5.
 
-**Controles:** WASD/flechas mover · clic izquierdo o J atacar · Espacio/Shift dash · E interactuar · Tab/I inventario · Esc cerrar menús.
+**Controles:** WASD/flechas mover · clic izquierdo o J atacar · Espacio/Shift dash · E interactuar · L linterna · Tab/I inventario · Esc cerrar menús.
 
 **Inventario:** clic agarrar/soltar (sobre otro ítem: intercambia) · R o clic derecho rotar · Supr/X tirar · Shift+clic pasar entre mochila y almacén · botón "Ordenar" compacta.
 

@@ -13,6 +13,7 @@ const ACTIONS := {
 	"toggle_inventory": [KEY_TAB, KEY_I],
 	"attack": [KEY_J],
 	"dash": [KEY_SPACE, KEY_SHIFT],
+	"toggle_light": [KEY_L],
 	# Inventario
 	"rotate_item": [KEY_R],
 	"discard_item": [KEY_DELETE, KEY_X],

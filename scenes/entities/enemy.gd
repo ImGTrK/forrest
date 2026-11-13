@@ -126,6 +126,7 @@ func take_hit(amount: int, knockback: Vector2) -> void:
 func _die() -> void:
 	state = State.DEAD
 	entity.alive = false
+	Missions.on_enemy_killed()
 	remove_from_group("enemy")
 	collision_layer = 0
 	collision_mask = 0

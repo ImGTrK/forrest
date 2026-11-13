@@ -12,6 +12,10 @@ signal bag_changed
 signal storage_changed
 ## Cambió la durabilidad o el set de herramientas/armas disponibles.
 signal equipment_changed
+## Se prendió/apagó la linterna o cambió el aceite.
+signal lantern_changed
+## Cambiaron las mejoras permanentes (recompensas de misiones).
+signal upgrades_changed
 signal message(text: String)
 
 ## % de lo cargado que se pierde según cómo termina el run (GDD §4).
@@ -27,6 +31,18 @@ const STORAGE_SIZE := Vector2i(10, 6)  # columnas fijas; las filas crecen
 var bag := GridInventory.new(BAG_SIZE)
 var storage := GridInventory.new(STORAGE_SIZE, true)
 var runs_completed: int = 0
+
+# --- Mejoras permanentes (recompensas del tablón, GDD §4 "meta-progresión") -------
+const UPGRADE_WEIGHT := 2.0   # kg por mejora
+const UPGRADE_ENERGY := 10.0  # energía máxima por mejora
+const UPGRADE_HEALTH := 2     # vida por mejora (= 1 corazón)
+var bonus_weight := 0.0
+var bonus_energy := 0.0
+var bonus_health := 0
+
+# --- Linterna (GDD §4.1: consume aceite mientras está prendida) --------------------
+const OIL_ID := &"oil"
+var lantern_on := false
 var rng := RandomNumberGenerator.new()
 
 
@@ -34,6 +50,8 @@ func _ready() -> void:
 	rng.randomize()
 	bag.changed.connect(bag_changed.emit)
 	bag.changed.connect(equipment_changed.emit)
+	# Diferido: Clock es un autoload que se carga después de este
+	(func() -> void: Clock.time_advanced.connect(burn_oil)).call_deferred()
 	storage.changed.connect(storage_changed.emit)
 
 
@@ -57,8 +75,12 @@ func carried_weight() -> float:
 	return bag.total_weight()
 
 
+func max_weight() -> float:
+	return MAX_WEIGHT + bonus_weight
+
+
 func is_overweight() -> bool:
-	return carried_weight() > MAX_WEIGHT
+	return carried_weight() > max_weight()
 
 
 func speed_multiplier() -> float:
@@ -170,6 +192,106 @@ func receive(item: ItemInstance) -> String:
 		return "mochila"
 	storage.add(item)
 	return "almacén"
+
+
+# --- Linterna y aceite ---------------------------------------------------------
+
+func lantern() -> ItemInstance:
+	return best_tool(&"light")
+
+
+func oil_items() -> Array[ItemInstance]:
+	var out: Array[ItemInstance] = []
+	for it in bag.items():
+		if it.data.id == OIL_ID and it.durability > 0.0:
+			out.append(it)
+	return out
+
+
+## Minutos de luz que quedan en el aceite de la mochila.
+func oil_minutes() -> float:
+	var total := 0.0
+	for it in oil_items():
+		total += it.durability
+	return total
+
+
+## Radio de visión que da la linterna prendida (0 si está apagada).
+func light_radius() -> float:
+	var l := lantern()
+	return l.stats.get("radio", 0.0) if lantern_on and l else 0.0
+
+
+func toggle_lantern() -> bool:
+	if lantern_on:
+		set_lantern(false)
+		return false
+	if lantern() == null:
+		notify("No tengo linterna (se fabrica en la mesa)")
+		return false
+	if oil_minutes() <= 0.0:
+		notify("No tengo aceite para la linterna")
+		return false
+	set_lantern(true)
+	return true
+
+
+func set_lantern(on: bool) -> void:
+	if on == lantern_on:
+		return
+	lantern_on = on
+	lantern_changed.emit()
+
+
+## Quema aceite con el reloj (se llama con los minutos que pasan). Se gasta primero
+## el frasco más vacío; los que se agotan desaparecen.
+func burn_oil(minutes: float) -> void:
+	if not lantern_on:
+		return
+	if lantern() == null:
+		set_lantern(false)
+		return
+	var left := minutes
+	while left > 0.0:
+		var oils := oil_items()
+		if oils.is_empty():
+			set_lantern(false)
+			notify("Se acabó el aceite: la linterna se apagó")
+			return
+		oils.sort_custom(func(a: ItemInstance, b: ItemInstance) -> bool: return a.durability < b.durability)
+		var oil := oils[0]
+		var used := minf(left, oil.durability)
+		oil.durability -= used
+		left -= used
+		if oil.durability <= 0.0:
+			bag.remove(oil)
+	lantern_changed.emit()
+
+
+# --- Mejoras permanentes -------------------------------------------------------
+
+## kind: &"weight", &"energy" o &"health".
+func apply_upgrade(kind: StringName) -> String:
+	match kind:
+		&"weight":
+			bonus_weight += UPGRADE_WEIGHT
+		&"energy":
+			bonus_energy += UPGRADE_ENERGY
+		&"health":
+			bonus_health += UPGRADE_HEALTH
+	upgrades_changed.emit()
+	return upgrade_text(kind)
+
+
+static func upgrade_text(kind: StringName) -> String:
+	match kind:
+		&"weight":
+			return "+%d kg de capacidad" % UPGRADE_WEIGHT
+		&"energy":
+			return "+%d de energía máxima" % UPGRADE_ENERGY
+		&"health":
+			return "+1 corazón"
+	return "?"
 
 
 ## Colapso / muerte: pierde una fracción al azar de lo cargado. El equipo nunca se pierde.

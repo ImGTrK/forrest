@@ -13,6 +13,8 @@ const RECIPES := [
 	preload("res://data/recipes/iron_axe.tres"),
 	preload("res://data/recipes/iron_pickaxe.tres"),
 	preload("res://data/recipes/iron_sword.tres"),
+	preload("res://data/recipes/lantern.tres"),
+	preload("res://data/recipes/oil.tres"),
 ]
 
 
@@ -52,7 +54,7 @@ static func preview(recipe: RecipeData, selection: Dictionary) -> ItemInstance:
 	for f: Dictionary in recipe.formulas:
 		var t := _avg_normalized(recipe.ingredient_item(f.from), selection[f.from], f.source)
 		var value: float = f.base * lerpf(f.min, f.max, t)
-		item.stats[f.stat] = roundf(value) if f.stat == "durabilidad" else snappedf(value, 0.1)
+		item.stats[f.stat] = roundf(value) if f.stat == recipe.result.durability_stat else snappedf(value, 0.1)
 		quality_sum += t
 	var weight := 0.0
 	for i in recipe.ingredients.size():
@@ -86,8 +88,12 @@ static func recipe_for(data: ItemData) -> RecipeData:
 	return null
 
 
+## Solo herramientas/armas con material de reparación (el aceite no se "repara").
 static func needs_repair(item: ItemInstance) -> bool:
-	return item.has_durability() and item.durability < item.max_durability()
+	if item.is_consumable() or not item.has_durability():
+		return false
+	var recipe := recipe_for(item.data)
+	return recipe != null and recipe.repair_material != null and item.durability < item.max_durability()
 
 
 ## Ejemplar que se gastaría para reparar (el de peor calidad). null si no hay.

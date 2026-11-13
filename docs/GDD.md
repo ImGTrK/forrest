@@ -358,6 +358,18 @@ Port del diseño de ítems e inventario de BarrenRoots (canvas de Obsidian).
 | Reparar | En la mesa, deja la herramienta como nueva y consume 1 ejemplar (el de peor calidad) de su material principal |
 | Armas | Daño = poder del arma redondeado; sin arma, puños de 1 de daño |
 
+## 15. Decisiones de Implementación (Hito 6 — Noche y misiones)
+
+| Tema | Decisión |
+|---|---|
+| Visión nocturna | Solo en el bosque (el pueblo está iluminado). Se cierra de 18 a 21 h, noche cerrada hasta las 3, se abre hasta las 5. Sin luz se ve un círculo de ~2 tiles |
+| Linterna | Equipo (nunca se pierde). Receta: 2 piedra + 1 madera; radio de visión 80-130 px según la **pureza** de la piedra. L prende/apaga; se apaga sola al entrar al pueblo |
+| Aceite | Consumible (se pierde al morir/colapsar como cualquier recurso). Receta: 2 madera; 90-180 minutos de juego según la **densidad** de la madera. Se gasta con el reloj mientras la linterna está prendida, primero el frasco más vacío |
+| Tablón | En el pueblo, cerca de la salida. Siempre 3 misiones, una de cada tipo al empezar |
+| Tipos | Entregar N recursos con calidad mínima (de la mochila o el almacén; se entregan los de peor calidad que cumplan) · llegar a profundidad N · derrotar N enemigos |
+| Escalado | Cada misión reclamada sube la exigencia de las nuevas (más cantidad, más calidad, más profundidad; el hierro aparece desde la 3ª) |
+| Recompensas | Mejoras permanentes al azar: +2 kg de capacidad, +10 de energía máxima o +1 corazón |
+
 ### Aclaración de diseño: energía tras colapsar
 La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. **Resuelto en el hito 2:** el colapso lleva directo a dormir en la cama, así el jugador no queda trabado con energía 0 en el pueblo.
 

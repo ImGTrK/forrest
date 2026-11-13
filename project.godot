@@ -21,6 +21,7 @@ GameState="*res://autoload/game_state.gd"
 Clock="*res://autoload/clock.gd"
 Energy="*res://autoload/energy.gd"
 ForestSession="*res://autoload/forest_session.gd"
+Missions="*res://autoload/missions.gd"
 
 [display]
 

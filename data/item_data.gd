@@ -27,6 +27,9 @@ enum ItemType { RESOURCE, TOOL, WEAPON, CONSUMABLE }
 ## Stats donde MENOS es mejor (ej. "peso"). El ADN favorece valores bajos con la profundidad.
 @export var inverted_stats: PackedStringArray = []
 
+## Stat que hace de durabilidad/carga. Herramientas: "durabilidad". Aceite: "minutos".
+@export var durability_stat: String = "durabilidad"
+
 @export_group("Herramienta (hito 5)")
 @export var tool_type: StringName = &""
 @export var tool_level: int = 0

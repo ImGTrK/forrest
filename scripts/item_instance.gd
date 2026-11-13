@@ -52,7 +52,11 @@ func power() -> float:
 
 
 func max_durability() -> float:
-	return stats.get("durabilidad", 0.0)
+	return stats.get(data.durability_stat, 0.0)
+
+
+func is_consumable() -> bool:
+	return data.item_type == ItemData.ItemType.CONSUMABLE
 
 
 func has_durability() -> bool:
@@ -97,10 +101,12 @@ func describe() -> String:
 	var lines: PackedStringArray = ["%s  ·  calidad %d%%" % [data.display_name, quality]]
 	if data.tool_level > 0:
 		lines.append("  nivel %d" % data.tool_level)
-	if has_durability():
+	if has_durability() and is_consumable():
+		lines.append("  quedan %d de %d %s" % [ceili(durability), roundi(max_durability()), data.durability_stat])
+	elif has_durability():
 		lines.append("  estado: %s (%d/%d)" % [condition(), ceili(durability), roundi(max_durability())])
 	for stat: String in stats:
-		if stat == "durabilidad":
+		if stat == data.durability_stat:
 			continue
 		var unit := " kg" if stat == data.weight_stat else ""
 		var hint := "  (menos es mejor)" if data.is_inverted(stat) else ""

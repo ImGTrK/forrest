@@ -100,6 +100,19 @@ func rarity_bonus() -> int:
 	return roundi(_sample(DIFFICULTY_KEYS, "rarity"))
 
 
+## Qué tan de noche es para la VISIÓN (GDD §4.1: de ~18:00 a ~04:00), 0..1.
+## 18:00 → 21:00 se cierra · 21:00 → 03:00 noche cerrada · 03:00 → 05:00 se abre.
+func night_factor() -> float:
+	var t := fmod(hour() - 18.0 + 24.0, 24.0)  # 0 = 18:00
+	if t < 3.0:
+		return t / 3.0
+	if t < 9.0:
+		return 1.0
+	if t < 11.0:
+		return 1.0 - (t - 9.0) / 2.0
+	return 0.0
+
+
 func ambient_color() -> Color:
 	var t := _t()
 	for i in range(1, COLOR_KEYS.size()):

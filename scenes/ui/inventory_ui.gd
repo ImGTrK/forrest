@@ -84,7 +84,6 @@ func _ready() -> void:
 	_weight_bar = TextureProgressBar.new()
 	_weight_bar.texture_under = BAR_UNDER
 	_weight_bar.texture_progress = BAR_FILL
-	_weight_bar.max_value = GameState.MAX_WEIGHT
 	_weight_bar.step = 0.01
 	_weight_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	weight_row.add_child(_weight_bar)
@@ -179,9 +178,10 @@ func _refresh() -> void:
 	_bag_view.show_grid(GameState.bag)
 	_storage_view.show_grid(GameState.storage)
 	var w := GameState.carried_weight()
+	_weight_bar.max_value = GameState.max_weight()
 	_weight_bar.value = w
 	_weight_bar.tint_progress = Color(0.95, 0.35, 0.25) if GameState.is_overweight() else Color(0.45, 0.7, 0.95)
-	_weight_label.text = "%.1f / %.0f kg%s" % [w, GameState.MAX_WEIGHT,
+	_weight_label.text = "%.1f / %.0f kg%s" % [w, GameState.max_weight(),
 		"  ¡sobrepeso!" if GameState.is_overweight() else ""]
 	_storage_title.text = "Almacén (%d)" % GameState.storage.count()
 	_discard_button.disabled = _held == null

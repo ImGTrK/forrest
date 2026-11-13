@@ -209,8 +209,8 @@ func _build_result() -> void:
 		return
 	var current := GameState.best_owned_like(data)
 	var lines: PackedStringArray = ["calidad %d%%" % preview.quality]
-	for stat in ["poder", "durabilidad", "peso"]:
-		var v: float = preview.stats.get(stat, 0.0)
+	for stat: String in preview.stats:
+		var v: float = preview.stats[stat]
 		var line := "%s %s" % [stat, _fmt(stat, v)]
 		if current:
 			var diff: float = v - current.stats.get(stat, 0.0)
@@ -259,7 +259,7 @@ func _build_repairs() -> void:
 
 
 static func _fmt(stat: String, v: float) -> String:
-	if stat == "durabilidad":
+	if stat == "durabilidad" or stat == "minutos" or stat == "radio":
 		return "%d" % roundi(v)
 	return "%.1f%s" % [v, " kg" if stat == "peso" else ""]
 

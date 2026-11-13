@@ -74,8 +74,9 @@ var _sword: Sprite2D
 
 
 func _ready() -> void:
-	health.max_health = MAX_HEALTH
-	health.current = MAX_HEALTH
+	health.max_health = max_health()
+	health.current = max_health()
+	GameState.upgrades_changed.connect(_on_upgrades_changed)
 	health.damaged.connect(_on_damaged)
 	health.died.connect(died.emit)
 	_sword = Sprite2D.new()
@@ -120,6 +121,9 @@ func _unhandled_input(event: InputEvent) -> void:
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("dash"):
 		dash(Input.get_vector("move_left", "move_right", "move_up", "move_down"))
+		get_viewport().set_input_as_handled()
+	elif event.is_action_pressed("toggle_light"):
+		GameState.toggle_lantern()
 		get_viewport().set_input_as_handled()
 	elif event.is_action_pressed("interact") and is_instance_valid(_focus) and _cooldown <= 0.0:
 		_cooldown = INTERACT_COOLDOWN * Energy.cooldown_multiplier()
@@ -221,6 +225,19 @@ func _on_damaged(_amount: int, from: Vector2) -> void:
 	if from != Vector2.INF:
 		_knock_vel = (global_position - from).normalized() * HURT_KNOCKBACK
 		_knock_t = HURT_KNOCKBACK_TIME
+
+
+func max_health() -> int:
+	return MAX_HEALTH + GameState.bonus_health
+
+
+func _on_upgrades_changed() -> void:
+	var gained := max_health() - health.max_health
+	health.max_health = max_health()
+	if gained > 0:
+		health.heal(gained)
+	else:
+		health.changed.emit(health.current, health.max_health)
 
 
 func revive() -> void:

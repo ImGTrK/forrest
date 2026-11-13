@@ -34,6 +34,12 @@ var state: State = State.NORMAL
 func _ready() -> void:
 	Clock.time_advanced.connect(_on_time_advanced)
 	Clock.slept.connect(_on_slept)
+	GameState.upgrades_changed.connect(func() -> void: _change(0.0))
+
+
+## Máximo actual (base + mejoras del tablón).
+func max_value() -> float:
+	return MAX + GameState.bonus_energy
 
 
 func spend_action() -> void:
@@ -45,7 +51,7 @@ func spend(amount: float) -> void:
 
 
 func ratio() -> float:
-	return value / MAX
+	return value / max_value()
 
 
 func is_exhausted() -> bool:
@@ -76,8 +82,8 @@ func _on_slept(hours: int) -> void:
 
 
 func _change(delta: float) -> void:
-	value = clampf(value + delta, 0.0, MAX)
-	changed.emit(value, MAX)
+	value = clampf(value + delta, 0.0, max_value())
+	changed.emit(value, max_value())
 	_update_state()
 
 

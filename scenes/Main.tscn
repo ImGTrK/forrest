@@ -5,6 +5,7 @@
 [ext_resource type="Script" path="res://scenes/ui/hud.gd" id="3_hud"]
 [ext_resource type="Script" path="res://scenes/ui/inventory_ui.gd" id="4_inventory"]
 [ext_resource type="Script" path="res://scenes/ui/crafting_ui.gd" id="5_crafting"]
+[ext_resource type="Script" path="res://scenes/ui/mission_board_ui.gd" id="6_board"]
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_main")
@@ -16,6 +17,7 @@ script = ExtResource("1_main")
 [node name="Player" parent="." instance=ExtResource("2_player")]
 
 [node name="HUD" type="CanvasLayer" parent="."]
+layer = 2
 script = ExtResource("3_hud")
 
 [node name="InventoryUI" type="CanvasLayer" parent="."]
@@ -27,6 +29,11 @@ script = ExtResource("4_inventory")
 process_mode = 3
 layer = 10
 script = ExtResource("5_crafting")
+
+[node name="MissionBoardUI" type="CanvasLayer" parent="."]
+process_mode = 3
+layer = 10
+script = ExtResource("6_board")
 
 [node name="Fade" type="CanvasLayer" parent="."]
 process_mode = 3

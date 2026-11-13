@@ -83,6 +83,14 @@ var SPRITES := [
 	{"path": "assets/sprites/world/bench.png", "size": Vector2i(T * 2, T), "style": "body",
 		"colors": [Color("9c6b3c")], "accent": Color("c8ccd4")},
 
+	# --- Hito 6: noche y misiones ---
+	{"path": "assets/sprites/items/lantern.png", "size": Vector2i(T, T), "style": "body",
+		"colors": [Color("5a5f6a")], "accent": Color("f2c94c")},
+	{"path": "assets/sprites/items/oil.png", "size": Vector2i(T, T), "style": "body",
+		"colors": [Color("6b5a2a")], "accent": Color("e0b84a")},
+	{"path": "assets/sprites/world/board.png", "size": Vector2i(T * 2, T * 2), "style": "body",
+		"colors": [Color("7a5534")], "accent": Color("e8e2d0")},
+
 	# --- Íconos de ítems (inventario/almacén) ---
 	# El ícono mide grid_size * 16 px (madera ocupa 1x2 celdas en la mochila)
 	{"path": "assets/sprites/items/wood.png", "size": Vector2i(T, T * 2), "style": "body",

@@ -8,12 +8,14 @@ extends Node2D
 ## lo ideal es pintarlo a mano en el editor con un TileMapLayer y borrar LAYOUT.
 ##   W pared   . piso   g pasto   p camino
 ##   C almacén   B cama (ocupa esta celda y la de abajo)   M mesa de crafting (esta y la de la derecha)
+##   T tablón de misiones (2x2 desde esta celda)
 ##   P inicio del juego   F llegada al volver del bosque
 
 signal leave(dir: Vector2i)
 signal chest_opened
 signal bed_used
 signal bench_used
+signal board_used
 
 const TILE := TerrainTiles.TILE
 
@@ -26,7 +28,7 @@ const LAYOUT: Array[String] = [
 	"W......................WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
-	"W.....C....M...........WgggggggggggggggggggggggW",
+	"W.....C....M...........WggggggggggggggTggggggggW",
 	"W......................WgggggggggggggggggggggggW",
 	"W......................WgggggggggggggggggggggggW",
 	"W.......................ggggggggggggggggpppppppp",
@@ -83,6 +85,10 @@ func _ready() -> void:
 				_spawn_bed(cell)
 			elif ch == "M":
 				_spawn_bench(cell)
+			elif ch == "T":
+				tile = TerrainTiles.GRASS
+				layer.set_cell(cell, 0, Vector2i(tile, 0))
+				_spawn_board(cell)
 
 	_add_label("Almacén  [E]", _spawns_chest_label_pos())
 	_add_label("Bosque  →", Vector2((_size.x - 7) * TILE, 9 * TILE))
@@ -125,6 +131,14 @@ func _spawn_bench(cell: Vector2i) -> void:
 	bench.used.connect(bench_used.emit)
 	add_child(bench)
 	_add_label("Mesa  [E]", Vector2(cell * TILE) + Vector2(2, -12))
+
+
+func _spawn_board(cell: Vector2i) -> void:
+	var board := Board.new()
+	board.position = Vector2(cell * TILE)
+	board.used.connect(board_used.emit)
+	add_child(board)
+	_add_label("Misiones  [E]", Vector2(cell * TILE) + Vector2(-6, -22))
 
 
 func _spawns_chest_label_pos() -> Vector2:

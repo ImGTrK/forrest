@@ -64,14 +64,19 @@ crafting necesita algo útil que fabricar. Diseño de "Sistema de Crafting", "Re
 - [x] Sin slots: se usa sola la mejor herramienta/arma de la mochila. HUD con hacha, pico y arma + durabilidad
 - [x] La espada pasa a ser un ítem: daño = su poder (sin arma: puños, 1 de daño)
 
-## 🔜 Hito 6 — Noche y misiones
-- [ ] Visibilidad nocturna (shader/overlay), linterna que consume aceite
-- [ ] Tablón de misiones (sin NPC): "traer X de Y", "llegar a profundidad N"
-- Sprites nuevos: tablón, linterna, máscara de luz
+## ✅ Hito 6 — Noche y misiones
+Rama: `hito-6-noche-misiones`. Implementación funcional; lo visual queda para después del MVP.
+- [x] Visión nocturna en el bosque: se cierra 18-21 h, noche cerrada 21-03 h, se abre 03-05 h (overlay simple)
+- [x] Linterna (equipo, se fabrica: 2 piedra + 1 madera; radio según la pureza de la piedra), L para prender/apagar
+- [x] Aceite (consumible, se fabrica: 2 madera; minutos según la densidad). Se quema con el reloj; se apaga en el pueblo
+- [x] Tablón de misiones en el pueblo (sin NPC): 3 activas — entregar recursos con calidad mínima, llegar a profundidad N, derrotar N enemigos
+- [x] Recompensas = mejoras permanentes: +2 kg de capacidad, +10 de energía máxima o +1 corazón. Cada misión reclamada sube la dificultad de las nuevas
+- [x] Fix: el almacén deja 2 filas libres (antes 1) para que siempre entre una madera parada
 
-## ⬜ Hito 7 — Pulido del MVP
-- [ ] Arte final integrado, sonido básico, menú principal
-- [ ] Guardado en disco del estado persistente (JSON, como el diseño de BarrenRoots)
+## 🔜 Hito 7 — Pulido del MVP
+- [ ] Guardado en disco del estado persistente (va primero: sin esto no hay partida que dure)
+- [ ] Menú principal / nueva partida
+- [ ] Arte final integrado, sonido básico (post-MVP según lo acordado: primero sistemas, después estética)
 - [ ] Balance de números (drenaje, % de pérdida, presupuesto) jugando
 
 ---

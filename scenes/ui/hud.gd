@@ -17,7 +17,9 @@ const HEART_HALF := preload("res://assets/sprites/ui/hearts/heart_half.png")
 const HEART_EMPTY := preload("res://assets/sprites/ui/hearts/heart_empty.png")
 
 ## Casillas de equipo: [tipo de herramienta o &"weapon", letra si está vacía]
-const EQUIP_SLOTS := [[&"axe", "H"], [&"pickaxe", "P"], [&"weapon", "E"]]
+const EQUIP_SLOTS := [[&"axe", "H"], [&"pickaxe", "P"], [&"weapon", "E"], [&"light", "L"]]
+## Para la barra de aceite: minutos que se consideran "lleno".
+const OIL_BAR_FULL := 180.0
 const EQUIP_CELL := 18
 const SLOT := preload("res://assets/sprites/ui/slot.png")
 
@@ -55,7 +57,7 @@ func _ready() -> void:
 	_energy_bar = TextureProgressBar.new()
 	_energy_bar.texture_under = BAR_UNDER
 	_energy_bar.texture_progress = BAR_FILL
-	_energy_bar.max_value = Energy.MAX
+	_energy_bar.max_value = Energy.max_value()
 	_energy_bar.step = 0.01
 	_energy_bar.size_flags_vertical = Control.SIZE_SHRINK_CENTER
 	energy_row.add_child(_energy_bar)
@@ -89,7 +91,7 @@ func _ready() -> void:
 	_hint.offset_top = -18
 	_hint.offset_left = 8
 	_hint.modulate = Color(1, 1, 1, 0.6)
-	_hint.text = "WASD mover · Clic/J atacar · Espacio dash · E interactuar · Tab inventario"
+	_hint.text = "WASD mover · Clic/J atacar · Espacio dash · E usar · L luz · Tab inventario"
 	add_child(_hint)
 
 	# Equipo en uso (abajo a la derecha): hacha, pico, arma
@@ -106,6 +108,7 @@ func _ready() -> void:
 	_equip.draw.connect(_draw_equipment)
 	add_child(_equip)
 	GameState.equipment_changed.connect(_equip.queue_redraw)
+	GameState.lantern_changed.connect(_equip.queue_redraw)
 
 	GameState.bag_changed.connect(_refresh_carried)
 	GameState.storage_changed.connect(func() -> void:
@@ -118,7 +121,7 @@ func _ready() -> void:
 	Energy.state_changed.connect(_on_energy_state)
 	_refresh_carried()
 	refresh_clock()
-	_on_energy_changed(Energy.value, Energy.MAX)
+	_on_energy_changed(Energy.value, Energy.max_value())
 	_on_energy_state(Energy.state)
 
 
@@ -157,7 +160,8 @@ func refresh_clock() -> void:
 	_clock.text = "Día %d  ·  %s  ·  %s" % [Clock.day(), Clock.time_string(), Clock.period_name()]
 
 
-func _on_energy_changed(value: float, _max_value: float) -> void:
+func _on_energy_changed(value: float, max_value: float) -> void:
+	_energy_bar.max_value = max_value
 	_energy_bar.value = value
 
 
@@ -185,8 +189,15 @@ func _draw_equipment() -> void:
 		_equip.draw_texture_rect(item.data.icon, Rect2(cell.position + (cell.size - s) / 2.0, s), false)
 		var bar := Rect2(pos + Vector2(1, EQUIP_CELL + 1), Vector2(EQUIP_CELL - 2, 2))
 		_equip.draw_rect(bar, Color(0, 0, 0, 0.6))
-		bar.size.x *= item.durability_ratio()
-		_equip.draw_rect(bar, item.condition_color())
+		if kind == &"light":
+			# Linterna: la barra es el aceite que queda; borde amarillo si está prendida
+			bar.size.x *= clampf(GameState.oil_minutes() / OIL_BAR_FULL, 0.0, 1.0)
+			_equip.draw_rect(bar, Color(0.95, 0.8, 0.3) if GameState.lantern_on else Color(0.6, 0.6, 0.6))
+			if GameState.lantern_on:
+				_equip.draw_rect(Rect2(pos, Vector2(EQUIP_CELL, EQUIP_CELL)).grow(-0.5), Color(0.95, 0.8, 0.3), false, 1.0)
+		else:
+			bar.size.x *= item.durability_ratio()
+			_equip.draw_rect(bar, item.condition_color())
 
 
 func _broken_in_bag(kind: StringName) -> ItemInstance:
@@ -225,7 +236,7 @@ func _on_zone_entered(coord: Vector2i) -> void:
 
 func _refresh_carried() -> void:
 	var bag := GameState.bag
-	var weight := "%.1f/%.0f kg" % [GameState.carried_weight(), GameState.MAX_WEIGHT]
+	var weight := "%.1f/%.0f kg" % [GameState.carried_weight(), GameState.max_weight()]
 	_carried.modulate = Color(1, 0.45, 0.4) if GameState.is_overweight() else Color.WHITE
 	if bag.is_empty():
 		_carried.text = "Mochila vacía"

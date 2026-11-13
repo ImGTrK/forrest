@@ -9,8 +9,10 @@ signal changed
 
 var size: Vector2i
 ## Si es true, la grilla agrega filas cuando hace falta y mantiene siempre
-## una fila libre abajo (almacén "sin límite").
+## FREE_ROWS filas libres abajo (almacén "sin límite"). Son 2 para que siempre
+## entre un ítem de 1x2 parado.
 var auto_grow := false
+const FREE_ROWS := 2
 var _cells: Array = []  # size.x * size.y; ItemInstance o null
 var _positions: Dictionary = {}  # ItemInstance -> Vector2i (esquina superior izquierda)
 var _sizes: Dictionary = {}  # ItemInstance -> Vector2i (tamaño con el que se colocó)
@@ -172,10 +174,18 @@ func _grow(rows: int) -> void:
 func _keep_free_row() -> void:
 	if not auto_grow:
 		return
-	for x in size.x:
-		if _cells[(size.y - 1) * size.x + x] != null:
-			_grow(1)
-			return
+	var empty_rows := 0
+	for y in range(size.y - 1, -1, -1):
+		var row_empty := true
+		for x in size.x:
+			if _cells[y * size.x + x] != null:
+				row_empty = false
+				break
+		if not row_empty:
+			break
+		empty_rows += 1
+	if empty_rows < FREE_ROWS:
+		_grow(FREE_ROWS - empty_rows)
 
 
 func _set_cells(pos: Vector2i, s: Vector2i, value: ItemInstance) -> void:
