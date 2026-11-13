@@ -37,7 +37,11 @@ func _ready() -> void:
 
 
 func spend_action() -> void:
-	_change(-ACTION_COST)
+	spend(ACTION_COST)
+
+
+func spend(amount: float) -> void:
+	_change(-amount)
 
 
 func ratio() -> float:

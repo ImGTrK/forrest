@@ -38,8 +38,15 @@ func _ready() -> void:
 	for e in zone.entities:
 		if not e.alive:
 			continue  # ya recolectado en este run
+		var entry: SpawnEntry = e.entry
+		if entry.is_enemy:
+			var enemy := Enemy.new()
+			enemy.setup(e, player, zone.loot_depth())
+			enemy.position = Vector2(e.tile * TILE) + Vector2(TILE, TILE) / 2.0
+			add_child(enemy)
+			continue
 		var h := Harvestable.new()
-		h.setup(e.entry, e, zone.loot_depth())
+		h.setup(entry, e, zone.loot_depth())
 		h.position = Vector2(e.tile * TILE)
 		add_child(h)
 

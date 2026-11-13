@@ -2,11 +2,14 @@
 
 [ext_resource type="Script" path="res://scenes/player/player.gd" id="1_pl"]
 [ext_resource type="Texture2D" path="res://assets/sprites/player/player.png" id="2_tex"]
+[ext_resource type="Script" path="res://scripts/health.gd" id="3_health"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
 size = Vector2(10, 6)
 
 [node name="Player" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 5
 motion_mode = 1
 script = ExtResource("1_pl")
 
@@ -17,7 +20,12 @@ shape = SubResource("RectangleShape2D_body")
 [node name="Sprite2D" type="Sprite2D" parent="."]
 position = Vector2(0, -2)
 texture = ExtResource("2_tex")
-hframes = 4
+hframes = 8
+vframes = 8
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("3_health")
+max_health = 6
 
 [node name="Camera2D" type="Camera2D" parent="."]
 position_smoothing_enabled = true

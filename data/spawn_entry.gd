@@ -13,6 +13,8 @@ extends Resource
 @export var weight_per_depth: float = 0.0
 ## No aparece antes de esta profundidad (distancia Manhattan al inicio del bosque).
 @export var min_depth: int = 0
+## true = se instancia como Enemy en vez de Harvestable (también cuesta presupuesto).
+@export var is_enemy: bool = false
 ## Qué recurso da al recolectarse. null = decoración no recolectable.
 @export var resource_type: ResourceType
 ## Golpes necesarios para recolectarlo (las herramientas llegarán en otro hito).

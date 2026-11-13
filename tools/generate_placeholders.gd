@@ -19,8 +19,16 @@ var SPRITES := [
 		"colors": [Color("3b7d3a"), Color("1d3320"), Color("8a7356"), Color("7d8f4e")]},
 
 	# --- Personaje ---
-	{"path": "assets/sprites/player/player.png", "size": Vector2i(T * 4, T), "frames": 4,
-		"style": "player", "colors": [Color("e8d29a")]},
+	# Hoja 8x8 (de BarrenRoots): filas = direcciones S, SW, W, NW, N, NE, E, SE;
+	# columnas 0-3 idle, 4-7 caminar.
+	{"path": "assets/sprites/player/player.png", "size": Vector2i(T * 8, T * 8), "frames": 8,
+		"rows": 8, "style": "player", "colors": [Color("e8d29a")]},
+	{"path": "assets/sprites/player/sword.png", "size": Vector2i(T, T), "style": "body",
+		"colors": [Color("c8ccd4")]},
+
+	# --- Enemigos (hito 3) ---
+	{"path": "assets/sprites/enemies/enemy_basic.png", "size": Vector2i(T * 2, T), "frames": 2,
+		"style": "body", "colors": [Color("d9a03a")]},
 
 	# --- Mundo ---
 	{"path": "assets/sprites/world/chest.png", "size": Vector2i(T, T), "style": "body",
@@ -42,6 +50,12 @@ var SPRITES := [
 		"colors": [Color("e8e2d0")]},
 	{"path": "assets/sprites/ui/icon_energy.png", "size": Vector2i(8, 8), "style": "body",
 		"colors": [Color("f2c94c")]},
+	{"path": "assets/sprites/ui/hearts/heart_full.png", "size": Vector2i(T, T), "style": "body",
+		"colors": [Color("d83a3a")]},
+	{"path": "assets/sprites/ui/hearts/heart_half.png", "size": Vector2i(T, T), "style": "body",
+		"colors": [Color("8a2a2a")]},
+	{"path": "assets/sprites/ui/hearts/heart_empty.png", "size": Vector2i(T, T), "style": "body",
+		"colors": [Color("3a2a2a")]},
 	{"path": "assets/sprites/ui/energy_bar_under.png", "size": Vector2i(64, 8), "style": "tile",
 		"colors": [Color("2a2a2a")]},
 	{"path": "assets/sprites/ui/energy_bar_fill.png", "size": Vector2i(64, 8), "style": "tile",
@@ -82,9 +96,13 @@ func _draw(spec: Dictionary) -> Image:
 	var colors: Array = spec.colors
 	var img := Image.create(size.x, size.y, false, Image.FORMAT_RGBA8)
 	img.fill(Color(0, 0, 0, 0))
+	var rows: int = spec.get("rows", 1)
 	var fw := size.x / frames
-	for f in frames:
-		var r := Rect2i(f * fw, 0, fw, size.y)
+	var fh := size.y / rows
+	for cell in frames * rows:
+		var f := cell % frames
+		var row := cell / frames
+		var r := Rect2i(f * fw, row * fh, fw, fh)
 		var color: Color = colors[mini(f, colors.size() - 1)]
 		match spec.style:
 			"tile":
@@ -97,12 +115,12 @@ func _draw(spec: Dictionary) -> Image:
 				if spec.has("accent"):
 					img.fill_rect(Rect2i(body.position + Vector2i(2, 2), Vector2i(3, 3)), spec.accent)
 			"player":
-				# Frames: 0 abajo, 1 arriba, 2 izquierda, 3 derecha
+				# Fila = dirección (S, SW, W, NW, N, NE, E, SE): el "ojo" mira hacia ahí
 				var body := Rect2i(r.position + Vector2i(3, 1), Vector2i(10, 14))
 				img.fill_rect(body, color)
 				_border(img, body, Color("3a2a1a"))
-				var eye_offsets := [Vector2i(0, 3), Vector2i(0, -3), Vector2i(-3, 0), Vector2i(3, 0)]
-				var eye: Vector2i = body.get_center() + eye_offsets[f] + Vector2i(0, -2)
+				var look := Vector2.DOWN.rotated(row * PI / 4.0) * 3.0
+				var eye: Vector2i = body.get_center() + Vector2i(roundi(look.x), roundi(look.y)) + Vector2i(0, -2)
 				img.fill_rect(Rect2i(eye - Vector2i(1, 1), Vector2i(2, 2)), Color("3a2a1a"))
 	return img
 

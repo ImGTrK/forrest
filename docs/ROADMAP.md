@@ -25,31 +25,55 @@ Rama: `hito-2-reloj-energia`. Números de balance en `autoload/clock.gd` y `auto
 - [x] Fix: tamaño de fuente del HUD (Theme propio en `scenes/ui/theme.tres`)
 - Sprites nuevos: `bed.png`, `icon_clock.png`, `icon_energy.png`, `energy_bar_under.png`, `energy_bar_fill.png`
 
-## 🔜 Hito 3 — Combate (GDD §5)
-- [ ] Vida del jugador, swing en arco (Area2D), dash con i-frames
-- [ ] Enemigo básico en la tabla de spawn (cuesta presupuesto), IA de persecución simple
-- [ ] Muerte → al hub perdiendo un % mayor de lo cargado
-- Sprites nuevos: enemigo, efecto de swing, corazones/barra de vida
+## ✅ Hito 3 — Combate (GDD §5) + arte de BarrenRoots
+Rama: `hito-3-combate`. Port de `PlayerController.cs`, `EnemyAI.cs`, `HealthSystem.cs` y `UIHeartsManager.cs`.
+- [x] Arte propio de BarrenRoots: hoja del jugador 8 direcciones animada, corazones, espada, enemigo, fuente BoldPixels
+- [x] Componente `Health` reutilizable (señales, i-frames)
+- [x] Ataque en arco de 120° hacia el mouse (o J), knockback, estela del swing
+- [x] Dash con i-frames que atraviesa enemigos (Espacio/Shift), cuesta energía
+- [x] Enemigo básico: idle → persecución → amago → golpe → retroceso; cuesta presupuesto, aparece desde profundidad 1 (o cerca del pueblo de noche); más vida con la profundidad
+- [x] Muerte → pierde 50% de lo cargado, vuelve al hub con la vida llena (sin dormir). Dormir cura
+- [x] HUD con corazones
+- [x] Zonas de 40×40 (antes 50×50): ancho exacto de pantalla, menos vacío, más ritmo
 
-## ⬜ Hito 4 — Herramientas y durabilidad
+## 🔜 Hito 4 — Ítems e inventario (rescatado de BarrenRoots)
+Base de ítems e inventario diseñada en el canvas de Obsidian de BarrenRoots
+(`ItemData`, `ItemInstance`, "Inventario del Jugador", "Almacén del Pueblo", "UI Inventario").
+Va antes que herramientas y crafting porque ambos necesitan ítems "de verdad".
+- [ ] `ItemData` (Resource ≈ ScriptableObject) reemplaza a `ResourceType`: id, nombre, ícono,
+      `item_type` (recurso / herramienta / arma / consumible), tamaño en grilla, rangos de stats (ADN),
+      tipo y nivel de herramienta si aplica
+- [ ] `ItemInstance` (clase runtime) reemplaza a los Dictionary actuales: referencia al `ItemData`,
+      stats rolados, peso (sale del ADN), durabilidad y `is_broken` para herramientas
+- [ ] Peso en el ADN de cada recurso (stat `peso`, "más bajo = mejor" → hay que soportar stats invertidos)
+- [ ] Inventario del jugador: grilla 6×4, cada ítem ocupa su tamaño; `add / remove / has_space`
+- [ ] Límite de peso + debuff de sobrepeso (velocidad ×0.5, como en BarrenRoots)
+- [ ] Inventario lleno → no se puede recolectar (o el ítem queda en el piso)
+- [ ] UI: grilla con íconos, tooltip con stats al pasar el mouse, barra de peso; almacén con depositar/retirar
+- [ ] Muerte/colapso pierden ítems del inventario (ya existe, se adapta)
+- Sprites nuevos: slot de grilla, fondo del panel, ícono de peso
+
+## ⬜ Hito 5 — Herramientas y durabilidad
 - [ ] Hacha / pico con nivel; cada recurso exige herramienta y nivel mínimo
-- [ ] Durabilidad Buena → Desgastada → Rota; reparar en el hub
+- [ ] Durabilidad Buena (>60%) → Desgastada (20-60%) → Rota (0%); reparar en el hub
+- [ ] Slots de herramienta y arma equipadas en el HUD
 - [ ] Reemplaza el `hits` fijo de `SpawnEntry` por daño de herramienta vs. dureza
-- Sprites nuevos: íconos de herramientas (3 estados)
+- Sprites nuevos: íconos de herramientas
 
-## ⬜ Hito 5 — Inventario con peso y crafting
-- [ ] Grilla de slots + límite de peso (peso sale del ADN), debuff de velocidad
-- [ ] Mesa de crafting en el hub: elegir qué ejemplar usar, preview de stats
+## ⬜ Hito 6 — Crafting
+Diseño de BarrenRoots: 3 paneles (recetas → materiales → preview con ▲▼), promedio ponderado de stats.
+- [ ] `RecipeData` (Resource), mesa de crafting en el hub, `craft()` y `preview()` con la misma fórmula
 - [ ] Primeras recetas: herramientas mejores, linterna
-- Sprites nuevos: mesa de crafting, slots de UI, íconos de ítems crafteados
+- Sprites nuevos: mesa de crafting, íconos de ítems crafteados
 
-## ⬜ Hito 6 — Noche y misiones
+## ⬜ Hito 7 — Noche y misiones
 - [ ] Visibilidad nocturna (shader/overlay), linterna que consume aceite
 - [ ] Tablón de misiones (sin NPC): "traer X de Y", "llegar a profundidad N"
 - Sprites nuevos: tablón, linterna, máscara de luz
 
-## ⬜ Hito 7 — Pulido del MVP
-- [ ] Arte final integrado, sonido básico, menú principal, guardado en disco del estado persistente
+## ⬜ Hito 8 — Pulido del MVP
+- [ ] Arte final integrado, sonido básico, menú principal
+- [ ] Guardado en disco del estado persistente (JSON, como el diseño de BarrenRoots)
 - [ ] Balance de números (drenaje, % de pérdida, presupuesto) jugando
 
 ---

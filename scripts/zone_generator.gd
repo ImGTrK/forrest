@@ -8,13 +8,17 @@ extends RefCounted
 ## El presupuesto se "gasta" tirando entidades de una tabla ponderada hasta agotarlo.
 ## Escalar la dificultad = cambiar un número; no hacen falta tablas por nivel.
 
-const ZONE_TILES := 50  # 50x50 tiles de 16px = 800x800px (GDD §3)
-const DOOR_MIN := 23  # la puerta ocupa los tiles 23..26 del lado (centrada)
-const DOOR_MAX := 26
+## 40x40 tiles de 16 px = 640x640 px: el ancho coincide exacto con el viewport (640),
+## así la zona se ve entera de lado a lado y solo hay scroll vertical.
+## (Era 50x50 en el GDD original; se achicó porque se sentía vacía y lenta.)
+const ZONE_TILES := 40
+## La puerta ocupa 4 tiles centrados en el lado (con 40: tiles 18..21).
+const DOOR_MIN := ZONE_TILES / 2 - 2
+const DOOR_MAX := ZONE_TILES / 2 + 1
 const DOOR_CHANCE := 0.45
 const BASE_BUDGET := 6
 const BUDGET_PER_DEPTH := 3
-const DECORATION_RANGE := Vector2i(8, 16)
+const DECORATION_RANGE := Vector2i(6, 11)  # escalado al área (64% de la original)
 
 const DIRS: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector2i.RIGHT]
 
@@ -23,6 +27,7 @@ const SPAWN_TABLE := [
 	preload("res://data/spawns/rock.tres"),
 	preload("res://data/spawns/iron_vein.tres"),
 	preload("res://data/spawns/bush.tres"),
+	preload("res://data/spawns/enemy_basic.tres"),
 ]
 
 
@@ -92,7 +97,7 @@ static func is_wall(z: ZoneData, c: Vector2i) -> bool:
 ## así todas las puertas de una zona siempre quedan conectadas entre sí.
 static func corridor_cells(z: ZoneData) -> Dictionary:
 	var cells := {}
-	var mid := ZONE_TILES / 2  # 25
+	var mid := ZONE_TILES / 2
 	var rects: Array[Rect2i] = [Rect2i(DOOR_MIN, DOOR_MIN, 4, 4)]  # centro
 	if z.has_door(Vector2i.LEFT):
 		rects.append(Rect2i(1, DOOR_MIN, mid, 4))

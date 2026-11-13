@@ -70,7 +70,7 @@ while presupuesto > 0:
 El hub es donde vive todo lo persistente entre runs: inventario del jugador, progresión, recursos almacenados, NPCs (si el MVP los incluye).
 
 ### Bosque (procedural, efímero)
-Grid de tiles de 50×50 tiles de arte, con arte en 16×16px → **800×800px por zona confirmado**. Reglas:
+Grid de zonas de **40×40 tiles** de arte de 16×16px → **640×640px por zona** (antes 50×50 / 800×800: se achicó tras probarlo porque se sentía vacío y lento; 640 coincide con el ancho de pantalla, así la zona se ve entera de lado a lado). Reglas:
 
 1. **Al entrar a una tile por primera vez en la sesión actual del bosque:** se genera con el sistema de presupuesto descrito arriba y el resultado se guarda en un diccionario en memoria (`{Vector2i: TileData}`), **no en disco**.
 2. **Si el jugador vuelve a esa tile en la misma sesión:** se usa el resultado ya guardado (no se regenera dos veces en el mismo run).
@@ -260,7 +260,7 @@ Algunas diferencias que te van a ahorrar tiempo de investigación:
 | Pregunta | Estado |
 |---|---|
 | ¿Nombre del proyecto? | Pendiente |
-| ¿Tamaño real de cada tile? | **Resuelto:** 50×50 tiles de arte de 16px = 800×800px por zona |
+| ¿Tamaño real de cada tile? | **Resuelto:** 40×40 tiles de arte de 16px = 640×640px por zona (era 50×50, ver §3) |
 | ¿Generación del grafo de tiles: todo de una vez o bajo demanda? | Recomendado: bajo demanda (más simple) |
 | ¿Hay NPCs/misiones en el MVP? | **Resuelto:** tablón de misiones sí, NPC con diálogo queda post-MVP (ver sección 6) |
 | ¿Se puede dormir en el bosque? | **Resuelto:** no, solo en el hub |
@@ -283,7 +283,7 @@ Tomadas al arrancar el proyecto (2026-11-12). Motor: **Godot 4.7.1, GDScript**.
 | Tema | Decisión |
 |---|---|
 | Motor / lenguaje | Godot 4.7.1 + GDScript, renderer Compatibility |
-| Transición entre zonas | **Corte tipo Isaac**: al cruzar una puerta se carga la zona vecina; la cámara queda limitada a la zona actual (800×800px) |
+| Transición entre zonas | **Corte tipo Isaac**: al cruzar una puerta se carga la zona vecina; la cámara queda limitada a la zona actual (640×640px desde el hito 3; antes 800×800) |
 | Generación del grafo | **Bajo demanda**, zona por zona, con un RNG sembrado por run (la semilla se imprime en consola para reproducir bugs) |
 | Puertas | Cada lado: si el vecino ya existe se respeta su puerta (coherencia); si no, 45% de chance. La puerta de entrada siempre existe |
 | Regla anti-encierro | Si una zona tiene vecinos sin generar, al menos una puerta lleva a uno. Verificado con 200 runs simulados (`tests/test_generation.gd`) |
@@ -309,6 +309,21 @@ Tomadas al arrancar el proyecto (2026-11-12). Motor: **Godot 4.7.1, GDScript**.
 | Cómo afecta la rareza | Se suma a la profundidad para los pesos de la tabla, `min_depth` y el ADN: de madrugada puede salir hierro al lado del pueblo |
 | Cuándo se fija | Cada zona toma la dificultad de la hora en que se pisa **por primera vez** en el run |
 | Visual | Tinte del mundo con CanvasModulate según la hora (el HUD no se tiñe) |
+
+## 12. Decisiones de Implementación (Hito 3 — Combate)
+
+Port de BarrenRoots (1 unidad de Unity = 16 px).
+
+| Tema | Decisión |
+|---|---|
+| Vida | 6 (3 corazones; corazón = 2). Dormir y morir la restauran |
+| Ataque | Arco de 120°, alcance 22 px, hacia el mouse (o J hacia donde mirás). 1 de daño, 0.2 s de swing, 0.35 s de cooldown (×2 agotado), cuesta 0.4 de energía |
+| Dash | 288 px/s durante 0.15 s, cooldown 1.5 s, i-frames y atraviesa enemigos, cuesta 0.6 de energía |
+| Daño recibido | 0.6 s de i-frames con parpadeo, destello rojo y knockback |
+| Enemigo básico | 48 px/s, percibe a 80 px, **amago de 0.35 s** antes de pegar (nuevo: hace el ataque legible y esquivable), medio corazón de daño, 3 de vida (+1 cada 3 de profundidad efectiva) |
+| Aparición | Cuesta 3 de presupuesto, `min_depth` 1 → de día no hay enemigos en la primera zona, de noche sí (rareza por hora) |
+| Muerte | Pierde 50% de lo cargado (colapso: 25%), guarda el resto, vuelve al hub con vida llena. No duerme: la hora y la energía siguen igual |
+| Controles | WASD mover · clic izq./J atacar · Espacio/Shift dash · E interactuar · Tab inventario |
 
 ### Aclaración de diseño: energía tras colapsar
 La tabla de progresión (§4) dice que la energía y el reloj **persisten** al volver al hub. En consecuencia, después de un colapso por agotamiento el jugador aparece en el hub con energía 0 y está obligado a dormir antes de volver a salir. **Resuelto en el hito 2:** el colapso lleva directo a dormir en la cama, así el jugador no queda trabado con energía 0 en el pueblo.

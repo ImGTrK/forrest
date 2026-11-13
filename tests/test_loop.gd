@@ -141,12 +141,90 @@ func _run() -> void:
 	_check(fs.zones.is_empty(), "colapso: el bosque se borró")
 	_check(Energy.value > 0.0 and Energy.state != Energy.State.COLLAPSED, "colapso: despierta con energía")
 
+	# --- Hito 3: combate ----------------------------------------------------
+	main._handle_leave(Vector2i.RIGHT)
+	await tree.physics_frame
+	_check(main._area is ForestZone, "combate: de vuelta en el bosque")
+	var player: Player = main.player
+	var enemy_entry: SpawnEntry = load("res://data/spawns/enemy_basic.tres")
+	# Sacar enemigos naturales de la zona para que no interfieran
+	for n in tree.get_nodes_in_group("enemy"):
+		n.queue_free()
+	await tree.process_frame
+
+	# Arco: un enemigo a la derecha se golpea atacando a la derecha, no a la izquierda
+	var ent := {"entry": enemy_entry, "tile": Vector2i.ZERO, "alive": true}
+	var enemy := _spawn_enemy(main, ent, player.global_position + Vector2(14, 0))
+	await tree.physics_frame
+	player._attack_cd = 0.0
+	player.attack(Vector2.LEFT)
+	_check(enemy.health.current == Enemy.BASE_HEALTH, "atacar hacia el otro lado no pega")
+	for i in Enemy.BASE_HEALTH:
+		player._attack_cd = 0.0
+		enemy.global_position = player.global_position + Vector2(14, 0)
+		player.attack(Vector2.RIGHT)
+	_check(ent.alive == false, "%d golpes matan al enemigo básico" % Enemy.BASE_HEALTH)
+	var hp_bonus := Enemy.new()
+	hp_bonus.setup({}, player, 6)
+	_check(hp_bonus._max_health > Enemy.BASE_HEALTH, "más profundidad = enemigos con más vida")
+	hp_bonus.free()
+
+	# El enemigo pega (con amago) y deja i-frames
+	player.revive()
+	var ent2 := {"entry": enemy_entry, "tile": Vector2i.ZERO, "alive": true}
+	var biter := _spawn_enemy(main, ent2, player.global_position + Vector2(8, 0))
+	for i in 60:
+		await tree.physics_frame
+		if player.health.current < Player.MAX_HEALTH:
+			break
+	_check(player.health.current == Player.MAX_HEALTH - Enemy.DAMAGE, "el enemigo hace medio corazón de daño")
+	_check(not player.take_hit(1, biter.global_position), "i-frames: no recibe dos golpes seguidos")
+	biter.queue_free()
+
+	# Dash: invulnerable mientras dura
+	player.revive()
+	await tree.physics_frame
+	player._dash_cd = 0.0
+	player.dash(Vector2.RIGHT)
+	_check(player.is_dashing(), "dash activo")
+	_check(not player.take_hit(1, player.global_position + Vector2(5, 0)), "dash con i-frames")
+	for i in 20:
+		await tree.physics_frame
+	_check(not player.is_dashing() and not player.health.invulnerable, "el dash termina")
+
+	# Muerte: pierde 50% de lo cargado, vuelve al hub con vida llena, sin dormir
+	for i in 8:
+		gs.run_inventory.append(DNA.generar_recurso(wood, 0, gs.rng))
+	var storage_before_death: int = gs.storage.size()
+	var time_before_death: float = Clock.total_minutes
+	player.health.take_damage(99)
+	await tree.process_frame
+	await _wait_sleep(main)
+	_check(main._area is Hub, "la muerte lleva al hub")
+	_check(gs.storage.size() == storage_before_death + 4, "muerte: guardó 4 de 8 (perdió 50%)")
+	_check(player.health.current == Player.MAX_HEALTH, "muerte: vuelve con la vida llena")
+	_check(Clock.total_minutes - time_before_death < 60.0, "muerte: no duerme (no pasan horas)")
+
+	# Animación: 8 direcciones -> filas de la hoja de BarrenRoots
+	_check(Player.row_for(Vector2.DOWN) == 0 and Player.row_for(Vector2.UP) == 4
+		and Player.row_for(Vector2.RIGHT) == 6 and Player.row_for(Vector2.LEFT) == 2
+		and Player.row_for(Vector2(1, 1)) == 7 and Player.row_for(Vector2(-1, -1)) == 3,
+		"direcciones -> filas de la hoja")
+
 	# Dejar correr algunos frames reales
 	for i in 30:
 		await tree.physics_frame
 
 	print("RESULTADO: ", "OK" if _failures == 0 else "%d FALLAS" % _failures)
 	tree.quit(1 if _failures > 0 else 0)
+
+
+func _spawn_enemy(main: Node, ent: Dictionary, pos: Vector2) -> Enemy:
+	var enemy := Enemy.new()
+	enemy.setup(ent, main.player, 0)
+	main._area.add_child(enemy)
+	enemy.global_position = pos
+	return enemy
 
 
 func _wait_sleep(main: Node) -> void:

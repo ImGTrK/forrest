@@ -9,8 +9,14 @@ const ACTIONS := {
 	"move_right": [KEY_D, KEY_RIGHT],
 	"move_up": [KEY_W, KEY_UP],
 	"move_down": [KEY_S, KEY_DOWN],
-	"interact": [KEY_E, KEY_SPACE],
+	"interact": [KEY_E],
 	"toggle_inventory": [KEY_TAB, KEY_I],
+	"attack": [KEY_J],
+	"dash": [KEY_SPACE, KEY_SHIFT],
+}
+
+const MOUSE_ACTIONS := {
+	"attack": [MOUSE_BUTTON_LEFT],
 }
 
 
@@ -21,4 +27,11 @@ func _enter_tree() -> void:
 		for key: Key in ACTIONS[action]:
 			var ev := InputEventKey.new()
 			ev.physical_keycode = key
+			InputMap.action_add_event(action, ev)
+	for action: String in MOUSE_ACTIONS:
+		if not InputMap.has_action(action):
+			InputMap.add_action(action)
+		for button: MouseButton in MOUSE_ACTIONS[action]:
+			var ev := InputEventMouseButton.new()
+			ev.button_index = button
 			InputMap.action_add_event(action, ev)

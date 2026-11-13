@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3]
+
+[ext_resource type="Script" path="res://data/spawn_entry.gd" id="1_se"]
+[ext_resource type="Texture2D" path="res://assets/sprites/enemies/enemy_basic.png" id="3_tex"]
+
+[resource]
+script = ExtResource("1_se")
+id = &"enemy_basic"
+cost = 3
+weight = 1.5
+weight_per_depth = 0.3
+min_depth = 1
+is_enemy = true
+hits = 1
+color = Color(0.8, 0.6, 0.2, 1)
+size = Vector2i(1, 1)
+texture = ExtResource("3_tex")

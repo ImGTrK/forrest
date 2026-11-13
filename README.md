@@ -7,7 +7,7 @@ lista de sprites y medidas en [assets/README.md](assets/README.md).
 ## Cómo correrlo
 Abrí `project.godot` con Godot 4.7.1 y apretá F5.
 
-**Controles:** WASD/flechas para moverte · E/Espacio para interactuar o golpear · Tab/I para el inventario · Esc para cerrar menús.
+**Controles:** WASD/flechas mover · clic izquierdo o J atacar · Espacio/Shift dash · E interactuar · Tab/I inventario · Esc cerrar menús.
 
 ## Estructura
 | Carpeta | Qué hay |

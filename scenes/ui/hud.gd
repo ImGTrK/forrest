@@ -1,6 +1,6 @@
 class_name GameHUD
 extends CanvasLayer
-## HUD: reloj, energía, ubicación, resumen de lo cargado, mensajes y minimapa.
+## HUD: vida, reloj, energía, ubicación, resumen de lo cargado, mensajes y minimapa.
 ## CanvasLayer ≈ un Canvas de Unity en Screen Space Overlay.
 
 const ICON_CLOCK := preload("res://assets/sprites/ui/icon_clock.png")    # 8x8
@@ -11,6 +11,12 @@ const BAR_FILL := preload("res://assets/sprites/ui/energy_bar_fill.png")    # 64
 ## (blanco/gris) para que el tinte decida el color: normal, cansado, agotado, desmayado.
 const BAR_TINTS := [Color(0.45, 0.85, 0.35), Color(0.95, 0.8, 0.25), Color(0.95, 0.35, 0.25), Color(0.95, 0.35, 0.25)]
 
+## Corazones de BarrenRoots (16x16). Cada corazón = 2 de vida.
+const HEART_FULL := preload("res://assets/sprites/ui/hearts/heart_full.png")
+const HEART_HALF := preload("res://assets/sprites/ui/hearts/heart_half.png")
+const HEART_EMPTY := preload("res://assets/sprites/ui/hearts/heart_empty.png")
+
+var _hearts: HBoxContainer
 var _clock: Label
 var _energy_bar: TextureProgressBar
 var _last_minute := -1
@@ -26,6 +32,10 @@ func _ready() -> void:
 	var box := VBoxContainer.new()
 	box.position = Vector2(8, 6)
 	add_child(box)
+
+	_hearts = HBoxContainer.new()
+	_hearts.add_theme_constant_override("separation", 1)
+	box.add_child(_hearts)
 
 	var clock_row := HBoxContainer.new()
 	clock_row.add_child(_icon(ICON_CLOCK))
@@ -72,7 +82,7 @@ func _ready() -> void:
 	_hint.offset_top = -18
 	_hint.offset_left = 8
 	_hint.modulate = Color(1, 1, 1, 0.6)
-	_hint.text = "WASD mover · E interactuar · Tab inventario"
+	_hint.text = "WASD mover · Clic/J atacar · Espacio dash · E interactuar · Tab inventario"
 	add_child(_hint)
 
 	GameState.run_inventory_changed.connect(_refresh_carried)
@@ -85,6 +95,33 @@ func _ready() -> void:
 	refresh_clock()
 	_on_energy_changed(Energy.value, Energy.MAX)
 	_on_energy_state(Energy.state)
+
+
+func bind_player(player: Player) -> void:
+	player.health.changed.connect(update_hearts)
+	update_hearts(player.health.current, player.health.max_health)
+
+
+## Misma lógica que UIHeartsManager.UpdateHearts() de BarrenRoots.
+func update_hearts(current: int, max_value: int) -> void:
+	var total := ceili(max_value / 2.0)
+	while _hearts.get_child_count() < total:
+		var r := TextureRect.new()
+		r.stretch_mode = TextureRect.STRETCH_KEEP
+		_hearts.add_child(r)
+	while _hearts.get_child_count() > total:
+		var last := _hearts.get_child(_hearts.get_child_count() - 1)
+		_hearts.remove_child(last)
+		last.queue_free()
+	for i in total:
+		var heart_value := (i + 1) * 2
+		var r: TextureRect = _hearts.get_child(i)
+		if current >= heart_value:
+			r.texture = HEART_FULL
+		elif current == heart_value - 1:
+			r.texture = HEART_HALF
+		else:
+			r.texture = HEART_EMPTY
 
 
 func refresh_clock() -> void:
@@ -118,11 +155,10 @@ func set_hub() -> void:
 
 func _on_zone_entered(coord: Vector2i) -> void:
 	var z: ZoneData = ForestSession.zones[coord]
-	var extra := ""
-	if z.difficulty > 1.01 or z.rarity > 0:
-		extra = "  (×%.2f, rareza +%d por la hora)" % [z.difficulty, z.rarity]
-	_location.text = "Bosque (%d, %d)  ·  profundidad %d  ·  presupuesto %d%s" % [
-		coord.x, coord.y, z.depth, z.budget, extra]
+	var text := "Bosque (%d, %d) · prof. %d · presupuesto %d" % [coord.x, coord.y, z.depth, z.budget]
+	if z.rarity > 0:
+		text += " · hora: ×%.1f, rareza +%d" % [z.difficulty, z.rarity]
+	_location.text = text
 	_minimap.visible = true
 
 

@@ -23,7 +23,7 @@ func _ready() -> void:
 	var box := VBoxContainer.new()
 	panel.add_child(box)
 	_title = Label.new()
-	_title.add_theme_font_size_override("font_size", 11)
+	_title.add_theme_font_size_override("font_size", 16)
 	box.add_child(_title)
 	_list = RichTextLabel.new()
 	_list.bbcode_enabled = true

@@ -1,6 +1,6 @@
 extends Node2D
 ## Orquestador: decide qué "área" está cargada (Hub o una ForestZone) y maneja
-## las transiciones, el dormir y el colapso. El jugador es persistente (no se destruye
+## las transiciones, el dormir, el colapso y la muerte. El jugador es persistente (no se destruye
 ## al cambiar de área); lo único que se reemplaza es el hijo de $World.
 
 const FADE_TIME := 0.5
@@ -24,6 +24,8 @@ func _ready() -> void:
 	# Diferido: el colapso se dispara en medio del _process del reloj y no conviene
 	# destruir/crear áreas en ese momento.
 	Energy.collapsed.connect(_on_collapsed, CONNECT_DEFERRED)
+	player.died.connect(_on_player_died, CONNECT_DEFERRED)
+	hud.bind_player(player)
 	_load_hub("start")
 
 
@@ -107,22 +109,48 @@ func _on_collapsed() -> void:
 	sleep(summary)
 
 
+## Morir en combate (GDD §4): pierde un % MAYOR de lo cargado que el colapso
+## (el equipo nunca se pierde), vuelve al hub con la vida llena. No duerme:
+## la energía y la hora siguen como estaban.
+func _on_player_died() -> void:
+	if _sleeping:
+		return
+	var summary := {}
+	await _black_screen(func() -> void:
+		var lost := GameState.lose_run_fraction(GameState.DEATH_LOSS, GameState.rng)
+		var kept := GameState.deposit_run()
+		ForestSession.reset()
+		_load_hub("bed")
+		player.revive()
+		summary.text = "Caíste en combate · perdiste %d, guardaste %d." % [lost, kept])
+	GameState.notify(summary.text)
+
+
 ## Dormir (solo en el hub): fundido a negro, pasan 5-9 h al azar, recarga proporcional.
+## Dormir también cura toda la vida.
 func sleep(prefix: String = "") -> void:
 	if _sleeping:
 		return
+	var before := Energy.value
+	var result := {}
+	await _black_screen(func() -> void:
+		result.hours = Clock.sleep()
+		player.revive()
+		hud.refresh_clock())
+	var text := "Dormiste %d h · energía +%d" % [result.hours, roundi(Energy.value - before)]
+	GameState.notify((prefix + "  " + text) if prefix != "" else text)
+
+
+## Pausa, funde a negro, ejecuta `action` con la pantalla negra y vuelve.
+func _black_screen(action: Callable) -> void:
 	_sleeping = true
 	get_tree().paused = true
 	await _fade_to(1.0)
-	var before := Energy.value
-	var hours := Clock.sleep()
-	hud.refresh_clock()
+	action.call()
 	await get_tree().create_timer(SLEEP_HOLD_TIME, true).timeout
 	await _fade_to(0.0)
 	get_tree().paused = false
 	_sleeping = false
-	var text := "Dormiste %d h · energía +%d" % [hours, roundi(Energy.value - before)]
-	GameState.notify((prefix + "  " + text) if prefix != "" else text)
 
 
 func is_sleeping() -> bool:
