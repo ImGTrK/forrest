@@ -30,6 +30,8 @@ var _energy_bar: TextureProgressBar
 var _last_minute := -1
 var _location: Label
 var _carried: Label
+## Tipos de ítem que se nombran en la línea de la mochila (el resto va como "+N más").
+const MAX_CARRIED_TYPES := 3
 var _toast: Label
 var _hint: Label
 var _minimap: Minimap
@@ -244,11 +246,16 @@ func _refresh_carried() -> void:
 	var counts := {}
 	for item in bag.items():
 		counts[item.display_name()] = counts.get(item.display_name(), 0) + 1
+	# Solo los más cargados: con muchos tipos la línea se salía de la pantalla
+	var names: Array = counts.keys()
+	names.sort_custom(func(a: String, b: String) -> bool: return counts[a] > counts[b])
 	var parts: PackedStringArray = []
-	for item_name: String in counts:
-		parts.append("%s ×%d" % [item_name, counts[item_name]])
-	_carried.text = "Mochila: %s · %s%s" % [", ".join(parts), weight,
-		"  (sobrepeso)" if GameState.is_overweight() else ""]
+	for i in mini(names.size(), MAX_CARRIED_TYPES):
+		parts.append("%s ×%d" % [names[i], counts[names[i]]])
+	if names.size() > MAX_CARRIED_TYPES:
+		parts.append("+%d más" % (names.size() - MAX_CARRIED_TYPES))
+	_carried.text = "Mochila %s%s · %s" % [weight,
+		" (sobrepeso)" if GameState.is_overweight() else "", ", ".join(parts)]
 
 
 func show_toast(text: String) -> void:
