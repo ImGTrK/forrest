@@ -8,8 +8,10 @@ con medidas, frames y una idea de cómo se ve o suena cada cosa.
   placeholder con esa medida exacta y lo paso a `assets/README.md`. Si dibujás algo antes y te sale mejor
   con otro tamaño, avisame y lo adapto.
 
-**Estados:** **Tuyo** = arte tuyo ya integrado · **Placeholder** = existe un cuadrado de color con la medida
-exacta, listo para pisar · **Nuevo** = todavía no existe en el juego.
+**Estados:** **Base** = sprite original editable ya integrado · **Placeholder** = cuadrado temporal de un hito futuro
+· **Nuevo** = todavía no existe en el juego. Los 32 PNG actuales son Base; mirá la
+[vista previa a 2×](PREVIEW_ARTE_BASE_2X.png), la [lámina de sprites](CONTACTO_SPRITES_BASE.png)
+o abrí `scenes/ArtPreview.tscn` con F6.
 
 **Prioridad:** ★★★ se nota muchísimo / ★★ suma bastante / ★ detalle.
 
@@ -20,13 +22,39 @@ exacta, listo para pisar · **Nuevo** = todavía no existe en el juego.
 | Regla | Detalle |
 |---|---|
 | Grilla | Tiles de **16×16**. El viewport es 640×360 escalado ×2: un tile se ve de 32 px en pantalla |
-| Perspectiva | Top-down con un poco de frente (3/4), como el jugador de BarrenRoots: los objetos altos (árboles, tablón) muestran su cara frontal |
+| Perspectiva | Top-down con un poco de frente (3/4); los objetos altos (árboles, tablón) muestran su cara frontal |
 | Luz | Desde **arriba a la izquierda**. Sombra suave abajo-derecha en objetos del mundo |
-| Contorno | Elegí uno y mantenelo en todo: contorno oscuro de 1 px (no negro puro) o sin contorno. El jugador ya define el estilo |
-| Paleta | Conviene una paleta fija de 24-32 colores (por ejemplo partir de una paleta de Lospec y ajustarla). El bosque de noche se oscurece por código, así que **no pintes noche**: dibujá todo de día |
+| Contorno | **1 px** marrón oscuro (`#4B373B`) en árboles y arbustos, con crema en bordes iluminados; casi negro (`#211C2B`) en jugador, enemigos y objetos de uso. Sin antialiasing |
+| Paleta | Primaveral: salvia `#84AB78`, jade `#4C9465`, crema `#F6E3BE`, rosa flor `#F2BAC5`, bermellón `#D34B55`, ciruela `#3B2D45`. Lista de 42 colores en `assets/PALETA_FORREST.gpl`. El bosque de noche se oscurece por código: dibujá todo de día |
+| Floración | Frecuente en copas y arbustos; el pasto conserva poco detalle para que el patrón de 16 px no distraiga |
 | Legibilidad | Lo que se puede romper/recolectar debe destacarse del fondo (más contraste o un brillo). La decoración, más apagada que el pasto |
 | Colores por escalón | Madera = marrones cálidos · Piedra = grises · Hierro = gris azulado · Cristal (nuevo) = turquesa/violeta brillante. Las herramientas heredan el color de su material |
 | Animaciones | Pocas y legibles: 2-4 frames, 4-8 fps. Los frames de una hoja van **de izquierda a derecha** y las variantes **en filas** |
+
+---
+
+### Implementación de la tanda actual
+
+Las tres hojas iniciales y las iteraciones enfocadas se guardan en [`docs/higgsfield/`](higgsfield/).
+Se enviaron a Higgsfield plantillas del **contrato de 16 px** del jugador, del mundo y de los ítems.
+El generador respetó bien la secuencia de vistas del jugador y los dos estados del enemigo, pero sus PNG
+de 1024 px no mantenían una cuadrícula exacta al reducirlos. Por eso las hojas son **referencias de diseño**:
+`tools/trace_higgsfield_refs.py` extrae estudios a tamaño real y `tools/build_higgsfield_art.py` corrige
+manualmente siluetas, ojos, flores, contornos y materiales antes de escribir los 32 PNG del juego.
+La hoja del jugador sigue siendo **128×128**, con ocho direcciones y ocho frames de 16×16 por fila.
+Los recursos son PNG editables; podés retocarlos directamente en Aseprite, LibreSprite o tu editor preferido.
+El tema de UI usa ciruela, crema y rosa de la misma paleta. Los otros ocho sprites discretos (terreno,
+espada de golpe y seis elementos pequeños del HUD) se dibujan directamente a tamaño nativo.
+
+Para reconstruir exactamente la tanda y sus vistas previas:
+
+```bash
+python -B tools/trace_higgsfield_refs.py
+python -B tools/build_higgsfield_art.py
+python -B tools/render_art_preview.py
+```
+
+Estos comandos **sobrescriben** los PNG integrados; guardá primero cualquier edición personal.
 
 ---
 
@@ -34,27 +62,48 @@ exacta, listo para pisar · **Nuevo** = todavía no existe en el juego.
 
 ### 2.1 Terreno — `assets/tilesets/terrain.png` ★★★
 
-**Hoy:** placeholder de 64×16 (4 tiles en fila: pasto · pared · piso del pueblo · camino).
+> **Base hecha (2026-11-13):** dibujada por código (`tools/art/draw_world.gd`). Vista previa armada con
+> las transiciones en `docs/PREVIEW_ARTE_V02_2X.png`. Se puede retocar a mano manteniendo la grilla.
 
-**0.2 (hito 9):** se agranda a **128×64** (8×4 tiles). La primera fila conserva el orden actual, así que si
-dibujás solo esa fila ya funciona. El código elige las variantes al azar para que el piso no se vea repetido.
+**Tamaño: 256×128** (16×8 tiles de 16×16). La fila 0 empieza igual que la versión original
+(pasto · pared · piso · camino), así que el juego actual sigue funcionando.
 
-| Fila | Col 0 | Col 1 | Col 2 | Col 3 | Col 4 | Col 5 | Col 6 | Col 7 |
-|---|---|---|---|---|---|---|---|---|
-| **0** | Pasto | Pared (borde del bosque) | Piso del pueblo | Camino | Pasto var. A | Pasto var. B | Pasto con florcitas | Pasto con piedritas |
-| **1** | Tierra / claro | Tierra var. | Piso pueblo var. | Camino var. | Pared var. A | Pared var. B | Pasto oscuro (arboleda) | Pasto oscuro var. |
-| **2** | Agua: esq. sup-izq | Agua: borde arriba | Agua: esq. sup-der | Agua: esq. interna sup-izq | Agua: esq. interna sup-der | Ruina: baldosa | Ruina: baldosa rota | Ruina: baldosa con musgo |
-| **3** | Agua: borde izq | Agua: centro | Agua: borde der | Agua: esq. interna inf-izq | Agua: esq. interna inf-der | (libre) | (libre) | (libre) |
+**Filas 0-1 — bases y variantes.** Las bases son **tranquilas** (casi lisas) y son las que más se repiten;
+las variantes con detalle se mezclan con poca probabilidad (ej. 1 de cada 6 tiles de pasto).
 
-Para el agua falta la fila de abajo (esquinas y borde inferior), que va en las columnas libres:
-**fila 3, col 5** = esq. inf-izq · **col 6** = borde abajo · **col 7** = esq. inf-der.
-El agua tiene colisión; la pared también.
+| Fila | 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15 |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| **0** | Pasto | Pared (cerco) | Piso pueblo | Camino | Tierra | Pasto oscuro | Agua | Ruina | Pasto matitas | Pasto pétalos | Pasto florcitas | Pasto piedritas | Camino var. | Tierra var. | Piso var. | Pasto oscuro var. |
+| **1** | Cerco con flores | Cerco var. | Agua con brillo | Ruina rota | Ruina con musgo | Pasto tranquilo var. | Camino var. 2 | — | — | — | — | — | — | — | — | — |
+
+**Filas 2-7 — juegos de transición sobre pasto** (estilo "isla", bordes orgánicos como el tileset de
+referencia de BarrenRoots, con nuestro estilo). Cada juego ocupa 5×3 tiles:
+
+| | col +0 | col +1 | col +2 | col +3 | col +4 |
+|---|---|---|---|---|---|
+| **fila +0** | esq. externa sup-izq | borde arriba | esq. externa sup-der | esq. interna sup-izq | esq. interna sup-der |
+| **fila +1** | borde izq | centro | borde der | esq. interna inf-izq | esq. interna inf-der |
+| **fila +2** | esq. externa inf-izq | borde abajo | esq. externa inf-der | — | — |
+
+"Esquina interna sup-izq" = el terreno ocupa todo menos un rincón de pasto arriba a la izquierda.
+
+| Juego | Origen (col, fila) | Borde |
+|---|---|---|
+| Camino | (0, 2) | el pasto queda "un escalón arriba" y le hace sombra al camino |
+| Tierra / claro | (5, 2) | igual que el camino, en tonos tierra |
+| Agua / estanque | (10, 2) | barranca marrón arriba, espuma abajo-derecha |
+| Pasto oscuro | (0, 5) | borde tramado suave (sin línea) |
+| Cerco | (5, 5) | contorno ciruela abajo-derecha y sombra sobre el pasto |
+| Ruinas | (10, 5) | musgo y juntas en el borde |
+
+Las regiones de cada terreno tienen que medir **al menos 2 tiles de ancho** para que las piezas encajen.
+El agua y la pared tienen colisión.
 
 **Ideas:**
 - **Pared** = un muro de arbustos o troncos muy tupido que dice "por acá no se pasa". Es lo que más se ve en los bordes de cada zona.
 - **Pasto oscuro** marca el piso bajo las arboledas densas (plantilla "arboleda").
 - **Ruinas** = piedras talladas viejas, medio tapadas por pasto, para la plantilla "ruinas".
-- Las variantes de pasto tienen que ser **sutiles**. Si llaman la atención, se nota el patrón.
+- La base tiene que ser **tranquila**: el detalle va en las variantes (poca probabilidad) y en la decoración (sprites).
 
 ### 2.2 Pueblo (hito 9 o 12) ★★
 
@@ -74,8 +123,8 @@ Hoy el pueblo es piso + paredes. Unos pocos objetos lo hacen sentir hogar:
 
 | Archivo | Medida | Estado | Prioridad | Idea |
 |---|---|---|---|---|
-| `player.png` | 128×128 → **256×128** en hito 10 | Tuyo (idle + caminar) | ★★★ | Ver tabla de abajo |
-| `sword.png` | 16×16 | Tuyo (temporal) | ★ | Espada del swing, apuntando hacia arriba (el código la rota) |
+| `player.png` | 128×128 → **256×128** en hito 10 | Base (idle + caminar) | ★★★ | Ver tabla de abajo |
+| `sword.png` | 16×16 | Base | ★ | Espada del swing, apuntando hacia arriba (el código la rota) |
 | `player_death.png` | 64×16 (4 frames) | Nuevo (hito 10) | ★★ | Cae al piso mirando abajo. Se usa al morir y al colapsar |
 | `slash.png` | 96×32 (3 frames de 32×32) | Nuevo (hito 10) | ★★ | Estela del golpe en arco, dibujada **hacia arriba**; el código la rota. Blanca/gris: se tiñe por arma |
 
@@ -105,7 +154,7 @@ El daño recibido se muestra con un flash blanco por código, así que no hace f
 
 | Archivo | Medida | Estado | Prioridad | Idea |
 |---|---|---|---|---|
-| `enemy_basic.png` | 32×16 hoy → **64×64** (formato estándar) | Tuyo | ★★ | El que ya existe. Persigue y muerde de cerca |
+| `enemy_basic.png` | 32×16 hoy → **64×64** (formato estándar) | Base | ★★ | El que ya existe. Persigue y muerde de cerca |
 | `enemy_ranged.png` | 64×64 (frames de 16×16) | Nuevo (hito 10) | ★★★ | **Lanzador**: criatura pequeña y quieta (un hongo que escupe esporas, una planta con vainas). Mantiene distancia y dispara |
 | `projectile_spore.png` | 16×8 (2 frames de 8×8) | Nuevo (hito 10) | ★★ | Lo que dispara el lanzador. Color llamativo, que se vea sobre el pasto |
 | `enemy_charger.png` | **96×96** (frames de 24×24) | Nuevo (hito 10) | ★★★ | **Embestidor**: bicho grande y pesado (jabalí de musgo, escarabajo cornudo). Se queda quieto, raspa el piso (amago largo) y embiste en línea recta. Si choca contra un árbol, queda aturdido |
@@ -119,16 +168,18 @@ El daño recibido se muestra con un flash blanco por código, así que no hace f
 
 | Archivo | Medida | Estado | Prioridad | Idea |
 |---|---|---|---|---|
-| `tree.png` | 32×32 | Placeholder | ★★★ | Árbol común, da madera. Copa ancha, tronco visible abajo |
-| `rock.png` | 16×16 | Placeholder | ★★★ | Roca gris, da piedra |
-| `iron_vein.png` | 16×16 | Placeholder | ★★★ | Roca con vetas gris azuladas que brillan un poco |
-| `bush.png` | 16×16 | Placeholder | ★★ | Arbusto decorativo, bloquea el paso |
-| `chest.png` | 16×16 | Placeholder | ★★ | Baúl del almacén en el pueblo |
-| `bed.png` | 16×32 | Placeholder | ★★ | Cama vertical (cabecera arriba) |
-| `bench.png` | 32×16 | Placeholder | ★★ | Mesa de trabajo con herramientas encima |
-| `board.png` | 32×32 | Placeholder | ★★ | Tablón de misiones con papelitos clavados; solo las patas tienen colisión |
+| `tree.png` | 32×32 | Base | ★★★ | Árbol común, da madera. Copa ancha, tronco visible abajo |
+| `rock.png` | 16×16 | Base | ★★★ | Roca gris, da piedra |
+| `iron_vein.png` | 16×16 | Base | ★★★ | Roca con vetas gris azuladas que brillan un poco |
+| `bush.png` | 16×16 | Base | ★★ | Arbusto decorativo, bloquea el paso |
+| `chest.png` | 16×16 | Base | ★★ | Baúl del almacén en el pueblo |
+| `bed.png` | 16×32 | Base | ★★ | Cama vertical (cabecera arriba) |
+| `bench.png` | 32×16 | Base | ★★ | Mesa de trabajo con herramientas encima |
+| `board.png` | 32×32 | Base | ★★ | Tablón de misiones con papelitos clavados; solo las patas tienen colisión |
 
 ### 5.2 Variantes (hito 9) ★★★
+
+> **Base hecha (2026-11-13):** dibujada por código con la paleta Forrest; ver `docs/CONTACTO_ARTE_V02.png`.
 
 El código elige una al azar. Es la forma más barata de que el bosque no se vea vacío ni repetido.
 
@@ -139,6 +190,8 @@ El código elige una al azar. Es la forma más barata de que el bosque no se vea
 | `bush.png` | 16×16 → **48×16** (3 variantes) | Una con bayas |
 
 ### 5.3 Decoración nueva (hito 9) ★★★
+
+> **Base hecha (2026-11-13):** dibujada por código con la paleta Forrest; ver `docs/CONTACTO_ARTE_V02.png`.
 
 La decoración "blanda" **no bloquea**: el jugador la pisa. Se reparte agrupada para que la zona se sienta viva.
 
@@ -155,6 +208,8 @@ La decoración "blanda" **no bloquea**: el jugador la pisa. Se reparte agrupada 
 | `deco_lilypad.png` | 32×16 (2 variantes) | No | Nenúfares sobre el agua del estanque |
 
 ### 5.4 Eventos raros (hito 9) ★★★
+
+> **Base hecha (2026-11-13):** dibujada por código con la paleta Forrest; ver `docs/CONTACTO_ARTE_V02.png`.
 
 Aparecen poco y tienen que verse **especiales** desde lejos: son el "encontré algo raro".
 
@@ -181,17 +236,17 @@ El ícono mide lo que ocupa en la mochila (1×1 celda = 16×16, 1×2 = 16×32). 
 
 | Archivo | Medida | Estado | Prioridad | Idea |
 |---|---|---|---|---|
-| `wood.png` | 16×32 | Placeholder | ★★★ | Tronquito vertical |
-| `stone.png` | 16×16 | Placeholder | ★★★ | Piedra gris |
-| `iron.png` | 16×16 | Placeholder | ★★★ | Pepita o lingote rústico de hierro |
-| `stone_axe.png` | 16×32 | Placeholder | ★★★ | Hacha con cabeza de piedra atada |
-| `stone_pickaxe.png` | 16×32 | Placeholder | ★★★ | Pico de piedra atado |
-| `wood_sword.png` | 16×32 | Placeholder | ★★★ | Espada de madera tallada |
-| `iron_axe.png` | 16×32 | Placeholder | ★★★ | Hacha de hierro |
-| `iron_pickaxe.png` | 16×32 | Placeholder | ★★★ | Pico de hierro |
-| `iron_sword.png` | 16×32 | Placeholder | ★★★ | Espada de hierro |
-| `lantern.png` | 16×16 | Placeholder | ★★ | Linterna de piedra con vela |
-| `oil.png` | 16×16 | Placeholder | ★★ | Frasquito de aceite |
+| `wood.png` | 16×32 | Base | ★★★ | Tronquito vertical |
+| `stone.png` | 16×16 | Base | ★★★ | Piedra gris |
+| `iron.png` | 16×16 | Base | ★★★ | Pepita o lingote rústico de hierro |
+| `stone_axe.png` | 16×32 | Base | ★★★ | Hacha con cabeza de piedra atada |
+| `stone_pickaxe.png` | 16×32 | Base | ★★★ | Pico de piedra atado |
+| `wood_sword.png` | 16×32 | Base | ★★★ | Espada de madera tallada |
+| `iron_axe.png` | 16×32 | Base | ★★★ | Hacha de hierro |
+| `iron_pickaxe.png` | 16×32 | Base | ★★★ | Pico de hierro |
+| `iron_sword.png` | 16×32 | Base | ★★★ | Espada de hierro |
+| `lantern.png` | 16×16 | Base | ★★ | Linterna de piedra con vela |
+| `oil.png` | 16×16 | Base | ★★ | Frasquito de aceite |
 | `crystal.png` | 16×16 | Nuevo (hito 11) | ★★ | Cristal turquesa/violeta facetado |
 | `crystal_axe.png`, `crystal_pickaxe.png`, `crystal_sword.png` | 16×32 c/u | Nuevo (hito 11, tentativo) | ★★ | Herramientas de tercer escalón. Puede que el cristal termine siendo mejora en vez de herramienta nueva: lo confirmo al diseñar el hito |
 
@@ -206,13 +261,13 @@ La UI se ve al doble: 8 px de ícono ≈ alto de una línea de texto.
 
 | Archivo | Medida | Estado | Prioridad | Idea |
 |---|---|---|---|---|
-| `hearts/heart_full.png`, `heart_half.png`, `heart_empty.png` | 16×16 c/u | Tuyo | — | Ya están |
-| `slot.png` | 18×18 | Placeholder | ★★ | Celda de la grilla del inventario (16 px + 1 px de borde) |
-| `icon_clock.png` | 8×8 | Placeholder | ★ | Reloj o sol |
-| `icon_energy.png` | 8×8 | Placeholder | ★ | Rayo o gota |
-| `icon_weight.png` | 8×8 | Placeholder | ★ | Pesa o mochila |
-| `energy_bar_under.png` | 64×8 | Placeholder | ★ | Marco de la barra |
-| `energy_bar_fill.png` | 64×8 | Placeholder | ★ | Relleno **en blanco/grises** (el código lo tiñe) |
+| `hearts/heart_full.png`, `heart_half.png`, `heart_empty.png` | 16×16 c/u | Base | — | Redibujados con la paleta de Forrest |
+| `slot.png` | 18×18 | Base | ★★ | Celda de la grilla del inventario (16 px + 1 px de borde) |
+| `icon_clock.png` | 8×8 | Base | ★ | Reloj o sol |
+| `icon_energy.png` | 8×8 | Base | ★ | Rayo o gota |
+| `icon_weight.png` | 8×8 | Base | ★ | Pesa o mochila |
+| `energy_bar_under.png` | 64×8 | Base | ★ | Marco de la barra |
+| `energy_bar_fill.png` | 64×8 | Base | ★ | Relleno **en blanco/grises** (el código lo tiñe) |
 | `panel.png` | 24×24 | Nuevo (hito 12) | ★★★ | Fondo de los paneles (inventario, crafting, tablón, menús). Se estira en **9 partes**: los 8 px de cada borde no se deforman, el centro sí. Idea: madera o pergamino |
 | `button.png` | 48×16 (3 estados de 16×16: normal, hover, apretado) | Nuevo (hito 12) | ★★ | También en 9 partes (bordes de 4 px) |
 | `equip_icons.png` | 32×8 (4 íconos de 8×8) | Nuevo (hito 12) | ★★ | Siluetas para los slots de equipo del HUD, en orden: hacha, pico, espada, linterna. Hoy son letras H/P/E/L |

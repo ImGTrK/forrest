@@ -3,48 +3,48 @@
 [ext_resource type="FontFile" path="res://assets/fonts/BoldPixels.ttf" id="1_font"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_panel"]
-bg_color = Color(0.09, 0.1, 0.12, 0.97)
+bg_color = Color(0.129, 0.11, 0.169, 0.97)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.35, 0.37, 0.42, 1)
+border_color = Color(0.973, 0.663, 0.737, 1)
 content_margin_left = 4.0
 content_margin_top = 2.0
 content_margin_right = 4.0
 content_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button"]
-bg_color = Color(0.2, 0.22, 0.27, 1)
+bg_color = Color(0.294, 0.216, 0.231, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.42, 0.45, 0.52, 1)
+border_color = Color(0.604, 0.396, 0.314, 1)
 content_margin_left = 6.0
 content_margin_top = 1.0
 content_margin_right = 6.0
 content_margin_bottom = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_hover"]
-bg_color = Color(0.3, 0.33, 0.4, 1)
+bg_color = Color(0.455, 0.294, 0.275, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.75, 0.78, 0.85, 1)
+border_color = Color(0.965, 0.89, 0.745, 1)
 content_margin_left = 6.0
 content_margin_top = 1.0
 content_margin_right = 6.0
 content_margin_bottom = 1.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_button_disabled"]
-bg_color = Color(0.14, 0.15, 0.18, 1)
+bg_color = Color(0.19, 0.153, 0.196, 1)
 border_width_left = 1
 border_width_top = 1
 border_width_right = 1
 border_width_bottom = 1
-border_color = Color(0.25, 0.26, 0.3, 1)
+border_color = Color(0.294, 0.216, 0.231, 1)
 content_margin_left = 6.0
 content_margin_top = 1.0
 content_margin_right = 6.0
@@ -53,7 +53,10 @@ content_margin_bottom = 1.0
 [resource]
 default_font = ExtResource("1_font")
 default_font_size = 16
-Button/colors/font_disabled_color = Color(0.45, 0.45, 0.5, 1)
+Label/colors/font_color = Color(0.965, 0.89, 0.745, 1)
+Button/colors/font_color = Color(0.965, 0.89, 0.745, 1)
+Button/colors/font_hover_color = Color(1, 0.945, 0.839, 1)
+Button/colors/font_disabled_color = Color(0.6, 0.54, 0.57, 1)
 Button/styles/disabled = SubResource("StyleBoxFlat_button_disabled")
 Button/styles/hover = SubResource("StyleBoxFlat_button_hover")
 Button/styles/normal = SubResource("StyleBoxFlat_button")

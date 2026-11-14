@@ -1,0 +1,53 @@
+GIMP Palette
+Name: Forrest Primavera
+Columns: 6
+# 49 native pixel-art colors (42 base + 7 de la 0.2: agua, musgo, fuego)
+ 33  28  43  ink
+ 59  45  69  plum
+ 75  55  59  brown_dark
+116  75  70  brown
+154 101  80  bark
+209 153 109  wood_light
+ 94 136 105  grass_dark
+132 171 120  grass
+184 209 142  grass_light
+ 43 102  83  leaf_dark
+ 76 148 101  leaf
+144 197 123  leaf_light
+212 226 161  pale_leaf
+246 227 190  cream
+255 241 214  ivory
+232 198 156  sand
+216 173 130  path
+184 128 100  path_shadow
+242 186 197  blush
+227 144 168  rose
+211  75  85  red
+150  61  77  red_dark
+ 89 101 116  stone_dark
+147 157 166  stone
+208 210 209  stone_light
+ 71 115 138  iron
+147 189 206  iron_light
+229 186 107  gold
+255 225 160  gold_light
+244 240 232  white
+ 36  88  72  jade_deep
+114 179 108  jade_bright
+185 216 139  leaf_sun
+255 224 222  flower_light
+248 169 188  flower_pink
+ 55 110 150  ore_blue
+128 201 232  ore_glint
+212 162  88  honey
+ 46  37  58  hair_dark
+ 82  54  79  hair
+128  86 110  hair_light
+245 203 163  skin
+ 47  94 110  water_deep
+ 79 140 148  water
+140 196 190  water_light
+214 238 228  foam
+110 154  90  moss
+242 140  74  ember
+255 210 122  flame

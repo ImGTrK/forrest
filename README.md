@@ -26,8 +26,8 @@ Si cerrás estando en el bosque, volvés al último guardado.
 | `scripts/` | Lógica pura: `ZoneGenerator` (presupuesto + tabla ponderada), `DNA`, `ItemInstance`, `GridInventory`, `Crafting`, `Health`, `ZoneData`, `TerrainTiles` |
 | `scenes/` | `Main`, jugador, hub, zona del bosque, entidades y UI |
 | `tests/` | Tests headless |
-| `assets/` | Sprites y tilesets (placeholders con medidas exactas, reemplazables) |
-| `tools/` | Scripts de utilidad (generador de placeholders) |
+| `assets/` | Sprites y tilesets base de pixel art, editables y con medidas exactas |
+| `tools/` | Scripts para regenerar el arte base, la vista previa y los placeholders futuros |
 
 ## Tests
 ```bash

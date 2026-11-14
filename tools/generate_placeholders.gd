@@ -19,9 +19,9 @@ var SPRITES := [
 		"colors": [Color("3b7d3a"), Color("1d3320"), Color("8a7356"), Color("7d8f4e")]},
 
 	# --- Personaje ---
-	# Hoja 8x8 (de BarrenRoots): filas = direcciones S, SW, W, NW, N, NE, E, SE;
+	# Hoja 8x8 de 32 px: filas = direcciones S, SW, W, NW, N, NE, E, SE;
 	# columnas 0-3 idle, 4-7 caminar.
-	{"path": "assets/sprites/player/player.png", "size": Vector2i(T * 8, T * 8), "frames": 8,
+	{"path": "assets/sprites/player/player.png", "size": Vector2i(T * 16, T * 16), "frames": 8,
 		"rows": 8, "style": "player", "colors": [Color("e8d29a")]},
 	{"path": "assets/sprites/player/sword.png", "size": Vector2i(T, T), "style": "body",
 		"colors": [Color("c8ccd4")]},
@@ -147,12 +147,12 @@ func _draw(spec: Dictionary) -> Image:
 					img.fill_rect(Rect2i(body.position + Vector2i(2, 2), Vector2i(3, 3)), spec.accent)
 			"player":
 				# Fila = dirección (S, SW, W, NW, N, NE, E, SE): el "ojo" mira hacia ahí
-				var body := Rect2i(r.position + Vector2i(3, 1), Vector2i(10, 14))
+				var body := Rect2i(r.position + Vector2i(6, 2), Vector2i(20, 28))
 				img.fill_rect(body, color)
 				_border(img, body, Color("3a2a1a"))
-				var look := Vector2.DOWN.rotated(row * PI / 4.0) * 3.0
-				var eye: Vector2i = body.get_center() + Vector2i(roundi(look.x), roundi(look.y)) + Vector2i(0, -2)
-				img.fill_rect(Rect2i(eye - Vector2i(1, 1), Vector2i(2, 2)), Color("3a2a1a"))
+				var look := Vector2.DOWN.rotated(row * PI / 4.0) * 6.0
+				var eye: Vector2i = body.get_center() + Vector2i(roundi(look.x), roundi(look.y)) + Vector2i(0, -4)
+				img.fill_rect(Rect2i(eye - Vector2i(1, 1), Vector2i(3, 3)), Color("3a2a1a"))
 	return img
 
 

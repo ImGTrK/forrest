@@ -12,7 +12,7 @@ const INTERACT_RANGE := 14.0
 ## Tiempo mínimo entre interacciones. Con energía baja se multiplica (Energy).
 const INTERACT_COOLDOWN := 0.25
 
-# --- Animación (hoja 128x128 de BarrenRoots: 8x8 frames de 16x16) ---------------
+# --- Animación (hoja 256x256: 8x8 frames de 32x32) ------------------------------
 ## Filas de la hoja: 0 S · 1 SW · 2 W · 3 NW · 4 N · 5 NE · 6 E · 7 SE.
 ## Columnas: 0-3 idle, 4-7 caminar.
 ## Este array traduce el sector angular (0 = Este, en sentido horario) a la fila.

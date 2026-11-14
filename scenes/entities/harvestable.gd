@@ -28,6 +28,12 @@ func setup(p_entry: SpawnEntry, p_entity: Dictionary, p_depth: int) -> void:
 func _ready() -> void:
 	super._ready()
 	_hp = entry.hardness
+	# Si la textura es una tira de variantes (ej. tree.png = 3 árboles de 32×32), se usa una.
+	# La elección sale de la posición de la entidad: la misma zona se ve igual al volver.
+	if _sprite and texture.get_width() > int(size.x):
+		var frames := int(texture.get_width() / size.x)
+		_sprite.hframes = frames
+		_sprite.frame = posmod(hash(entity.get("tile", Vector2i.ZERO)), frames)
 	_flash = HitFlash.new(_sprite)
 	add_child(_flash)
 
