@@ -34,6 +34,8 @@ const SPAWN_TABLE := [
 	preload("res://data/spawns/rock.tres"),
 	preload("res://data/spawns/iron_vein.tres"),
 	preload("res://data/spawns/enemy_basic.tres"),
+	preload("res://data/spawns/enemy_spitter.tres"),
+	preload("res://data/spawns/enemy_charger.tres"),
 ]
 
 ## Decoración y eventos por id (las plantillas los nombran por id).
@@ -54,6 +56,7 @@ const EXTRAS := {
 	&"shiny_vein": preload("res://data/spawns/shiny_vein.tres"),
 	&"lost_chest": preload("res://data/spawns/lost_chest.tres"),
 	&"enemy_basic": preload("res://data/spawns/enemy_basic.tres"),
+	&"enemy_spitter": preload("res://data/spawns/enemy_spitter.tres"),
 }
 ## Centros de los 4 cuadrantes (lejos de los corredores en cruz del medio).
 const QUADRANTS: Array[Vector2i] = [Vector2i(10, 10), Vector2i(29, 10), Vector2i(10, 29), Vector2i(29, 29)]
@@ -335,8 +338,10 @@ static func _place_event(z: ZoneData, occupied: Dictionary, rng: RandomNumberGen
 		_place(z, EXTRAS[&"camp_tent"], area, occupied)
 		_place(z, EXTRAS[&"campfire"], fire, occupied)
 		_place(z, EXTRAS[&"lost_chest"], area + Vector2i(5, 1), occupied)
+		# Guardias: dos erizos y, desde profundidad 2, un Lanzador detrás de la fogata
 		for off: Vector2i in [Vector2i(-2, 1), Vector2i(2, 1), Vector2i(0, -2)]:
-			z.entities.append({"entry": EXTRAS[&"enemy_basic"], "tile": fire + off, "alive": true})
+			var guard: StringName = &"enemy_spitter" if off.y < 0 and z.loot_depth() >= 2 else &"enemy_basic"
+			z.entities.append({"entry": EXTRAS[guard], "tile": fire + off, "alive": true})
 		z.event = ev
 		return
 	var entry: SpawnEntry = EXTRAS[ev]

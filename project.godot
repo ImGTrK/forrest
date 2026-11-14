@@ -24,6 +24,8 @@ Energy="*res://autoload/energy.gd"
 ForestSession="*res://autoload/forest_session.gd"
 Missions="*res://autoload/missions.gd"
 SaveSystem="*res://autoload/save_system.gd"
+Fx="*res://autoload/fx.gd"
+AudioManager="*res://autoload/audio_manager.gd"
 
 [display]
 

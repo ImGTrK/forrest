@@ -53,8 +53,14 @@ func run() -> void:
 		gs.bag.add(roll("wood"))
 	var time_before_death: float = Clock.total_minutes
 	p.health.take_damage(99)
+	await tree.physics_frame
+	check(p.is_dying() and main._area is ForestZone, "muerte: primero se anima la caída (sigue en el bosque)")
+	var dead_t := Time.get_ticks_msec()
+	await p.died
+	check(Time.get_ticks_msec() - dead_t >= Player.DEATH_TIME * 1000.0 * 0.8, "muerte: avisa al terminar la caída")
 	await tree.process_frame
 	await wait_sleep()
+	check(not p.is_dying() and p.sprite.rotation == 0.0, "muerte: al revivir queda de pie")
 	check(main._area is Hub, "la muerte lleva al pueblo")
 	check(gs.bag.count() == 4, "muerte: le quedan 4 de 8 en la mochila (perdió 50%)")
 	check(p.health.current == Player.MAX_HEALTH, "muerte: vuelve con la vida llena")

@@ -50,7 +50,12 @@ Los `.tres` se editan desde el Inspector de Godot; las constantes, en el script.
 | Ataque | arco 120°, alcance 22 px, cooldown 0.35 s, puños 1 de daño | `player.gd` → `ATTACK_*`, `FIST_DAMAGE` |
 | Dash | 288 px/s, 0.15 s, cooldown 1.5 s | `player.gd` → `DASH_*` |
 | I-frames al recibir daño | 0.6 s | `player.gd` → `HURT_IFRAMES` |
-| Enemigo básico | 48 px/s, percepción 80 px, amago 0.35 s, 1 de daño, vida 3 (+1 c/3 de profundidad) | `scenes/entities/enemies/enemy_basic.gd` (valores por defecto y knockback en `enemy.gd`) |
+| Enemigo básico (erizo) | 48 px/s, percepción 80 px, amago 0.35 s, 1 de daño, vida 3 (+1 c/3 de profundidad) | `scenes/entities/enemies/enemy_basic.gd` (valores por defecto y knockback en `enemy.gd`) |
+| Lanzador | 40 px/s, percepción 112 px, distancia cómoda 64 px, huye a < 36 px, dispara hasta 100 px; amago 0.6 s, espora 96 px/s, 1 de daño, cooldown 1.7 s, vida 2 | `enemy_spitter.gd` |
+| Embestidor | 30 px/s, percepción 96 px, embiste desde 84 px; amago 0.75 s, 210 px/s por 0.7 s, 2 de daño, aturdido 1.6 s al chocar, knockback ×0.35, vida 5 | `enemy_charger.gd` |
+| Aparición | erizo: costo 3, peso 1.5 (+0.3/prof.), desde prof. 1 · Lanzador: costo 3, peso 0.9 (+0.25), desde prof. 2 · Embestidor: costo 4, peso 0.7 (+0.3), desde prof. 3 | `data/spawns/enemy_*.tres` |
+| Por plantilla | estanque: Lanzador ×1.6 · arboleda: Lanzador ×1.4, Embestidor ×0.6 · claro: Embestidor ×1.5 · pedregal: Embestidor ×1.8 · campamento: un guardia es Lanzador desde prof. 2 | `scripts/zone_templates.gd` → `spawn_mult`; `zone_generator.gd` → `_place_event` |
+| Feedback | freno de golpe 0.045 s (al recibir: 0.06 s), sacudida por trauma (máx. 4 px), muerte del jugador 0.9 s antes del fundido | `autoload/fx.gd`, `player.gd` → `DEATH_TIME` |
 
 ## Crafting y herramientas
 | Qué | Dónde |

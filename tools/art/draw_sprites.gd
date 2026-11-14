@@ -4,6 +4,7 @@ extends SceneTree
 ## arriba a la izquierda, contorno de 1 px. Objetos usables y actores: contorno "ink".
 ##
 ## Uso:   godot --headless --path . --script res://tools/art/draw_sprites.gd [-- solo=items,props,ui,enemy]
+## `enemy` también genera la espora y la espada del swing.
 ## Pisa los PNG que genera. Lo retocado a mano conviene versionarlo antes.
 
 const PC := preload("res://tools/art/pixel_canvas.gd")
@@ -452,52 +453,306 @@ func _bar(fill: bool) -> RefCounted:
 
 
 # =====================================================================================
-# ENEMIGO BÁSICO — erizo-fruta (2 frames de 16×16: 0 parpadeo, 1 normal). Mira a la derecha.
-# El rojo intenso queda para el peligro: es el único enemigo rojo.
+# ENEMIGOS — hoja estándar de 64×64: 4×4 frames de 16×16, mirando a la derecha.
+#   fila 0 quieto · fila 1 moverse · fila 2 amago (cols 0-1) + golpe (cols 2-3) · fila 3 muerte
+# El rojo intenso es peligro: cuerpo del erizo, ojo del embestidor, boquilla del lanzador.
 # =====================================================================================
 
 func _enemy() -> void:
-	var c := _layer(32, 16, 181)
-	for f in 2:
-		c.stamp(_enemy_frame(f == 0), f * 16, 0)
-	_save(c, "enemies/enemy_basic.png")
+	_save(_sheet(_hog_frames()), "enemies/enemy_basic.png")
+	_save(_sheet(_shroom_frames()), "enemies/enemy_spitter.png")
+	_save(_sheet(_boar_frames()), "enemies/enemy_charger.png")
+	_save(_spore(), "enemies/spore.png")
 	_save(_swing_sword(), "player/sword.png")
 
 
-func _enemy_frame(blink: bool) -> RefCounted:
+func _sheet(frames: Array) -> RefCounted:
+	var c := _layer(64, 64, 180)
+	for i in frames.size():
+		c.stamp(frames[i], (i % 4) * 16, (i / 4) * 16)
+	return c
+
+
+func _clear(k: RefCounted, x: int, y: int) -> void:
+	k.px(x, y, Color(0, 0, 0, 0))
+
+
+## Ojo en X (muerto).
+func _x_eye(k: RefCounted, x: int, y: int) -> void:
+	k.px(x - 1, y - 1, "ink")
+	k.px(x + 1, y - 1, "ink")
+	k.px(x, y, "ink")
+	k.px(x - 1, y + 1, "ink")
+	k.px(x + 1, y + 1, "ink")
+
+
+# --- Erizo-fruta (enemigo básico) -------------------------------------------------
+
+func _hog_frames() -> Array:
+	return [
+		_hog({}), _hog({"sy": 0.94}), _hog({"blink": true}), _hog({"sy": 0.97}),
+		_hog({"sy": 0.92, "sx": 1.06}), _hog({"dy": -1.0, "sy": 1.05}), _hog({"dy": -2.0}), _hog({"dy": -1.0}),
+		_hog({"sy": 0.86, "sx": 1.1, "dx": -1.0}), _hog({"sy": 0.8, "sx": 1.14, "dx": -1.0}),
+		_hog({"dx": 2.0, "sx": 1.08, "bite": true}), _hog({"dx": 1.0, "bite": true}),
+		_hog({"sy": 0.8, "sx": 1.08, "dead": 1}), _hog({"sy": 0.6, "sx": 1.2, "dead": 2}),
+		_hog({"sy": 0.42, "sx": 1.25, "dead": 3}), _hog({"sy": 0.3, "sx": 1.2, "dead": 4}),
+	]
+
+
+func _hog(o: Dictionary) -> RefCounted:
+	var dx: float = o.get("dx", 0.0)
+	var dy: float = o.get("dy", 0.0)
+	var sx: float = o.get("sx", 1.0)
+	var sy: float = o.get("sy", 1.0)
+	var dead: int = o.get("dead", 0)
 	var c := _layer(16, 16, 191)
-	c.ground_shadow(8, 14.5, 6, 1.4)
+	c.ground_shadow(8, 14.5, 6.0 * sx, 1.4, 0.32 if dy > -1.5 else 0.22)
+	var rx := 5.5 * sx
+	var ry := 4.6 * sy
+	var cx := 7.0 + dx
+	var cy := 14.1 - ry + dy
+	var at := func(ox: float, oy: float) -> Vector2i:
+		return Vector2i(roundi(cx + ox * sx), roundi(cy + oy * sy))
 	var body := _layer(16, 16, 192)
-	body.ellipse(7, 9.5, 5.5, 4.6, "red")
-	# púas en el lomo
-	for p in [Vector2i(2, 6), Vector2i(4, 4), Vector2i(7, 3), Vector2i(10, 4), Vector2i(1, 9)]:
+	body.ellipse(cx, cy, rx, ry, "red")
+	# púas en el lomo (se van cayendo al morir)
+	var spikes := [Vector2(-5, -3.5), Vector2(-3, -5.5), Vector2(0, -6.5), Vector2(3, -5.5), Vector2(-6, -0.5)]
+	if dead >= 2:
+		spikes = [Vector2(-3, -5.5), Vector2(1, -6.5)]
+	if dead >= 4:
+		spikes = []
+	for s: Vector2 in spikes:
+		var p: Vector2i = at.call(s.x, s.y)
 		body.px(p.x, p.y, "red")
 		body.px(p.x + 1, p.y, "red")
 		body.px(p.x, p.y - 1, "red")
 	body.shade("rose", "red", "red_dark", "red_dark")
 	# cara rosada a la derecha
-	body.ellipse(11.5, 10, 3, 2.6, "blush")
-	body.px(14, 10, "blush")
-	body.px(10, 9, "flower_light")
-	body.px(14, 11, "rose")  # hocico
-	if blink:
-		body.line(11, 9, 12, 9, "ink")
-	else:
-		body.px(12, 9, "ink")
-		body.px(12, 8, "ink")
-		body.px(11, 8, "white")
-	body.px(10, 11, "rose")  # cachete
+	if dead < 4:
+		body.ellipse(cx + 4.5 * sx, cy + 0.5 * sy, 3.0 * sx, maxf(2.6 * sy, 1.2), "blush")
+		var snout: Vector2i = at.call(7, 0.5)
+		body.px(snout.x, snout.y, "blush")
+		var nose: Vector2i = at.call(7, 1.5)
+		body.px(nose.x, nose.y, "rose")
+		var eye: Vector2i = at.call(5, -0.5)
+		if dead > 0:
+			_x_eye(body, eye.x, eye.y)
+		elif o.get("blink", false):
+			body.line(eye.x - 1, eye.y, eye.x, eye.y, "ink")
+		else:
+			body.px(eye.x, eye.y, "ink")
+			body.px(eye.x, eye.y - 1, "ink")
+			body.px(eye.x - 1, eye.y - 1, "white")
+		var cheek: Vector2i = at.call(3, 1.5)
+		body.px(cheek.x, cheek.y, "rose")
+		if o.get("bite", false):  # boca abierta con dientito
+			var m: Vector2i = at.call(6.5, 2.0)
+			body.px(m.x, m.y, "ink")
+			body.px(m.x + 1, m.y, "ink")
+			body.px(m.x + 1, m.y - 1, "white")
 	# patitas
-	body.px(4, 14, "red_dark")
-	body.px(9, 14, "red_dark")
+	if dead == 0:
+		var lift := 1 if dy < -1.5 else 0
+		body.px(roundi(cx - 3), roundi(cy + ry) - lift, "red_dark")
+		body.px(roundi(cx + 2), roundi(cy + ry) - lift, "red_dark")
 	body.outline("ink")
 	c.stamp(body)
-	# hojitas en la cabeza (es una fruta)
-	c.px(7, 2, "leaf")
-	c.px(8, 1, "leaf_light")
-	c.px(6, 1, "leaf_dark")
+	# hojitas en la cabeza (es una fruta); al morir se caen al costado
+	var leaf: Vector2i = at.call(0, -7.5) if dead < 3 else Vector2i(roundi(cx + 7), 13)
+	c.px(leaf.x, leaf.y, "leaf")
+	c.px(leaf.x + 1, leaf.y - 1, "leaf_light")
+	c.px(leaf.x - 1, leaf.y - 1, "leaf_dark")
 	return c
 
+
+# --- Lanzador: hongo bufón de sombrero ciruela con boquilla roja -------------------
+
+func _shroom_frames() -> Array:
+	return [
+		_shroom({}), _shroom({"dy": 0.0, "inflate": 0.3}), _shroom({"blink": true}), _shroom({"inflate": 0.3}),
+		_shroom({"lean": 1.0, "dy": -1.0}), _shroom({"lean": 0.0, "dy": 0.0}), _shroom({"lean": -1.0, "dy": -1.0}), _shroom({}),
+		_shroom({"inflate": 0.6}), _shroom({"inflate": 1.0}),
+		_shroom({"squish": 1.0, "lean": 1.0, "puff": 2}), _shroom({"squish": 0.5, "puff": 1}),
+		_shroom({"squish": 1.0, "dead": 1}), _shroom({"squish": 1.5, "lean": 2.0, "dead": 2}),
+		_shroom({"squish": 2.0, "lean": 3.0, "dead": 3}), _shroom({"dead": 4}),
+	]
+
+
+func _shroom(o: Dictionary) -> RefCounted:
+	var dy: float = o.get("dy", 0.0)
+	var lean: float = o.get("lean", 0.0)
+	var inflate: float = o.get("inflate", 0.0)
+	var squish: float = o.get("squish", 0.0)
+	var dead: int = o.get("dead", 0)
+	var c := _layer(16, 16, 301)
+	c.ground_shadow(8, 14.5, 5.0 + inflate * 0.5, 1.3)
+	if dead >= 4:  # solo queda el sombrero tirado y esporas
+		var rest := _layer(16, 16, 309)
+		rest.ellipse(8, 13, 5, 1.8, "hair")
+		rest.shade("hair_light", "hair", "hair_dark", "ink")
+		rest.px(6, 12, "blush")
+		rest.outline("ink")
+		c.stamp(rest)
+		for p in [Vector2i(3, 9), Vector2i(12, 8), Vector2i(10, 6)]:
+			c.px(p.x, p.y, "pale_leaf")
+		return c
+	# tallo con carita
+	var stem_h := 6 - dead
+	var top := 14 - stem_h
+	var stem := _layer(16, 16, 302)
+	stem.rect(5, top, 6, stem_h, "cream")
+	stem.rect(6, 14, 4, 1, "cream")
+	stem.shade("ivory", "cream", "sand", "path_shadow")
+	# carita debajo del sombrero (el borde del sombrero tapa las filas top..top+2)
+	if dead > 0:
+		stem.px(8, top + 3, "ink")
+		stem.px(10, top + 3, "ink")
+	elif o.get("blink", false):
+		stem.line(7, top + 3, 8, top + 3, "ink")
+		stem.line(10, top + 3, 11, top + 3, "ink")
+	else:
+		stem.px(8, top + 3, "ink")
+		stem.px(10, top + 3, "ink")
+		stem.px(8, top + 4, "ink")
+		stem.px(10, top + 4, "ink")
+	stem.px(11, top + 4, "blush")  # cachete
+	stem.outline("ink")
+	c.stamp(stem)
+	# sombrero: domo con la base plana
+	var cap := _layer(16, 16, 303)
+	var crx := 6.5 + inflate
+	var cry := 4.2 + inflate * 0.7 - squish
+	var ccx := 8.0 + lean
+	var ccy := float(top) + 0.5 + dy - (0.0 if dead == 0 else -float(dead))
+	cap.ellipse(ccx, ccy, crx, cry, "hair")
+	for y in range(roundi(ccy + 1), 16):
+		for x in 16:
+			_clear(cap, x, y)
+	cap.shade("hair_light", "hair", "hair_dark", "ink")
+	# lunares
+	for s in [Vector2(-3, -2), Vector2(1, -3), Vector2(-1, -0.5)]:
+		cap.px(roundi(ccx + s.x * (1.0 + inflate * 0.15)), roundi(ccy + s.y * (1.0 + inflate * 0.12)), "blush")
+	cap.px(roundi(ccx - 4), roundi(ccy - 1), "flower_light")
+	# boquilla roja hacia adelante (de ahí sale la espora)
+	var sp := Vector2i(roundi(ccx + crx - 1), roundi(ccy - 1))
+	if dead == 0:
+		cap.px(sp.x, sp.y, "red")
+		cap.px(sp.x + 1, sp.y, "red_dark")
+		cap.px(sp.x, sp.y - 1, "red")
+	# borde de las laminillas
+	cap.line(roundi(ccx - crx + 1), roundi(ccy), roundi(ccx + crx - 1), roundi(ccy), "rose")
+	cap.outline("ink")
+	c.stamp(cap)
+	var puff: int = o.get("puff", 0)
+	if puff > 0:
+		c.px(sp.x + 2, sp.y, "pale_leaf")
+		c.px(sp.x + 3, sp.y - 1, "leaf_sun")
+		if puff > 1:
+			c.px(sp.x + 3, sp.y + 1, "pale_leaf")
+			c.px(sp.x + 4, sp.y, "cream")
+	return c
+
+
+# --- Embestidor: jabalí-escarabajo de caparazón marrón, cuerno crema y ojo rojo -------
+
+func _boar_frames() -> Array:
+	return [
+		_boar({}), _boar({"sy": 0.95}), _boar({"dy": 0.0}), _boar({"sy": 0.95}),
+		_boar({"legs": 1}), _boar({"legs": 2, "dy": -1.0}), _boar({"legs": 3}), _boar({"legs": 0, "dy": -1.0}),
+		_boar({"down": 1, "legs": 1}), _boar({"down": 2, "legs": 3}),
+		_boar({"down": 2, "sx": 1.12, "sy": 0.9, "legs": 2}), _boar({"down": 2, "sx": 1.12, "sy": 0.9, "legs": 0}),
+		_boar({"dead": 1, "sy": 0.9}), _boar({"dead": 2, "dy": -2.0}), _boar({"dead": 3}), _boar({"dead": 3, "sy": 0.85}),
+	]
+
+
+func _boar(o: Dictionary) -> RefCounted:
+	var dy: float = o.get("dy", 0.0)
+	var sx: float = o.get("sx", 1.0)
+	var sy: float = o.get("sy", 1.0)
+	var down: int = o.get("down", 0)
+	var legs: int = o.get("legs", 0)
+	var dead: int = o.get("dead", 0)
+	var c := _layer(16, 16, 401)
+	c.ground_shadow(8, 14.5, 7.0 * sx, 1.5)
+	var k := _layer(16, 16, 402)
+	var on_back := dead >= 2
+	var rx := 5.8 * sx
+	var ry := 4.3 * sy
+	var cx := 7.0 - (1.0 if down > 0 else 0.0)
+	var cy := 12.6 - ry + dy + (0.5 * down)
+	# patas (detrás del cuerpo): 3 visibles, alternan al trotar; patas arriba si está boca arriba
+	var lx := [roundi(cx - 3), roundi(cx), roundi(cx + 3)]
+	for i in 3:
+		if on_back:
+			k.line(lx[i], roundi(cy - ry), lx[i] + (1 if i % 2 == 0 else -1), roundi(cy - ry) - 2, "ink")
+		else:
+			var long := 2 if (i + legs) % 2 == 0 else 1
+			if down > 1 and i == 2:
+				long = 2
+			k.line(lx[i], roundi(cy + ry - 1), lx[i] + (1 if legs % 2 == 1 and i != 1 else 0), mini(roundi(cy + ry) + long - 1, 14), "ink")
+	var shell := _layer(16, 16, 403)
+	shell.ellipse(cx, cy, rx, ry, "brown")
+	shell.shade("bark", "brown", "brown_dark", "plum", "wood_light" if not on_back else null)
+	# surcos del caparazón
+	var seam_y := roundi(cy + (1 if on_back else -1))
+	for x in range(roundi(cx - rx + 2), roundi(cx + rx - 1)):
+		if x % 3 != 0:
+			shell.px(x, seam_y, "brown_dark")
+	if not on_back:
+		shell.px(roundi(cx - 2), roundi(cy - ry + 1), "wood_light")
+		shell.px(roundi(cx - 1), roundi(cy - ry + 1), "sand")
+	k.stamp(shell)
+	# cabeza con cuerno (baja al raspar y embestir)
+	var hx := cx + rx - 0.5
+	var hy := cy + 0.5 + down * 0.8
+	if on_back:
+		hy = cy + 1.5
+	var head := _layer(16, 16, 404)
+	head.ellipse(hx, hy, 3.0, 2.6, "brown_dark")
+	head.shade("brown", "brown_dark", "plum", "ink")
+	var ex := roundi(hx)
+	var ey := roundi(hy - 1)
+	if dead > 0:
+		head.px(ex, ey, "ink")
+		head.px(ex + 1, ey + 1, "ink")
+		head.px(ex + 1, ey - 1, "ink")
+	else:
+		head.px(ex, ey, "red")
+		head.px(ex + 1, ey, "flame" if down > 1 else "red")
+	k.stamp(head)
+	# cuerno: hacia arriba en reposo, hacia adelante al embestir
+	var tip := Vector2i(roundi(hx + 3), roundi(hy - 1))
+	if down > 1:
+		k.px(tip.x, tip.y + 1, "cream")
+		k.px(tip.x + 1, tip.y + 1, "ivory")
+		k.px(tip.x + 2, tip.y + 1, "ivory")
+	elif not on_back:
+		k.px(tip.x, tip.y, "cream")
+		k.px(tip.x, tip.y - 1, "ivory")
+		k.px(tip.x + 1, tip.y - 2, "ivory")
+	else:
+		k.px(tip.x, tip.y + 2, "cream")
+		k.px(tip.x + 1, tip.y + 3, "ivory")
+	k.outline("ink")
+	c.stamp(k)
+	return c
+
+
+## Espora del Lanzador: 2 frames de 8×8 (late un poco).
+func _spore() -> RefCounted:
+	var c := _layer(16, 8, 501)
+	for f in 2:
+		var k := _layer(8, 8, 502 + f)
+		var r := 2.4 if f == 0 else 2.0
+		k.disc(4, 4, r, "pale_leaf")
+		k.shade("cream", "pale_leaf", "leaf_sun", "jade_bright")
+		k.px(3, 3, "ivory")
+		k.outline("leaf_dark")
+		if f == 1:
+			k.px(1, 1, "pale_leaf")
+			k.px(6, 6, "leaf_sun")
+		c.stamp(k, f * 8, 0)
+	return c
 
 ## Espada del swing (16×16, apuntando hacia arriba; el código la rota).
 func _swing_sword() -> RefCounted:

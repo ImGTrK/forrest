@@ -142,17 +142,20 @@ Rama: `hito-9-bosque-vivo` (sobre `arte-base`). Ataca "se siente vacío".
 Rama: `arte-codigo`. Ítems, herramientas, props del pueblo, veta de hierro, UI y enemigo básico redibujados con
 `tools/art/draw_sprites.gd` (misma paleta, contorno y luz que el bosque). Queda la hoja del jugador para el hito 10.
 
-## 🔜 Hito 10 — Combate con peso
+## ✅ Hito 10 — Combate con peso
 Rama: `hito-10-combate`.
-- [ ] **Lanzador**: se queda a distancia, apunta (amago visible) y dispara una espora; huye si te acercás
-- [ ] **Embestidor**: raspa el piso (amago largo), embiste en línea recta; si choca con un árbol o una pared queda aturdido
-- [ ] Proyectiles como escena propia (los puede reusar un jefe a futuro)
-- [ ] Feedback: números de daño, flash blanco, sacudida de cámara corta, freno de 2-3 frames al golpear,
+- [x] **Lanzador**: se queda a distancia, apunta (amago visible) y dispara una espora; huye si te acercás
+- [x] **Embestidor**: raspa el piso (amago largo), embiste en línea recta; si choca con un árbol o una pared queda aturdido
+- [x] Proyectiles como clase propia (`Projectile`, configurable; los puede reusar un jefe a futuro)
+- [x] Feedback: números de daño, flash blanco, sacudida de cámara corta, freno de 2-3 frames al golpear,
       partículas de impacto y astillas al recolectar, barra de vida sobre el enemigo herido
-- [ ] Animaciones del jugador: ataque y dash (columnas 8-15 de `player.png`) y muerte
-- [ ] Hoja estándar de enemigo (4 filas: quieto, moverse, amago+ataque, muerte)
-- [ ] Sistema de audio: `AudioManager` con buses (música, efectos, UI), variantes al azar y primeros efectos de combate
-- [ ] Balance: dónde y desde qué profundidad aparece cada enemigo
+- [x] Animaciones del jugador: **rig por partes** horneado a la hoja (`tools/art/draw_player.gd`) con quieto,
+      caminar, ataque, dash y muerte en 8 direcciones; frames de 24×24 a escala 1 (el personaje pasa a medir
+      ~20 px, antes quedaba más chico que los enemigos). Capa procedural encima: estirón, aplastado y estela
+- [x] Hoja estándar de enemigo (4 filas: quieto, moverse, amago+ataque, muerte), los tres enemigos la usan
+- [x] Sistema de audio: `AudioManager` con buses (Music, SFX, UI), variantes al azar y efectos de combate y
+      recolección **sintetizados** (placeholders) que se reemplazan soltando archivos en `assets/audio/sfx/`
+- [x] Balance: dónde y desde qué profundidad aparece cada enemigo ([[BALANCE]] § Combate)
 - Placeholders nuevos: guía §3, §4, §8 · Sonidos: guía §9.2 "Jugador y combate"
 
 ## ⬜ Hito 11 — Rasgos, cristal y tablón

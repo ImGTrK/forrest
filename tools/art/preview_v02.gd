@@ -136,21 +136,20 @@ func _init() -> void:
 			if which == 0: objs.append(["world/deco_flowers.png", rng.randi_range(0, 3), 4, 16, p])
 			elif which == 1: objs.append(["world/deco_tall_grass.png", 0, 2, 16, p])
 			else: objs.append(["world/deco_mushrooms.png", rng.randi_range(0, 1), 2, 16, p])
-	objs.append(["enemies/enemy_basic.png", 1, 2, 16, Vector2(30, 10)])
+	objs.append(["enemies/enemy_basic.png", 0, 4, 16, Vector2(30, 10)])
 	objs.sort_custom(func(a: Array, b: Array) -> bool: return a[4].y * T + a[3] < b[4].y * T + b[3])
 	for o: Array in objs:
 		var tex := _load(o[0])
 		var fw: int = tex.get_width() / int(o[2])
-		var fh: int = tex.get_height() if o[0] != "player/player.png" else 32
+		var fh: int = 16 if String(o[0]).begins_with("enemies/") else tex.get_height()
 		var src := Rect2i(int(o[1]) * fw, 0, fw, fh)
 		img.blend_rect(tex, src, Vector2i(o[4] * T))
+	# Jugador: frame de 24×24 a escala 1 (rig del hito 10), pies sobre la celda
+	var pl := _load("player/player.png")
+	img.blend_rect(pl, Rect2i(0, 0, 24, 24), Vector2i(Vector2(22.5, 9.6) * T) - Vector2i(12, 18))
 	img.save_png(ProjectSettings.globalize_path("res://docs/PREVIEW_ARTE_V02.png"))
 	var big := img.duplicate() as Image
 	big.resize(W * T * 2, H * T * 2, Image.INTERPOLATE_NEAREST)
-	# El jugador está dibujado al doble (32×32) y en el juego se escala ×0.5: en la vista ×2 se ve
-	# con su detalle real, del tamaño de un tile. En la vista ×1 no entra sin perder píxeles.
-	var pl := _load("player/player.png")
-	big.blend_rect(pl, Rect2i(0, 0, 32, 32), Vector2i(Vector2(22.5, 9.6) * T * 2) - Vector2i(16, 16))
 	big.save_png(ProjectSettings.globalize_path("res://docs/PREVIEW_ARTE_V02_2X.png"))
 	_contact()
 	print("ok preview")

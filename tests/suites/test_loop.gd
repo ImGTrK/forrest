@@ -20,7 +20,7 @@ func run() -> void:
 				if node.is_queued_for_deletion():
 					break
 				node.interact(player())
-			harvested += 1
+			harvested += maxi(node.entry.drop_count, 1)  # eventos (árbol ancestral) sueltan más de uno
 	check(harvested > 0, "había algo para recolectar")
 	check(gs.bag.count() == harvested, "mochila = %d" % harvested)
 

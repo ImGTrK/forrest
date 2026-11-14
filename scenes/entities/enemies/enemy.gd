@@ -8,6 +8,9 @@ extends CharacterBody2D
 ##   - vida (componente Health), destello al recibir daño (componente HitFlash), knockback
 ##   - muerte: marca la entidad en la cache de la zona, avisa a Missions y llama a _drop()
 ##   - el "amago" visual: se infla y se pone blanco antes de pegar (legible y esquivable)
+##   - hoja estándar de 4 filas (quieto, moverse, amago+ataque, muerte) animada sola
+##   - feedback (hito 10): destello blanco, número de daño, freno de golpe, partículas,
+##     sonido, barra de vida cuando está herido y estrellitas si queda aturdido
 ##
 ## Cada tipo de enemigo es un hijo que:
 ##   1. en _init() setea sus stats (speed, damage, base_health…) y su textura
@@ -23,7 +26,20 @@ const LAYER_ENEMY := 4
 const MASK_ENEMY := 1 | 4  # mundo + otros enemigos (al jugador lo atraviesa)
 const KNOCKBACK_TIME := 0.25
 const KNOCKBACK_FRICTION := 600.0
-const HURT_FLASH := Color(1, 0.3, 0.3)
+const HURT_FLASH := Color(2.4, 2.4, 2.4)  # blanco (valores > 1 queman el sprite hacia blanco)
+## Hoja estándar: 4 columnas × 4 filas de frames iguales.
+const ROW_IDLE := 0
+const ROW_MOVE := 1
+const ROW_ATTACK := 2  # columnas 0-1 amago, 2-3 golpe
+const ROW_DEATH := 3
+const ANIM_FPS := 6.0
+const DEATH_FPS := 10.0
+const DEATH_TIME := 0.75  # frames de muerte + desvanecido
+const STRIKE_SHOW := 0.25  # cuánto se ve el frame de golpe tras un ataque instantáneo
+const BAR_WIDTH := 12
+const COL_BAR_BG := Color("211C2B")
+const COL_BAR := Color("D34B55")
+const COL_NUMBER := Color("FFF1D6")
 
 # --- Stats (los setea cada hijo en _init) --------------------------------------
 var speed := 48.0
@@ -43,6 +59,10 @@ var texture: Texture2D
 var hframes := 1
 var vframes := 1
 var sprite_offset := Vector2(0, -3)
+## Altura del sprite sobre el centro (para ubicar la barra de vida y las estrellitas).
+var top := 11.0
+## Partículas al recibir golpes / morir.
+var hit_colors := PackedColorArray([Color("FFF1D6"), Color("D34B55"), Color("E390A8")])
 
 var entity: Dictionary  # referencia en ZoneData (alive = false al morir: no reaparece)
 var player: Player
@@ -56,6 +76,8 @@ var _anim_t := 0.0
 var _max_health := 3
 var _sprite: Sprite2D
 var _flash: HitFlash
+var _strike_t := 0.0
+var _death_t := 0.0
 
 
 func setup(p_entity: Dictionary, p_player: Player, loot_depth: int) -> void:
@@ -87,14 +109,20 @@ func _ready() -> void:
 	health = Health.new()
 	health.max_health = maxi(_max_health, base_health)
 	add_child(health)
-	health.damaged.connect(func(_a: int, _f: Vector2) -> void: _flash.flash(HURT_FLASH, 0.15))
+	health.damaged.connect(_on_damaged)
 	health.died.connect(_die)
 	add_to_group("enemy")
 	_anim_t = randf() * 2.0
 
 
 func _physics_process(delta: float) -> void:
-	if state == State.DEAD or player == null:
+	if state == State.DEAD:
+		_death_t += delta
+		_update_visual(delta)
+		if _death_t >= DEATH_TIME:
+			queue_free()
+		return
+	if player == null:
 		return
 	var to_player := player.global_position - global_position
 	var dist := to_player.length()
@@ -118,6 +146,7 @@ func _physics_process(delta: float) -> void:
 			if _t <= 0.0:
 				state = State.RECOVER
 				_t = attack_cooldown
+				_strike_t = STRIKE_SHOW
 				_attack(to_player, dist)  # puede cambiar el estado (ej. a ATTACK para una embestida)
 		State.ATTACK:
 			velocity = _attack_velocity(delta)
@@ -145,7 +174,7 @@ func _physics_process(delta: float) -> void:
 func take_hit(amount: int, knockback: Vector2) -> void:
 	if state == State.DEAD:
 		return
-	if health.take_damage(amount) and state != State.DEAD:
+	if health.take_damage(amount) and state != State.DEAD and _interruptible():
 		state = State.KNOCKBACK
 		_t = KNOCKBACK_TIME
 		_knock = knockback * _knockback_scale()
@@ -219,9 +248,43 @@ func _knockback_scale() -> float:
 	return 1.0
 
 
-## Frame del sprite según el estado. Por defecto: frame 0.
-func _animate(_delta: float) -> void:
+## ¿Un golpe corta lo que está haciendo? false = sigue (ej. en plena embestida).
+func _interruptible() -> bool:
+	return true
+
+
+## Aviso extra en pantalla durante el amago (ej. la mira del Lanzador). Se dibuja en _draw.
+func _draw_telegraph() -> void:
 	pass
+
+
+## Frame del sprite según el estado. Por defecto: la hoja estándar de 4 filas
+## (si la textura tiene menos filas, se queda en el frame 0).
+func _animate(_delta: float) -> void:
+	if vframes < 4 or hframes < 4:
+		return
+	var row := ROW_IDLE
+	var col := int(_anim_t * ANIM_FPS) % 4
+	match state:
+		State.DEAD:
+			row = ROW_DEATH
+			col = mini(int(_death_t * DEATH_FPS), 3)
+		State.WINDUP:
+			row = ROW_ATTACK
+			col = int(_anim_t * 8.0) % 2
+		State.ATTACK:
+			row = ROW_ATTACK
+			col = 2 + int(_anim_t * 8.0) % 2
+		State.STUNNED:
+			row = ROW_IDLE
+			col = 0
+		_:
+			if _strike_t > 0.0:
+				row = ROW_ATTACK
+				col = 2 if _strike_t > STRIKE_SHOW / 2.0 else 3
+			elif velocity.length() > 2.0:
+				row = ROW_MOVE
+	_sprite.frame = row * hframes + col
 
 
 ## Qué suelta al morir. Por defecto: nada.
@@ -239,16 +302,45 @@ func _die() -> void:
 	remove_from_group("enemy")
 	collision_layer = 0
 	collision_mask = 0
-	var tween := create_tween()
-	tween.tween_property(_sprite, "modulate", Color(1, 0.3, 0.3, 0.0), 0.3)
-	tween.tween_callback(queue_free)
+	_death_t = 0.0
+	velocity = Vector2.ZERO
+	_sprite.rotation = 0.0
+	Fx.burst(self, hit_colors, 14, 80.0, Vector2(0, -4))
+	Fx.shake(0.25)
+	AudioManager.play(&"enemy_die")
+	queue_redraw()
+
+
+func _on_damaged(amount: int, _from: Vector2) -> void:
+	_flash.flash(HURT_FLASH, 0.12)
+	Fx.number(self, amount, COL_NUMBER)
+	Fx.burst(self, hit_colors, 6, 55.0, Vector2(0, -4))
+	Fx.hitstop()
+	Fx.shake(0.18)
+	AudioManager.play(&"hit")
+	queue_redraw()
 
 
 func _update_visual(delta: float) -> void:
 	_anim_t += delta
+	_strike_t = maxf(_strike_t - delta, 0.0)
 	_animate(delta)
-	if absf(velocity.x) > 1.0:
-		_sprite.flip_h = velocity.x < 0.0
+	if state == State.DEAD:
+		_sprite.scale = Vector2.ONE
+		var fade := clampf((_death_t - 0.4) / (DEATH_TIME - 0.4), 0.0, 1.0)
+		_sprite.modulate = Color(1, 1, 1, 1.0 - fade)
+		return
+	# Mira hacia donde se mueve; quieto (amago, aturdido) mira al jugador.
+	# En el knockback no se da vuelta (sale despedido de espaldas).
+	if state != State.KNOCKBACK:
+		if absf(velocity.x) > 1.0:
+			_sprite.flip_h = velocity.x < 0.0
+		elif player and absf(player.global_position.x - global_position.x) > 2.0:
+			_sprite.flip_h = player.global_position.x < global_position.x
+	# Aturdido: se tambalea
+	_sprite.rotation = sin(_anim_t * 14.0) * 0.18 if state == State.STUNNED else 0.0
+	if state == State.WINDUP or state == State.STUNNED:
+		queue_redraw()  # mira del amago / estrellitas
 	if _flash.is_active():
 		return  # el destello de daño manda
 	if state == State.WINDUP:
@@ -259,3 +351,25 @@ func _update_visual(delta: float) -> void:
 	else:
 		_sprite.modulate = Color.WHITE
 		_sprite.scale = Vector2.ONE
+
+
+## Barra de vida (solo herido), estrellitas de aturdido y el aviso del amago de cada hijo.
+func _draw() -> void:
+	if state == State.DEAD:
+		return
+	if state == State.WINDUP:
+		_draw_telegraph()
+	if state == State.STUNNED:
+		for i in 3:
+			var a := _anim_t * 5.0 + i * TAU / 3.0
+			var p := Vector2(cos(a) * 7.0, -top - 4.0 + sin(a) * 2.0).round()
+			# estrellita en cruz de 3×3 con centro claro
+			draw_rect(Rect2(p + Vector2(-1, 0), Vector2(3, 1)), Color("E5BA6B"))
+			draw_rect(Rect2(p + Vector2(0, -1), Vector2(1, 3)), Color("E5BA6B"))
+			draw_rect(Rect2(p, Vector2(1, 1)), Color("FFF1D6"))
+	if health and health.current < health.max_health:
+		var y := -top - 4.0
+		var x := -BAR_WIDTH / 2.0
+		draw_rect(Rect2(x - 1, y - 1, BAR_WIDTH + 2, 4), COL_BAR_BG)
+		var fill := roundf(BAR_WIDTH * float(health.current) / health.max_health)
+		draw_rect(Rect2(x, y, fill, 2), COL_BAR)

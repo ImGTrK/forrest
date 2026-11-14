@@ -45,14 +45,27 @@ Las flores son frecuentes en árboles y arbustos; el pasto se mantiene discreto 
 
 | Archivo | Tamaño | Contenido |
 |---|---|---|
-| `player.png` | **256×256** | 8×8 frames de **32×32** dibujados al doble de detalle; en el juego el sprite va con **escala 0.5** (`Player.tscn`), así ocupa un tile y con la ventana ×2 cada píxel de la hoja se ve 1:1. **Filas** = dirección: 0 S · 1 SW · 2 W · 3 NW · 4 N · 5 NE · 6 E · 7 SE. **Columnas** 0-3 idle, 4-7 caminar (4 fps). Pies en la fila ~29 del frame. La colisión es 10×6 a los pies |
+| `player.png` | **384×216** | Rig por partes del hito 10 (`tools/art/draw_player.gd`): 16×9 frames de **24×24** a **escala 1** (mide ~20 px de alto, más que los enemigos). **Filas** = dirección: 0 S · 1 SW · 2 W · 3 NW · 4 N · 5 NE · 6 E · 7 SE (SW, W y NW son espejo). **Columnas** 0-3 quieto (4 fps), 4-7 caminar (8 fps), 8-11 ataque, 12-15 dash. **Fila 8** = muerte: 0-3 cae con la cabeza a la izquierda, 4-7 a la derecha. Pies en la fila 22 del frame; el sprite va en (0, -6). La colisión es 10×6 a los pies |
 | `sword.png` | **16×16** | Espada del swing, dibujada **apuntando hacia arriba** (el código la rota) |
+
+El jugador se arma con piezas (pelo y cara, torso, bufanda, mochila, brazos, piernas) y cada frame
+es una pose. Para retocar una animación se cambian sus poses en `_pose()` y se vuelve a hornear:
+`godot --headless --path . --script res://tools/art/draw_player.gd` (pisa `player.png`).
+Encima, `player.gd` → `_update_pose` suma un estirón leve al pegar, aplastado al recibir y la
+estela del dash (`assets/shaders/silhouette.gdshader`).
 
 ## Enemigos — `assets/sprites/enemies/`
 
+Hoja estándar (hito 10): **64×64** = 4×4 frames de **16×16**, mirando a la derecha (el código espeja).
+Filas: 0 quieto · 1 moverse · 2 amago (cols 0-1) + golpe (cols 2-3) · 3 muerte (una vez). Dibujados en
+`tools/art/draw_sprites.gd` (`-- solo=enemy`).
+
 | Archivo | Tamaño | Contenido |
 |---|---|---|
-| `enemy_basic.png` | **32×16** | 2 frames originales de 16×16: frame 0 parpadeo (0.1 s), frame 1 normal (2 s). Mira a la derecha; el código lo espeja |
+| `enemy_basic.png` | **64×64** | Erizo-fruta rojo (hoja estándar) |
+| `enemy_spitter.png` | **64×64** | Lanzador: hongo de sombrero ciruela con boquilla roja (hoja estándar) |
+| `enemy_charger.png` | **64×64** | Embestidor: jabalí-escarabajo marrón, cuerno crema, ojo rojo (hoja estándar) |
+| `spore.png` | **16×8** | Espora del Lanzador, 2 frames de 8×8 (el sprite va 5 px sobre su sombra) |
 
 ## Mundo — `assets/sprites/world/`
 

@@ -31,8 +31,8 @@ func _ready() -> void:
 	_place("world/board.png", Vector2(544, 64))
 	_place("world/bench.png", Vector2(96, 256))
 	_place("world/bed.png", Vector2(48, 240))
-	_place_sheet("player/player.png", Vector2(240, 172), 8, 8, 0, Vector2(0, -10))
-	_place_sheet("enemies/enemy_basic.png", Vector2(368, 168), 2, 1, 1)
+	_place_sheet("player/player.png", Vector2(240, 172), 16, 9, 0, Vector2(0, -6))
+	_place_sheet("enemies/enemy_basic.png", Vector2(368, 168), 4, 4, 0)
 
 
 func _place(relative: String, pos: Vector2) -> void:

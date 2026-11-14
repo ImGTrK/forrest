@@ -36,10 +36,23 @@ avisa a [[Tablón de misiones|Missions]], llama a `_drop()`) están en la base.
 | `_attack_velocity()` | termina enseguida | moverse durante la embestida; terminar con `end_attack()` |
 | `_on_moved()` | nada | detectar choque contra una pared → `stun()` |
 | `_knockback_scale()` | 1 | enemigos pesados que no se empujan |
-| `_animate()` | nada | elegir el frame de la hoja |
+| `_interruptible()` | sí | que un golpe no corte la embestida |
+| `_draw_telegraph()` | nada | dibujar el aviso del amago (mira, flecha) |
+| `_animate()` | hoja estándar de 4 filas según el estado | efectos extra (temblar al raspar) |
 | `_drop()` | nada | soltar algo al morir |
 
-Hijos: `EnemyBasic` (hito 8). Planeados: lanzador y embestidor ([[Enemigos]], hito 10).
+Hijos: `EnemyBasic` (erizo), `EnemySpitter` (Lanzador) y `EnemyCharger` (Embestidor). Ver [[Enemigos]].
+
+**Hoja estándar de enemigo:** 64×64 = 4×4 frames de 16×16, mirando a la derecha. Filas:
+0 quieto · 1 moverse · 2 amago (cols 0-1) + golpe (cols 2-3) · 3 muerte (se reproduce una vez).
+La base elige el frame sola; el hijo solo pone `hframes = 4` y `vframes = 4`.
+La base también pone el feedback: destello blanco, número de daño, partículas, freno de golpe,
+sonido, barra de vida (herido) y estrellitas (aturdido).
+
+### `Projectile` — `scenes/entities/projectile.gd`
+Proyectil genérico (Area2D): vuela recto, se rompe contra el mundo, daña al jugador, el dash lo
+atraviesa. No se hereda: se configura (`velocity`, `damage`, `texture`, `lifetime`…). La colisión va a
+ras del piso y el sprite se dibuja `height` px más arriba. `Projectile.spawn(padre, pos, vel, daño)`.
 
 **Sumar un enemigo nuevo:** crear `enemy_x.gd` con `extends Enemy`, setear stats en `_init()`,
 sobrescribir lo necesario, y crear su `data/spawns/enemy_x.tres` con `is_enemy = true` y
@@ -51,10 +64,19 @@ Como agregar un `MonoBehaviour` a un GameObject: se suma con `add_child(...)` y 
 | Componente | Archivo | Lo usan |
 |---|---|---|
 | `Health` | `scripts/health.gd` | jugador, enemigos |
-| `HitFlash` | `scripts/components/hit_flash.gd` | recursos (destello + sacudida), enemigos (destello rojo) |
+| `HitFlash` | `scripts/components/hit_flash.gd` | recursos (destello + sacudida), enemigos (destello blanco) |
 
 **Regla:** si es "un tipo de cosa" (un enemigo, algo usable) → herencia. Si es "una capacidad"
 que pueden tener cosas distintas (vida, destello, más adelante soltar loot) → componente.
+
+## Servicios globales del hito 10 (autoloads)
+| Autoload | Para qué | Uso |
+|---|---|---|
+| `Fx` | "juice": freno de golpe (baja `Engine.time_scale` un instante), sacudida de cámara por trauma, números de daño, partículas | `Fx.hitstop()`, `Fx.shake(0.3)`, `Fx.number(nodo, 2)`, `Fx.burst(nodo, colores)` |
+| `AudioManager` | buses Music/SFX/UI, pool de reproductores, variantes al azar | `AudioManager.play(&"hit")` |
+
+Sonidos: si existe `assets/audio/sfx/<id>.wav` (o `<id>_1.wav`, `<id>_2.wav`…) se usa ese archivo;
+si no, `SfxSynth` (`scripts/sfx_synth.gd`) sintetiza un placeholder. Ids actuales: ver `SfxSynth.RECIPES`.
 
 ## Datos (Resources ≈ ScriptableObjects)
 `ItemData`, `SpawnEntry`, `RecipeData` en `data/`. Los números se cambian en los `.tres` desde el
@@ -64,5 +86,5 @@ Inspector, sin tocar código. Ver [[BALANCE]].
 Ver [[Guardado]]. Cambiar el formato = subir `VERSION` y agregar una migración.
 
 ## Tests
-`tests/RunTests.tscn` corre 8 suites (una por sistema), cada una con partida nueva.
+`tests/RunTests.tscn` corre 10 suites (una por sistema), cada una con partida nueva.
 Para sumar una: `tests/suites/test_x.gd` con `extends TestSuite` y agregarla a `SUITES`.

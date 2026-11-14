@@ -2,7 +2,7 @@
 tipo: mecánica
 estado: hecho
 version: 0.1
-hito: 3
+hito: 10
 ---
 # Enemigos
 
@@ -13,6 +13,14 @@ hito: 3
   El amago hace el ataque legible y esquivable con dash.
 - Medio corazón de daño, 3 de vida (+1 cada 3 de profundidad efectiva).
 - Cuesta 3 de presupuesto y aparece desde profundidad 1: de día la primera zona es segura; de noche, no.
+- **Lanzador** (hongo de sombrero ciruela, prof. 2+): se queda a ~64 px, apunta con una **mira de puntos**
+  (0.6 s) y escupe una espora que vuela recto. Si te acercás huye; entre disparos te rodea de costado.
+  Frágil (2 golpes). Se le gana cerrando distancia o esquivando la espora con dash (la atraviesa).
+- **Embestidor** (jabalí-escarabajo, prof. 3+): lento y pesado. **Raspa el piso** 0.75 s (tiembla, levanta
+  polvo, flecha de aviso) y embiste recto a 210 px/s. Pega un corazón entero. Si choca contra un árbol,
+  roca o el cerco queda **aturdido 1.6 s** con estrellitas: la ventana para pegarle. En plena embestida los
+  golpes no lo frenan y el knockback le hace poco.
+- Todos usan la **hoja estándar** de 4 filas y el feedback común (destello, número, barra de vida, muerte animada).
 - Muerto, no reaparece en esa zona durante el run.
 
 ## Se conecta con
@@ -25,10 +33,11 @@ hito: 3
 [[BALANCE]] § Combate.
 
 ## Código
-`scenes/entities/enemies/enemy.gd` (base) · `enemy_basic.gd` · `data/spawns/enemy_basic.tres`. Cómo sumar uno: [[Arquitectura]].
+`scenes/entities/enemies/enemy.gd` (base) · `enemy_basic.gd` · `enemy_spitter.gd` · `enemy_charger.gd` ·
+`scenes/entities/projectile.gd` · `data/spawns/enemy_*.tres`. Cómo sumar uno: [[Arquitectura]].
 
 ## Ideas y pendientes
 - ✅ **Hito 8:** clase base `Enemy`; `EnemyBasic` es su primer hijo. El tipo sale de `SpawnEntry.enemy_script`.
-- **0.2 (hito 10):** **Lanzador** (quieto, dispara esporas a distancia) y **Embestidor** (raspa el piso, embiste en línea recta, se aturde si choca).
+- ✅ **Hito 10:** Lanzador y Embestidor, proyectil reutilizable, hoja estándar de enemigo.
 - Campamento enemigo como evento: [[Plantillas de zona y eventos]].
 - Jefes y voladores: [[Ideas para la 0.3]].

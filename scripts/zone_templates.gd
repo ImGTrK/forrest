@@ -29,7 +29,7 @@ const TEMPLATES := {
 	&"claro": {
 		"weight": 2.0, "weight_per_depth": 0.0, "min_depth": 0,
 		"features": [[&"clearing", 1]],
-		"spawn_mult": {&"tree": 0.4, &"rock": 0.8},
+		"spawn_mult": {&"tree": 0.4, &"rock": 0.8, &"enemy_charger": 1.5},
 		"deco": [[&"deco_flowers", 5, Vector2i(2, 5)], [&"deco_tall_grass", 2, Vector2i(2, 3)],
 			[&"deco_stump", 2, Vector2i(1, 1)], [&"bush", 2, Vector2i(1, 2)]],
 		"event_mult": 0.8, "event_bias": {&"camp": 2.0},
@@ -37,7 +37,7 @@ const TEMPLATES := {
 	&"arboleda": {
 		"weight": 2.0, "weight_per_depth": 0.1, "min_depth": 0,
 		"features": [[&"dark", 4]],
-		"spawn_mult": {&"tree": 2.5, &"rock": 0.4},
+		"spawn_mult": {&"tree": 2.5, &"rock": 0.4, &"enemy_spitter": 1.4, &"enemy_charger": 0.6},
 		"deco": [[&"deco_mushrooms", 3, Vector2i(1, 3)], [&"deco_log", 2, Vector2i(1, 1)],
 			[&"bush", 3, Vector2i(2, 3)], [&"deco_tall_grass", 2, Vector2i(2, 3)]],
 		"event_mult": 1.0, "event_bias": {&"ancient_tree": 3.0},
@@ -45,7 +45,7 @@ const TEMPLATES := {
 	&"estanque": {
 		"weight": 1.5, "weight_per_depth": 0.0, "min_depth": 0,
 		"features": [[&"pond", 1], [&"dark", 1]],
-		"spawn_mult": {&"tree": 0.8},
+		"spawn_mult": {&"tree": 0.8, &"enemy_spitter": 1.6},
 		"deco": [[&"deco_lilypad", 2, Vector2i(2, 3)], [&"deco_tall_grass", 3, Vector2i(2, 4)],
 			[&"deco_flowers", 2, Vector2i(2, 3)], [&"bush", 1, Vector2i(1, 2)]],
 		"event_mult": 0.8, "event_bias": {},
@@ -61,7 +61,7 @@ const TEMPLATES := {
 	&"pedregal": {
 		"weight": 0.5, "weight_per_depth": 0.25, "min_depth": 1,
 		"features": [[&"clearing", 1]],
-		"spawn_mult": {&"rock": 2.2, &"iron_vein": 2.0, &"tree": 0.5},
+		"spawn_mult": {&"rock": 2.2, &"iron_vein": 2.0, &"tree": 0.5, &"enemy_charger": 1.8},
 		"deco": [[&"deco_boulder", 3, Vector2i(1, 1)], [&"bush", 1, Vector2i(1, 2)],
 			[&"deco_tall_grass", 1, Vector2i(2, 3)]],
 		"event_mult": 1.2, "event_bias": {&"shiny_vein": 3.0},

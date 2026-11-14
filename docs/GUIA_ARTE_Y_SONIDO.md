@@ -123,19 +123,21 @@ Hoy el pueblo es piso + paredes. Unos pocos objetos lo hacen sentir hogar:
 
 | Archivo | Medida | Estado | Prioridad | Idea |
 |---|---|---|---|---|
-| `player.png` | 128×128 → **256×128** en hito 10 | Base (idle + caminar) | ★★★ | Ver tabla de abajo |
+| `player.png` | **384×216** (16×9 frames de 24×24, escala 1) | ✅ Hito 10: rig por partes (`tools/art/draw_player.gd`) | ★★★ | Ver tabla de abajo |
 | `sword.png` | 16×16 | Base | ★ | Espada del swing, apuntando hacia arriba (el código la rota) |
-| `player_death.png` | 64×16 (4 frames) | Nuevo (hito 10) | ★★ | Cae al piso mirando abajo. Se usa al morir y al colapsar |
+| ~~`player_death.png`~~ | — | ✅ Va en la fila 8 de `player.png` | — | Golpe, rodillas, tendido (cabeza a la izquierda; cols 4-7 espejo) |
 | `slash.png` | 96×32 (3 frames de 32×32) | Nuevo (hito 10) | ★★ | Estela del golpe en arco, dibujada **hacia arriba**; el código la rota. Blanca/gris: se tiñe por arma |
 
 **Hoja del jugador (hito 10):** 8 filas por dirección (igual que ahora: 0 S · 1 SW · 2 W · 3 NW · 4 N · 5 NE · 6 E · 7 SE) y 16 columnas:
 
 | Columnas | Animación | Frames | Notas |
 |---|---|---|---|
-| 0-3 | Quieto | 4 | Ya existe |
-| 4-7 | Caminar | 4 | Ya existe |
-| 8-11 | **Atacar** | 4 | Nuevo. Brazo atrás → swing → seguimiento → vuelta. Dura 0.35 s |
-| 12-15 | **Dash** | 4 | Nuevo. Cuerpo inclinado/estirado. `PlayerDash.ase` ya tiene la fila "abajo" |
+| 0-3 | Quieto | 4 | Respira (cabeza 1 px) y parpadea |
+| 4-7 | Caminar | 4 | Dos pasos; el cuerpo sube en el paso intermedio |
+| 8-11 | **Atacar** | 4 | Brazo atrás → estocada → seguimiento → vuelta (en los 0.2 s del ataque) |
+| 12-15 | **Dash** | 4 | Se agacha, se lanza inclinado con los brazos atrás, se endereza |
+
+Fila 8 = muerte. SW, W y NW son el espejo de SE, E y NE (la luz queda arriba a la derecha en esas filas).
 
 El daño recibido se muestra con un flash blanco por código, así que no hace falta animación de "herido".
 

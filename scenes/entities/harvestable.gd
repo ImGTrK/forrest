@@ -84,8 +84,15 @@ func _on_interact(_by: Node) -> void:
 	_hp -= tool.power() if tool else HAND_POWER
 	GameState.wear(tool)
 	_flash.flash(Color(1.8, 1.8, 1.8), 0.2, 1.0)  # destello + sacudida al golpear
+	var chips := chip_colors()
+	var at := Vector2(size.x / 2.0, size.y * 0.6)
 	if _hp > 0.0:
+		Fx.burst(self, chips, 5, 55.0, at, 0.5)
+		AudioManager.play(&"mine" if entry.tool_type == &"pickaxe" else &"chop", -2.0)
 		return
+	Fx.burst(self, chips, 14, 75.0, at, 0.3)
+	Fx.shake(0.15)
+	AudioManager.play(&"break")
 	# Eventos raros: más de un ejemplar y mejor ADN (loot_bonus suma profundidad)
 	for i in maxi(entry.drop_count, 1):
 		var item := DNA.generar_recurso(entry.item, depth + entry.loot_bonus, ForestSession.rng)
@@ -93,6 +100,20 @@ func _on_interact(_by: Node) -> void:
 			break
 	entity.alive = false
 	queue_free()
+
+
+## Astillas al golpear: madera para lo que se tala, piedra (y destellos de mineral) para lo que
+## se pica, hojas para el resto.
+func chip_colors() -> PackedColorArray:
+	match entry.tool_type:
+		&"axe":
+			return PackedColorArray([Color("D1996D"), Color("9A6550"), Color("F6E3BE")])
+		&"pickaxe":
+			var c := PackedColorArray([Color("939DA6"), Color("D0D2D1"), Color("596574")])
+			if entry.item and entry.item.id != &"stone":
+				c.append(Color("80C9E8"))
+			return c
+	return PackedColorArray([Color("84AB78"), Color("B8D18E"), Color("F8A9BC")])
 
 
 func _draw_overlay() -> void:

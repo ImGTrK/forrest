@@ -40,8 +40,11 @@ func run() -> void:
 	check(log_deco._collision_rect().has_area(), "el tronco caído sí bloquea")
 	var fire := spawn_harvestable(spawn_entry("campfire"))
 	var f0: int = fire._sprite.frame
-	await wait_frames(12)
-	check(fire._sprite.frame != f0, "la fogata se anima")
+	var changed := false
+	for i in 30:  # muestrea varias veces: una vuelta completa caería en el mismo frame
+		await tree.physics_frame
+		changed = changed or fire._sprite.frame != f0
+	check(changed, "la fogata se anima")
 	for n in [flowers, log_deco, fire]:
 		n.queue_free()
 
