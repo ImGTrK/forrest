@@ -152,3 +152,14 @@ Regenerar (pisa estos PNG; versioná antes lo que retoques a mano):
 "$GODOT" --headless --path . --script res://tools/art/draw_world.gd -- solo=trees     # una parte
 "$GODOT" --headless --path . --script res://tools/art/preview_v02.gd                  # vistas previas
 ```
+
+## Sprites dibujados por código — `tools/art/draw_sprites.gd`
+Ítems y herramientas, props del pueblo (almacén, cama, mesa, tablón), veta de hierro, UI (corazones,
+celda, íconos, barras), enemigo básico y la espada del swing se dibujan con el mismo pincel que el
+bosque, para que todo comparta paleta, contorno y luz. El único sprite que sigue siendo de la etapa
+con Higgsfield es la hoja del jugador (`player/player.png`), que se rehace como "muñeco" en el hito 10.
+Vista: `docs/CONTACTO_SPRITES_CODIGO.png`.
+```bash
+"$GODOT" --headless --path . --script res://tools/art/draw_sprites.gd                      # todo
+"$GODOT" --headless --path . --script res://tools/art/draw_sprites.gd -- solo=items,ui     # una parte
+```

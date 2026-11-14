@@ -138,6 +138,10 @@ Rama: `hito-9-bosque-vivo` (sobre `arte-base`). Ataca "se siente vacío".
       con transiciones hasta la salida, tablón en su caminito, estanque con nenúfares, arboledas, árboles (no se
       talan), flores, pasto alto y roca grande. Sigue en ASCII en `scenes/world/hub.gd` para editarlo rápido
 
+## ✅ Pasada de arte por código
+Rama: `arte-codigo`. Ítems, herramientas, props del pueblo, veta de hierro, UI y enemigo básico redibujados con
+`tools/art/draw_sprites.gd` (misma paleta, contorno y luz que el bosque). Queda la hoja del jugador para el hito 10.
+
 ## 🔜 Hito 10 — Combate con peso
 Rama: `hito-10-combate`.
 - [ ] **Lanzador**: se queda a distancia, apunta (amago visible) y dispara una espora; huye si te acercás
