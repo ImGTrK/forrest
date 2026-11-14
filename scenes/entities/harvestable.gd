@@ -1,9 +1,13 @@
 class_name Harvestable
 extends Interactable
-## Árbol / roca / veta (o arbusto decorativo si no tiene item).
+## Árbol / roca / veta, o decoración (arbusto, flores, ruinas…) si no tiene ítem.
 ## Se construye por código a partir de un SpawnEntry: es el "prefab" de todas las entidades
-## recolectables. El sprite sale de SpawnEntry.texture (mide exactamente size * 16 px,
-## con el origen en la esquina superior izquierda).
+## del bosque que no son enemigos. El sprite sale de SpawnEntry.texture (cada frame mide
+## size * 16 px, con el origen en la esquina superior izquierda).
+##
+## Texturas con varios frames en tira:
+##   - anim_fps = 0: son VARIANTES (ej. 3 árboles) y se elige una por posición
+##   - anim_fps > 0: es una ANIMACIÓN (fogata, veta brillante, pasto meciéndose)
 
 ## Poder de golpe a mano (sin herramienta). Árbol (dureza 6) = 4 golpes a mano.
 const HAND_POWER := 1.5
@@ -15,6 +19,8 @@ var depth: int = 0
 
 var _hp: float = 1.0
 var _flash: HitFlash
+var _frames := 1
+var _anim_t := 0.0
 
 
 func setup(p_entry: SpawnEntry, p_entity: Dictionary, p_depth: int) -> void:
@@ -28,21 +34,30 @@ func setup(p_entry: SpawnEntry, p_entity: Dictionary, p_depth: int) -> void:
 func _ready() -> void:
 	super._ready()
 	_hp = entry.hardness
-	# Si la textura es una tira de variantes (ej. tree.png = 3 árboles de 32×32), se usa una.
-	# La elección sale de la posición de la entidad: la misma zona se ve igual al volver.
 	if _sprite and texture.get_width() > int(size.x):
-		var frames := int(texture.get_width() / size.x)
-		_sprite.hframes = frames
-		_sprite.frame = posmod(hash(entity.get("tile", Vector2i.ZERO)), frames)
+		_frames = int(texture.get_width() / size.x)
+		_sprite.hframes = _frames
+		# La elección sale de la posición: la misma zona se ve igual al volver.
+		_sprite.frame = posmod(hash(entity.get("tile", Vector2i.ZERO)), _frames)
+		_anim_t = randf() * 10.0  # que no se animen todos sincronizados
 	_flash = HitFlash.new(_sprite)
 	add_child(_flash)
+	set_process(entry.anim_fps > 0.0 and _frames > 1)
 
 
+func _process(delta: float) -> void:
+	_anim_t += delta
+	_sprite.frame = int(_anim_t * entry.anim_fps) % _frames
+
+
+## La decoración blanda (flores, pasto alto, nenúfares) se pisa: sin colisión.
 func _collision_rect() -> Rect2:
+	if not entry.solid:
+		return Rect2()
 	return Rect2(Vector2(2, 2), size - Vector2(4, 4))
 
 
-## Los arbustos decorativos (sin ítem) no se pueden golpear.
+## La decoración (sin ítem) no se puede golpear.
 func is_interactive() -> bool:
 	return entry.item != null
 
@@ -71,9 +86,12 @@ func _on_interact(_by: Node) -> void:
 	_flash.flash(Color(1.8, 1.8, 1.8), 0.2, 1.0)  # destello + sacudida al golpear
 	if _hp > 0.0:
 		return
-	var item := DNA.generar_recurso(entry.item, depth, ForestSession.rng)
+	# Eventos raros: más de un ejemplar y mejor ADN (loot_bonus suma profundidad)
+	for i in maxi(entry.drop_count, 1):
+		var item := DNA.generar_recurso(entry.item, depth + entry.loot_bonus, ForestSession.rng)
+		if not GameState.pick_up(item):
+			break
 	entity.alive = false
-	GameState.pick_up(item)
 	queue_free()
 
 

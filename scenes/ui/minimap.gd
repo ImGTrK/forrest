@@ -11,6 +11,8 @@ const COL_BG := Color(0, 0, 0, 0.55)
 const COL_VISITED := Color(0.65, 0.7, 0.65)
 const COL_CURRENT := Color(1, 1, 1)
 const COL_HUB := Color(0.85, 0.7, 0.4)
+## Punto en las zonas con un evento raro (árbol antiguo, cofre perdido, veta brillante, campamento).
+const COL_EVENT := Color(1.0, 0.85, 0.45)
 
 
 func _ready() -> void:
@@ -37,6 +39,8 @@ func _draw() -> void:
 			continue
 		var col := COL_CURRENT if c == cur else COL_VISITED
 		draw_rect(Rect2(p - Vector2(CELL, CELL) / 2.0, Vector2(CELL, CELL)), col)
+		if z.event != &"":
+			draw_rect(Rect2(p - Vector2(2, 2), Vector2(4, 4)), COL_EVENT if c != cur else Color(0.85, 0.55, 0.2))
 		for dir: Vector2i in z.doors:
 			if z.doors[dir]:
 				var d := Vector2(dir)

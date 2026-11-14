@@ -34,7 +34,11 @@ Los `.tres` se editan desde el Inspector de Godot; las constantes, en el script.
 | Tamaño de zona | 40×40 tiles | `scripts/zone_generator.gd` → `ZONE_TILES` |
 | Presupuesto | 6 + 3 × profundidad (× hora) | `zone_generator.gd` → `BASE_BUDGET`, `BUDGET_PER_DEPTH` |
 | Probabilidad de puerta | 45% | `zone_generator.gd` → `DOOR_CHANCE` |
-| Decoración por zona | 6-11 arbustos | `zone_generator.gd` → `DECORATION_RANGE` |
+| Plantillas: peso, manchas de suelo, multiplicadores de spawn, decoración | — | `scripts/zone_templates.gd` → `TEMPLATES` |
+| Chance de evento raro | 10% + 3% por profundidad efectiva (tope 45%), × la plantilla | `zone_templates.gd` → `EVENT_CHANCE*`, `EVENTS` |
+| Botín de eventos | árbol antiguo 3 maderas (+6 prof.), veta brillante 2 hierros (+5), cofre 3 recursos (+4) | `data/spawns/ancient_tree.tres`, `shiny_vein.tres`, `lost_chest.tres` (`drop_count`, `loot_bonus`); `scenes/entities/lost_chest.gd` → `LOOT_COUNT` |
+| Mezcla de variantes de suelo | pasto liso ~90%, con detalle ~10% | `scripts/terrain_tiles.gd` → `CENTERS` |
+| Grosor del cerco | 2 tiles | `zone_generator.gd` → `WALL_THICKNESS` |
 | Costo, peso en la tabla, profundidad mínima | — | `data/spawns/*.tres` (`cost`, `weight`, `weight_per_depth`, `min_depth`) |
 | Dureza y herramienta requerida | árbol 6, roca 5, veta 12 (pico 1) | `data/spawns/*.tres` (`hardness`, `tool_type`, `min_tool_level`) |
 | Poder a mano | 1.5 | `scenes/entities/harvestable.gd` → `HAND_POWER` |

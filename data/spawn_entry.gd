@@ -31,3 +31,17 @@ extends Resource
 @export var size: Vector2i = Vector2i.ONE
 ## Sprite en el mundo (assets/sprites/world/). Si es null se dibuja un rectángulo de color.
 @export var texture: Texture2D
+## false = se puede pisar (flores, pasto alto, nenúfares). Solo decoración.
+@export var solid: bool = true
+## > 0: la textura es una tira de frames que se anima a estos fps (fogata, veta brillante).
+## = 0: si la tira tiene varios frames son variantes y se elige uno por posición.
+@export var anim_fps: float = 0.0
+## Profundidad extra para el ADN de lo que suelta (eventos raros: mejor calidad).
+@export var loot_bonus: int = 0
+## Cuántos ejemplares suelta al romperse.
+@export var drop_count: int = 1
+## Script especial para entidades que no son recursos comunes (ej. cofre perdido).
+## Vacío = Harvestable.
+@export var entity_script: Script
+## Dónde se puede colocar: &"" en pasto · &"water" sobre el agua (nenúfares).
+@export var placement: StringName = &""

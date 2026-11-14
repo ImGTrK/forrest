@@ -9,7 +9,10 @@ hito: 1
 > El hub fijo y persistente: el único lugar seguro, donde se guarda, se fabrica, se duerme y se planea la próxima salida.
 
 ## Cómo funciona
-- Mapa hecho a mano (hoy en ASCII dentro de `hub.gd`), siempre igual. No hay noche visual: está iluminado.
+- Mapa hecho a mano en ASCII dentro de `hub.gd`, siempre igual. No hay noche visual: está iluminado.
+- **Hito 9:** usa el mismo suelo por materiales que el bosque (cerco, caminos con transiciones, estanque,
+  arboledas) más decoración: árboles que no se talan, flores, pasto alto, arbustos, tocón y roca grande.
+  La plaza de piedra (cama, almacén, mesa) es compacta y baja al camino principal.
 - Contiene: almacén (cofre), mesa de trabajo, cama, tablón y la salida al bosque.
 - **Pisar el pueblo resetea el bosque**: la próxima salida es un bosque nuevo.
 - Llegar al pueblo autoguarda.

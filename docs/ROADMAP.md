@@ -116,20 +116,29 @@ Rama: `hito-8-base-solida`. Preparar el código para sumar contenido sin duplica
       persiste). Se revisa si el hito 11 lo hace crecer
 - Sin arte nuevo
 
-## 🔜 Hito 9 — Bosque vivo
-Rama: `hito-9-bosque-vivo`. Ataca "se siente vacío".
-- [ ] `terrain.png` a 128×64 con variantes de pasto, tierra, pasto oscuro, agua y ruinas (orden en la guía §2.1);
-      el generador elige variantes al azar
-- [ ] Variantes de árbol, roca y arbusto (hojas de 3)
-- [ ] Decoración agrupada en manchones: flores, pasto alto animado, hongos (se pisan); tocón, tronco caído (bloquean)
-- [ ] **Plantillas de zona**: claro, arboleda densa, estanque, ruinas, pedregal. Cada una cambia el piso,
-      la decoración y los pesos de la tabla de spawns. Se eligen con peso según la profundidad
-- [ ] **Eventos raros** (pocos por run, visibles de lejos): árbol antiguo, cofre perdido, veta brillante,
-      campamento enemigo. El minimapa marca la zona al descubrirlos
-- [ ] Tests: todas las plantillas respetan puertas, corredores y anti-encierro; frecuencia de eventos en 200 runs
-- Placeholders nuevos: guía §2.1, §5.2, §5.3, §5.4
+## ✅ Hito 9 — Bosque vivo
+Rama: `hito-9-bosque-vivo` (sobre `arte-base`). Ataca "se siente vacío".
+- [x] Arte por código (`tools/art/`): `terrain.png` 256×128 con bases tranquilas, variantes y 6 juegos de
+      transición tipo isla (camino, tierra, agua, pasto oscuro, cerco, ruinas); variantes de árbol, roca y arbusto
+- [x] **Suelo por materiales**: cada zona guarda qué material hay en cada celda y `TerrainTiles.paint_ground()`
+      elige solo bordes, esquinas y variantes (autotile propio, ≈ Rule Tile de Unity). El agua y el cerco tienen colisión
+- [x] Cerco de 2 tiles alrededor de cada zona (las transiciones necesitan regiones de 2+)
+- [x] **Plantillas de zona** (`scripts/zone_templates.gd`): bosque, claro, arboleda, estanque, ruinas, pedregal.
+      Cada una pone manchas de suelo, cambia los pesos de la tabla de spawns y reparte su decoración
+- [x] Decoración en grupos: flores, pasto alto animado, hongos y nenúfares (se pisan); tocón, tronco, roca grande,
+      columnas y muros de ruina (bloquean)
+- [x] **Eventos raros** (~25% de las zonas): árbol antiguo (3 maderas de buen ADN), cofre perdido (3 recursos,
+      queda abierto), veta brillante animada (2 hierros, pide pico 1), campamento enemigo (carpa, fogata, cofre y
+      3 enemigos). El minimapa marca las zonas con evento
+- [x] Tests: el generador revisa en 200 runs que los caminos queden libres, nada caiga sobre agua o cerco, no queden
+      franjas de 1 tile y todas las puertas se alcancen caminando; suite `forest` con el cofre, el árbol antiguo, la
+      decoración y el suelo pintado. 176 checks
+- [x] Jugador con hoja de 32×32 a escala 0.5 (detalle 1:1 con la ventana ×2)
+- [x] **Pueblo rehecho** con el mismo suelo y decoración: plaza de piedra compacta (cama, almacén, mesa), camino
+      con transiciones hasta la salida, tablón en su caminito, estanque con nenúfares, arboledas, árboles (no se
+      talan), flores, pasto alto y roca grande. Sigue en ASCII en `scenes/world/hub.gd` para editarlo rápido
 
-## ⬜ Hito 10 — Combate con peso
+## 🔜 Hito 10 — Combate con peso
 Rama: `hito-10-combate`.
 - [ ] **Lanzador**: se queda a distancia, apunta (amago visible) y dispara una espora; huye si te acercás
 - [ ] **Embestidor**: raspa el piso (amago largo), embiste en línea recta; si choca con un árbol o una pared queda aturdido

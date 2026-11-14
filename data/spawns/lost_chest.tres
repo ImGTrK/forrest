@@ -1,0 +1,15 @@
+[gd_resource type="Resource" script_class="SpawnEntry" format=3]
+
+[ext_resource type="Script" path="res://data/spawn_entry.gd" id="1_se"]
+[ext_resource type="Texture2D" path="res://assets/sprites/world/lost_chest.png" id="3_tex"]
+[ext_resource type="Script" path="res://scenes/entities/lost_chest.gd" id="4_scr"]
+
+[resource]
+script = ExtResource("1_se")
+id = &"lost_chest"
+cost = 0
+weight = 1.0
+loot_bonus = 4
+size = Vector2i(1, 1)
+texture = ExtResource("3_tex")
+entity_script = ExtResource("4_scr")

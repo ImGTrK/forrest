@@ -29,7 +29,7 @@ func run() -> void:
 	# --- Interactable: todo lo del pueblo hereda de la misma base ---------------------
 	var props := {}
 	for node in main._area.get_children():
-		if node is Interactable:
+		if node is Interactable and not node is Harvestable:  # props (la decoración va aparte)
 			props[node.get_script().get_global_name()] = node
 	check(props.has(&"Chest") and props.has(&"Bed") and props.has(&"Bench") and props.has(&"Board"),
 		"cofre, cama, mesa y tablón son Interactable (%s)" % ", ".join(props.keys()))
@@ -37,6 +37,14 @@ func run() -> void:
 	for node: Interactable in props.values():
 		in_group = in_group and node.is_in_group("interactable")
 	check(in_group, "todos entran al grupo que busca el jugador")
+	var deco := 0
+	var choppable := 0
+	for node in main._area.get_children():
+		if node is Harvestable:
+			deco += 1
+			if node.is_in_group("interactable"):
+				choppable += 1
+	check(deco >= 10 and choppable == 0, "el pueblo tiene decoración (%d) y nada para talar" % deco)
 	var board: Board = props[&"Board"]
 	var legs := board._collision_rect()
 	check(legs.size.y < board.size.y and legs.end.y == board.size.y, "tablón: solo las patas bloquean")

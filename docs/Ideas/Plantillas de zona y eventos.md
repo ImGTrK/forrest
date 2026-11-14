@@ -1,10 +1,14 @@
 ---
 tipo: idea
-estado: planeado
+estado: hecho
 version: 0.2
 hito: 9
 ---
 # Plantillas de zona y eventos
+
+> ✅ **Hecho en el hito 9.** Código: `scripts/zone_templates.gd` (plantillas y eventos), `scripts/zone_generator.gd`
+> (suelo, decoración, eventos), `scripts/terrain_tiles.gd` (autotile), `scenes/entities/lost_chest.gd`.
+> Los números se ajustan en [[BALANCE]] § Bosque.
 
 > Que cada zona tenga personalidad y que de vez en cuando aparezca algo que valga la pena contar.
 

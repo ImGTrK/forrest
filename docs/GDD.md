@@ -390,3 +390,16 @@ La tabla de progresión (§4) dice que la energía y el reloj **persisten** al v
 3. Herramientas con nivel y durabilidad (reemplazan el `hits` fijo)
 4. Inventario con peso, crafting con preview de stats
 5. Niebla nocturna + fuente de luz, tablón de misiones
+
+## 17. Decisiones de Implementación (Hito 9 — Bosque vivo)
+
+| Tema | Decisión |
+|---|---|
+| Suelo | Cada zona guarda el material de cada celda (pasto, camino, tierra, agua, pasto oscuro, cerco, ruina). El dibujo elige bordes y esquinas mirando a los vecinos (autotile de 13 piezas por material) |
+| Estilo del suelo | Base casi lisa (~90%) y variantes con detalle (~10%): el detalle va en la decoración, no en el piso |
+| Borde de la zona | Cerco de 2 tiles (las transiciones necesitan regiones de 2 o más) |
+| Plantillas | bosque, claro, arboleda, estanque, ruinas (desde prof. 1), pedregal (desde prof. 1). Peso según profundidad |
+| Decoración | En grupos. Lo blando (flores, pasto alto, hongos, nenúfares) se pisa; lo sólido bloquea con 1 tile de margen |
+| Eventos raros | ~25% de las zonas. Árbol antiguo, cofre perdido, veta brillante, campamento. Un evento por zona como máximo |
+| Garantías | Los caminos de puerta a puerta nunca se tapan: el agua deja 2 tiles de margen y nada se coloca sobre el camino |
+

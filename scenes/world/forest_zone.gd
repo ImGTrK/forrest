@@ -20,20 +20,11 @@ func setup(p_zone: ZoneData, p_player: Player) -> void:
 
 func _ready() -> void:
 	var layer := TerrainTiles.make_layer()
-	# Más profundo = más oscuro: la dificultad se ve, no es sólo un número.
-	layer.modulate = Color.WHITE.darkened(clampf(zone.depth * 0.05, 0.0, 0.45))
+	# Más profundo = un poco más oscuro: la dificultad se ve, no es sólo un número.
+	layer.modulate = Color.WHITE.darkened(clampf(zone.depth * 0.04, 0.0, 0.35))
 	add_child(layer)
-
-	var paths := ZoneGenerator.corridor_cells(zone)
-	for y in SIZE:
-		for x in SIZE:
-			var c := Vector2i(x, y)
-			var tile := TerrainTiles.GRASS
-			if ZoneGenerator.is_wall(zone, c):
-				tile = TerrainTiles.WALL
-			elif paths.has(c):
-				tile = TerrainTiles.PATH
-			layer.set_cell(c, 0, Vector2i(tile, 0))
+	# Suelo por materiales: TerrainTiles elige bordes, esquinas y variantes solo.
+	TerrainTiles.paint_ground(layer, zone.ground, Vector2i(SIZE, SIZE), zone.paint_seed)
 
 	for e in zone.entities:
 		if not e.alive:
@@ -45,8 +36,8 @@ func _ready() -> void:
 			enemy.position = Vector2(e.tile * TILE) + Vector2(TILE, TILE) / 2.0
 			add_child(enemy)
 			continue
-		var h := Harvestable.new()
-		h.setup(entry, e, zone.loot_depth())
+		var h: Interactable = entry.entity_script.new() if entry.entity_script else Harvestable.new()
+		h.call("setup", entry, e, zone.loot_depth())
 		h.position = Vector2(e.tile * TILE)
 		add_child(h)
 

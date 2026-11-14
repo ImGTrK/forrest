@@ -15,7 +15,9 @@ hito: 1
 - **Anti-encierro:** si hay vecinos sin generar, al menos una puerta lleva a uno. Los callejones sin salida son parte del riesgo.
 - Cada puerta tiene un corredor libre hasta el centro: todo queda conectado.
 - **Profundidad** = distancia Manhattan a la zona (0,0). El pueblo está en (-1,0).
-- Minimapa estilo Isaac con las zonas visitadas; se resetea con el bosque.
+- Minimapa estilo Isaac con las zonas visitadas (y un punto en las que tienen evento raro); se resetea con el bosque.
+- **Hito 9:** cada zona toma una plantilla (bosque, claro, arboleda, estanque, ruinas, pedregal) y guarda el
+  material de cada celda; el suelo se pinta con transiciones automáticas. Cerco de 2 tiles alrededor.
 
 ## Se conecta con
 - [[Presupuesto de dificultad]]: decide qué y cuánto aparece en cada zona.
@@ -32,5 +34,5 @@ Tamaño, chance de puerta, decoración: [[BALANCE]] § Bosque.
 `scripts/zone_generator.gd` · `scripts/zone_data.gd` · `autoload/forest_session.gd` · `scenes/world/forest_zone.gd` · `scenes/ui/minimap.gd` · test `tests/test_generation.gd` (200 runs).
 
 ## Ideas y pendientes
-- Se siente **vacío**: [[Plantillas de zona y eventos]] (0.2).
+- ✅ Se sentía **vacío** → [[Plantillas de zona y eventos]] (hito 9).
 - Biomas distintos: [[Ideas para la 0.3]].

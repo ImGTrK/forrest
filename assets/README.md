@@ -126,7 +126,7 @@ Cada sprite nuevo que agregue un hito se suma a `tools/generate_placeholders.gd`
 ## Arte de la 0.2 dibujado por código — `tools/art/`
 El terreno, las variantes de árbol/roca/arbusto, la decoración y los eventos raros del hito 9 se
 dibujan con `tools/art/draw_world.gd` (pixel art nativo, paleta Forrest, luz arriba-izquierda,
-contorno de 1 px). Todavía no los usa el generador: llegan con el hito 9.
+contorno de 1 px). Los usa el generador desde el hito 9 (`data/spawns/deco_*.tres` y eventos).
 Vista previa: `docs/PREVIEW_ARTE_V02.png` (escena de muestra) y `docs/CONTACTO_ARTE_V02.png` (cada PNG ×4).
 
 | Archivo (`sprites/world/`) | Tamaño | Contenido |
