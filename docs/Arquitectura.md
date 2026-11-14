@@ -78,6 +78,13 @@ que pueden tener cosas distintas (vida, destello, más adelante soltar loot) →
 Sonidos: si existe `assets/audio/sfx/<id>.wav` (o `<id>_1.wav`, `<id>_2.wav`…) se usa ese archivo;
 si no, `SfxSynth` (`scripts/sfx_synth.gd`) sintetiza un placeholder. Ids actuales: ver `SfxSynth.RECIPES`.
 
+## Rasgos raros (hito 11)
+- `TraitData` (`data/trait_data.gd`): un `.tres` por rasgo en `data/traits/` con material, si es malo,
+  peso de aparición y `effects` (stat → multiplicador).
+- `Traits` (`scripts/traits.gd`): `roll()` al recolectar (lo llama `DNA.generar_recurso`), `apply()`
+  sobre los stats, `inherit()` al fabricar (lo usa `Crafting.preview`). `ItemInstance.traits` los guarda.
+- Sumar un rasgo: crear el `.tres` y agregarlo a `Traits.ALL`.
+
 ## Datos (Resources ≈ ScriptableObjects)
 `ItemData`, `SpawnEntry`, `RecipeData` en `data/`. Los números se cambian en los `.tres` desde el
 Inspector, sin tocar código. Ver [[BALANCE]].
@@ -86,5 +93,5 @@ Inspector, sin tocar código. Ver [[BALANCE]].
 Ver [[Guardado]]. Cambiar el formato = subir `VERSION` y agregar una migración.
 
 ## Tests
-`tests/RunTests.tscn` corre 10 suites (una por sistema), cada una con partida nueva.
+`tests/RunTests.tscn` corre 11 suites (una por sistema), cada una con partida nueva.
 Para sumar una: `tests/suites/test_x.gd` con `extends TestSuite` y agregarla a `SUITES`.

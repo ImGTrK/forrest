@@ -24,6 +24,7 @@ const RECIPES := {
 	&"spit": {"dur": 0.1, "wave": "sine", "f0": 720.0, "f1": 170.0, "tone": 0.8, "noise": 0.2, "lp0": 0.4, "lp1": 0.1, "attack": 0.003, "decay": 28.0},
 	&"pop": {"dur": 0.08, "wave": "sine", "f0": 420.0, "f1": 120.0, "tone": 0.6, "noise": 0.5, "lp0": 0.6, "lp1": 0.2, "attack": 0.001, "decay": 40.0},
 	&"scrape": {"dur": 0.5, "wave": "none", "noise": 0.9, "lp0": 0.06, "lp1": 0.12, "attack": 0.1, "decay": 2.5, "am": 16.0},
+	&"rare": {"dur": 0.55, "wave": "tri", "f0": 660.0, "f1": 1320.0, "tone": 0.6, "noise": 0.05, "lp0": 0.6, "lp1": 0.6, "attack": 0.01, "decay": 4.5, "vib": 7.0},
 	&"bonk": {"dur": 0.3, "wave": "sine", "f0": 320.0, "f1": 170.0, "tone": 0.8, "noise": 0.25, "lp0": 0.5, "lp1": 0.1, "attack": 0.002, "decay": 9.0, "vib": 22.0},
 }
 

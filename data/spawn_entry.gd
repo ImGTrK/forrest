@@ -38,6 +38,8 @@ extends Resource
 @export var anim_fps: float = 0.0
 ## Profundidad extra para el ADN de lo que suelta (eventos raros: mejor calidad).
 @export var loot_bonus: int = 0
+## Hito 11: lo que suelta trae un rasgo bueno seguro (árbol antiguo, veta brillante).
+@export var guaranteed_trait: bool = false
 ## Cuántos ejemplares suelta al romperse.
 @export var drop_count: int = 1
 ## Script especial para entidades que no son recursos comunes (ej. cofre perdido).

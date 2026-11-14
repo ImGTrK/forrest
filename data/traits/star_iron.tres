@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/trait_data.gd" id="1_trait"]
+[ext_resource type="Resource" path="res://data/items/iron.tres" id="2_mat"]
+
+[resource]
+script = ExtResource("1_trait")
+id = &"star_iron"
+display_name = "Hierro estelar"
+description = "Cayó del cielo hace mucho."
+material = ExtResource("2_mat")
+negative = false
+weight = 0.8
+effects = {
+"poder": 1.3
+}

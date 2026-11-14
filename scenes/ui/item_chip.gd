@@ -38,6 +38,7 @@ func _draw() -> void:
 	var q := InventoryGridView.quality_color(item.quality)
 	if q.a > 0.0:
 		draw_rect(Rect2(Vector2(CELL - 4, CELL - 4), Vector2(3, 3)), q)
+	InventoryGridView.draw_trait_mark(self, item, Rect2(Vector2.ZERO, Vector2(CELL, CELL)))
 	if selected:
 		draw_rect(Rect2(Vector2.ZERO, Vector2(CELL, CELL)).grow(-0.5), Color("f2c94c"), false, 1.0)
 	else:

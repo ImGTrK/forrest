@@ -1,0 +1,16 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/trait_data.gd" id="1_trait"]
+[ext_resource type="Resource" path="res://data/items/copper.tres" id="2_mat"]
+
+[resource]
+script = ExtResource("1_trait")
+id = &"oxidized_copper"
+display_name = "Oxidado"
+description = "La pátina verde lo come por dentro."
+material = ExtResource("2_mat")
+negative = true
+weight = 1.5
+effects = {
+"durabilidad": 0.8
+}

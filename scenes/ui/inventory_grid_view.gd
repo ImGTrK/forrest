@@ -84,6 +84,20 @@ static func draw_item(ci: CanvasItem, item: ItemInstance, rect: Rect2) -> void:
 	var q := quality_color(item.quality)
 	if q.a > 0.0:
 		ci.draw_rect(Rect2(rect.end - Vector2(4, 4), Vector2(3, 3)), q)
+	draw_trait_mark(ci, item, rect)
+
+
+## Hito 11: ítem con rasgo = borde del color del rasgo y una estrellita arriba a la izquierda
+## (dorada si son buenos, rosada si alguno es malo).
+static func draw_trait_mark(ci: CanvasItem, item: ItemInstance, rect: Rect2) -> void:
+	if not item.has_traits():
+		return
+	var c := Traits.mark_color(item)
+	ci.draw_rect(rect.grow(-0.5), Color(c, 0.85), false, 1.0)
+	var p := (rect.position + Vector2(2, 2)).floor()
+	ci.draw_rect(Rect2(p + Vector2(0, 1), Vector2(3, 1)), c)
+	ci.draw_rect(Rect2(p + Vector2(1, 0), Vector2(1, 3)), c)
+	ci.draw_rect(Rect2(p + Vector2(1, 1), Vector2(1, 1)), Color("FFF1D6"))
 
 
 static func quality_color(q: int) -> Color:

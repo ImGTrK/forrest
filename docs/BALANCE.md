@@ -63,6 +63,9 @@ Los `.tres` se editan desde el Inspector de Godot; las constantes, en el script.
 | Ingredientes, fórmulas (base, min, max, stat de origen), material de reparación | `data/recipes/*.tres` |
 | Nivel y tipo de cada herramienta | `data/items/stone_axe.tres`, etc. (`tool_level`, `tool_type`) |
 | Radio de la linterna / minutos de aceite | `data/recipes/lantern.tres`, `oil.tres` |
+| Escalera de metales (hito 11) | piedra nv. 1 · cobre nv. 2 (poder base 4, durabilidad 60) · hierro nv. 3 (5 / 80). Veta de cobre: dureza 9, pico nv. 1, desde prof. 1. Veta de hierro: dureza 12, pico nv. 2, desde prof. 3 | `data/recipes/copper_*.tres`, `data/spawns/copper_vein.tres`, `iron_vein.tres` |
+| Rasgos: chance | 5 % + 2 % por profundidad (tope 35 %); eventos especiales: bueno garantizado | `scripts/traits.gd` → `BASE_CHANCE`, `PER_DEPTH`, `MAX_CHANCE`; `SpawnEntry.guaranteed_trait` |
+| Rasgos: efectos | multiplican stats (ej. ×1.25 durabilidad); tope 2 por herramienta | `data/traits/*.tres` → `effects`, `weight`; `Traits.MAX_PER_ITEM` |
 | Visión sin luz / oscuridad máxima | `scenes/main.gd` → `VISION_NO_LIGHT`, `NIGHT_DARKNESS` |
 
 ## Misiones

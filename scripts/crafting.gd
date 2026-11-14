@@ -10,6 +10,9 @@ const RECIPES := [
 	preload("res://data/recipes/stone_axe.tres"),
 	preload("res://data/recipes/stone_pickaxe.tres"),
 	preload("res://data/recipes/wood_sword.tres"),
+	preload("res://data/recipes/copper_axe.tres"),
+	preload("res://data/recipes/copper_pickaxe.tres"),
+	preload("res://data/recipes/copper_sword.tres"),
 	preload("res://data/recipes/iron_axe.tres"),
 	preload("res://data/recipes/iron_pickaxe.tres"),
 	preload("res://data/recipes/iron_sword.tres"),
@@ -62,8 +65,20 @@ static func preview(recipe: RecipeData, selection: Dictionary) -> ItemInstance:
 			weight += m.weight()
 	item.stats["peso"] = snappedf(weight * recipe.weight_factor, 0.1)
 	item.quality = roundi(100.0 * quality_sum / maxi(recipe.formulas.size(), 1))
+	# Rasgos heredados (hito 11). El peso no se toca: ya viene del peso de los materiales.
+	item.traits = traits_for(recipe, selection).kept
+	Traits.apply(item, item.traits, PackedStringArray(["peso"]))
 	item.repair_full()
 	return item
+
+
+## Qué rasgos heredaría el resultado: {"kept": [...], "dropped": [...]} (ver Traits.inherit).
+static func traits_for(recipe: RecipeData, selection: Dictionary) -> Dictionary:
+	var mats: Array[ItemInstance] = []
+	for i in recipe.ingredients.size():
+		for m: ItemInstance in selection.get(i, []):
+			mats.append(m)
+	return Traits.inherit(mats)
 
 
 ## Craftea: consume los materiales elegidos y entrega el resultado (mochila o almacén).
@@ -75,6 +90,7 @@ static func craft(recipe: RecipeData, selection: Dictionary) -> ItemInstance:
 		for m: ItemInstance in selection[i]:
 			GameState.remove_owned(m)
 	var where := GameState.receive(item)
+	Missions.on_crafted(item)
 	GameState.notify("Fabricaste %s (calidad %d%%) · está en %s" % [item.display_name(), item.quality, where])
 	return item
 

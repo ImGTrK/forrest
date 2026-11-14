@@ -158,16 +158,20 @@ Rama: `hito-10-combate`.
 - [x] Balance: dónde y desde qué profundidad aparece cada enemigo ([[BALANCE]] § Combate)
 - Placeholders nuevos: guía §3, §4, §8 · Sonidos: guía §9.2 "Jugador y combate"
 
-## ⬜ Hito 11 — Rasgos, cristal y tablón
+## ✅ Hito 11 — Rasgos, cobre y tablón
 Rama: `hito-11-rasgos`. Ataca "el crafting es básico" y "el tablón no deja elegir".
-- [ ] **Rasgos raros**: 2-3 por material, como datos (`TraitData` .tres). Chance según profundidad, hora y eventos
-- [ ] Al fabricar, la herramienta **hereda** los rasgos de los ingredientes elegidos; la vista previa los muestra
-- [ ] Marca de rasgo y borde de rareza en los íconos; jingle de "hallazgo raro"
-- [ ] **Veta de cristal** (pico nivel 2) y el cristal como material; decidir herramientas nivel 3 o mejora de las existentes
-- [ ] **Tablón**: al reclamar se elige qué entregar (preseleccionados los peores); se ve la recompensa antes;
-      misiones nuevas: "fabricá una herramienta de calidad ≥ X" y "traé un ítem con rasgo"
-- [ ] Guardado: rasgos en el JSON (migración si hace falta)
-- Placeholders nuevos: guía §5.5, §6 (cristal), §7 (`icon_trait`, `mission_icons`)
+- [x] **Rasgos raros**: 3 por material (uno malo), como datos (`data/traits/*.tres`). Chance según profundidad
+      (incluye hora y bonus de eventos); árbol antiguo y veta brillante garantizan uno bueno
+- [x] Al fabricar, la herramienta **hereda** los rasgos de los ingredientes elegidos (tope 2, los malos entran
+      primero); la vista previa muestra cuáles entran y cuáles no. Reparar los conserva
+- [x] Marca de rasgo (estrellita y borde dorado / rosado) en los íconos; jingle de "hallazgo raro"
+- [x] **Cambio de plan: cobre en vez de cristal.** Escalera piedra (nv. 1) → **cobre (nv. 2)** → hierro (nv. 3):
+      veta de cobre con pico de piedra desde prof. 1; la de hierro pide pico de cobre y aparece desde prof. 3.
+      Hacha, pico y espada de cobre
+- [x] **Tablón**: al reclamar una entrega se elige qué dar (vienen marcados los peores, sin regalar los de rasgo
+      bueno); la recompensa se ve antes; misiones nuevas "fabricá una herramienta o arma de calidad ≥ X" y
+      "entregá un recurso con rasgo bueno"; el reemplazo no repite tipos que ya estén en el tablón
+- [x] Guardado: rasgos en el JSON (campo nuevo opcional: los guardados viejos cargan sin migrar)
 
 ## ⬜ Hito 12 — Pulido y build
 Rama: `hito-12-build`.

@@ -14,7 +14,11 @@ hito: 6
   - **Llegar** a profundidad N.
   - **Derrotar** N enemigos.
 - Hoy, al entregar, se usan automáticamente **los de peor calidad** que cumplan el requisito.
-- Cada misión reclamada se reemplaza por una más exigente del mismo tipo (más cantidad, calidad, profundidad; el hierro aparece desde la 3ª).
+- Cada misión reclamada se reemplaza por una más exigente, de un tipo que no esté ya en el tablón
+  (más cantidad, calidad, profundidad; el cobre aparece desde la 3ª y el hierro desde la 5ª).
+- **Hito 11:** al reclamar una entrega se **elige qué dar** (vienen marcados los peores y los de rasgo
+  bueno quedan para el final). Misiones nuevas: fabricar una herramienta o arma de calidad ≥ X, y
+  entregar recursos con [[Rasgos raros|rasgo bueno]].
 
 ## Se conecta con
 - [[Mejoras permanentes]]: la recompensa.

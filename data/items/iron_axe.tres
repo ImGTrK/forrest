@@ -13,4 +13,4 @@ item_type = 1
 grid_size = Vector2i(1, 2)
 weight_stat = "peso"
 tool_type = &"axe"
-tool_level = 2
+tool_level = 3

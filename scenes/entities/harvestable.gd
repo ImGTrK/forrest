@@ -95,7 +95,8 @@ func _on_interact(_by: Node) -> void:
 	AudioManager.play(&"break")
 	# Eventos raros: más de un ejemplar y mejor ADN (loot_bonus suma profundidad)
 	for i in maxi(entry.drop_count, 1):
-		var item := DNA.generar_recurso(entry.item, depth + entry.loot_bonus, ForestSession.rng)
+		var item := DNA.generar_recurso(entry.item, depth + entry.loot_bonus, ForestSession.rng,
+			true, entry.guaranteed_trait and i == 0)
 		if not GameState.pick_up(item):
 			break
 	entity.alive = false

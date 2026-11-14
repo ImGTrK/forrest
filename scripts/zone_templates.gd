@@ -61,7 +61,7 @@ const TEMPLATES := {
 	&"pedregal": {
 		"weight": 0.5, "weight_per_depth": 0.25, "min_depth": 1,
 		"features": [[&"clearing", 1]],
-		"spawn_mult": {&"rock": 2.2, &"iron_vein": 2.0, &"tree": 0.5, &"enemy_charger": 1.8},
+		"spawn_mult": {&"rock": 2.2, &"copper_vein": 2.0, &"iron_vein": 2.0, &"tree": 0.5, &"enemy_charger": 1.8},
 		"deco": [[&"deco_boulder", 3, Vector2i(1, 1)], [&"bush", 1, Vector2i(1, 2)],
 			[&"deco_tall_grass", 1, Vector2i(2, 3)]],
 		"event_mult": 1.2, "event_bias": {&"shiny_vein": 3.0},

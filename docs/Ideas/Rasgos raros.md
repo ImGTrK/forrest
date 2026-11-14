@@ -1,6 +1,6 @@
 ---
 tipo: idea
-estado: planeado
+estado: hecho
 version: 0.2
 hito: 11
 ---
@@ -25,7 +25,14 @@ hito: 11
 ## Afecta a
 - [[ADN de recursos]] · [[Crafting]] · [[Herramientas y durabilidad]] · [[Tablón de misiones]] (misión "traé un ítem con rasgo").
 
-## Dudas
-- ¿Los rasgos se pueden perder al reparar?
-- ¿Tope de rasgos por herramienta?
-- ¿Rasgos negativos (ej. *frágil*) para que no todo sea ganancia?
+## Cómo quedó (hito 11)
+- 3 rasgos por material, uno malo. Lista y efectos en `data/traits/*.tres`:
+  - Madera: *Corazón de roble* (+25 % durabilidad), *Madera liviana* (−30 % peso), *Carcomida* (−25 % durabilidad).
+  - Piedra: *Piedra veteada* (+20 % poder), *Piedra de río* (+20 % durabilidad), *Agrietada* (−15 % poder).
+  - Cobre: *Cobre rojo* (+15 % poder, +10 % durabilidad), *Cobre nativo* (+30 % durabilidad), *Oxidado* (−20 % durabilidad).
+  - Hierro: *Hierro templado* (−30 % peso, +5 % poder), *Hierro estelar* (+30 % poder, más raro), *Quebradizo* (−30 % durabilidad).
+- Chance 5 % + 2 % por profundidad (tope 35 %). Árbol antiguo y veta brillante: uno bueno seguro.
+- Tope de **2** por herramienta; los malos entran primero (no se tapan sumando buenos). Repetidos no suman.
+- Reparar **conserva** los rasgos.
+- El peso del rasgo ya se nota en el recurso; en la herramienta llega a través del peso de los materiales.
+- Código: `data/trait_data.gd`, `scripts/traits.gd` ([[Arquitectura]]).

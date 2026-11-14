@@ -28,7 +28,7 @@ o abrí `scenes/ArtPreview.tscn` con F6.
 | Paleta | Primaveral: salvia `#84AB78`, jade `#4C9465`, crema `#F6E3BE`, rosa flor `#F2BAC5`, bermellón `#D34B55`, ciruela `#3B2D45`. Lista de 42 colores en `assets/PALETA_FORREST.gpl`. El bosque de noche se oscurece por código: dibujá todo de día |
 | Floración | Frecuente en copas y arbustos; el pasto conserva poco detalle para que el patrón de 16 px no distraiga |
 | Legibilidad | Lo que se puede romper/recolectar debe destacarse del fondo (más contraste o un brillo). La decoración, más apagada que el pasto |
-| Colores por escalón | Madera = marrones cálidos · Piedra = grises · Hierro = gris azulado · Cristal (nuevo) = turquesa/violeta brillante. Las herramientas heredan el color de su material |
+| Colores por escalón | Madera = marrones cálidos · Piedra = grises · Cobre = naranja tostado con pátina verde (hito 11) · Hierro = gris azulado. Las herramientas heredan el color de su material |
 | Animaciones | Pocas y legibles: 2-4 frames, 4-8 fps. Los frames de una hoja van **de izquierda a derecha** y las variantes **en filas** |
 
 ---
@@ -227,7 +227,7 @@ Aparecen poco y tienen que verse **especiales** desde lejos: son el "encontré a
 
 | Archivo (propuesto) | Medida | Idea |
 |---|---|---|
-| `crystal_vein.png` | 16×16 | Roca con cristales turquesa/violeta saliendo. Necesita pico de hierro |
+| ~~`crystal_vein.png`~~ → ✅ `copper_vein.png` | 16×16 | Hito 11: el cristal se reemplazó por cobre. Roca con vetas cobrizas y pátina verde. Necesita pico de piedra |
 
 ---
 
@@ -249,8 +249,8 @@ El ícono mide lo que ocupa en la mochila (1×1 celda = 16×16, 1×2 = 16×32). 
 | `iron_sword.png` | 16×32 | Base | ★★★ | Espada de hierro |
 | `lantern.png` | 16×16 | Base | ★★ | Linterna de piedra con vela |
 | `oil.png` | 16×16 | Base | ★★ | Frasquito de aceite |
-| `crystal.png` | 16×16 | Nuevo (hito 11) | ★★ | Cristal turquesa/violeta facetado |
-| `crystal_axe.png`, `crystal_pickaxe.png`, `crystal_sword.png` | 16×32 c/u | Nuevo (hito 11, tentativo) | ★★ | Herramientas de tercer escalón. Puede que el cristal termine siendo mejora en vez de herramienta nueva: lo confirmo al diseñar el hito |
+| ✅ `copper.png` | 16×16 | Hito 11 (por código) | ★★ | Mineral de cobre: piedra con vetas naranja tostado y pátina |
+| ✅ `copper_axe.png`, `copper_pickaxe.png`, `copper_sword.png` | 16×32 c/u | Hito 11 (por código) | ★★ | Herramientas de nivel 2 (el hierro pasa a nivel 3) |
 
 **Rasgos raros (hito 11):** no hace falta un ícono por rasgo. Alcanza con una marca general (sección 7)
 y el código le pone un borde de color al ítem según su rareza.

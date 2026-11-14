@@ -13,6 +13,7 @@ item = ExtResource("2_res")
 hardness = 18.0
 tool_type = &"axe"
 loot_bonus = 6
+guaranteed_trait = true
 drop_count = 3
 size = Vector2i(3, 3)
 texture = ExtResource("3_tex")

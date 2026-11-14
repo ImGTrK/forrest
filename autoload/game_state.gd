@@ -79,7 +79,13 @@ func pick_up(item: ItemInstance) -> bool:
 	if not bag.add(item):
 		notify("La mochila está llena")
 		return false
-	notify("+ %s  (calidad %d%%)" % [item.display_name(), item.quality])
+	if item.has_traits():
+		var t: TraitData = item.traits[0]
+		notify("%s %s: %s ★ %s (%s)" % ["¡Hallazgo raro!" if not t.negative else "Mmm…",
+			item.display_name(), t.display_name, t.effects_text(), "calidad %d%%" % item.quality])
+		AudioManager.play(&"rare" if not t.negative else &"pop")
+	else:
+		notify("+ %s  (calidad %d%%)" % [item.display_name(), item.quality])
 	if is_overweight() and not was_overweight:
 		notify("Voy muy cargado: me muevo más lento")
 	return true

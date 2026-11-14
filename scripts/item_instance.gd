@@ -14,6 +14,8 @@ var rotated: bool = false
 ## Durabilidad actual (herramientas y armas). La máxima es el stat "durabilidad".
 var durability: float = 0.0
 var is_broken: bool = false
+## Rasgos raros (hito 11). Recursos: el que salió al recolectar. Herramientas: los heredados.
+var traits: Array[TraitData] = []
 
 
 func _init(p_data: ItemData = null) -> void:
@@ -38,6 +40,10 @@ func weight() -> float:
 	if data.weight_stat != "" and stats.has(data.weight_stat):
 		return stats[data.weight_stat]
 	return data.base_weight
+
+
+func has_traits() -> bool:
+	return not traits.is_empty()
 
 
 func is_resource() -> bool:
@@ -99,6 +105,8 @@ func repair_full() -> void:
 ## Texto del tooltip.
 func describe() -> String:
 	var lines: PackedStringArray = ["%s  ·  calidad %d%%" % [data.display_name, quality]]
+	for t in traits:
+		lines.append("  ★ %s%s: %s" % [t.display_name, " (malo)" if t.negative else "", t.effects_text()])
 	if data.tool_level > 0:
 		lines.append("  nivel %d" % data.tool_level)
 	if has_durability() and is_consumable():
@@ -131,6 +139,7 @@ func to_dict() -> Dictionary:
 		"rotated": rotated,
 		"durability": durability,
 		"broken": is_broken,
+		"traits": traits.map(func(t: TraitData) -> String: return t.resource_path),
 	}
 
 
@@ -147,4 +156,8 @@ static func from_dict(d: Dictionary) -> ItemInstance:
 	item.rotated = bool(d.get("rotated", false))
 	item.durability = float(d.get("durability", 0.0))
 	item.is_broken = bool(d.get("broken", false))
+	# Rasgos (hito 11): guardados viejos no los tienen; uno que ya no existe se descarta
+	for trait_path: String in d.get("traits", []):
+		if ResourceLoader.exists(trait_path):
+			item.traits.append(load(trait_path))
 	return item

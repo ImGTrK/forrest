@@ -21,6 +21,8 @@ const P := {
 	# Nuevos (0.2): agua de estanque, jade frío para que no compita con el pasto
 	"water_deep": "2F5E6E", "water": "4F8C94", "water_light": "8CC4BE", "foam": "D6EEE4",
 	"moss": "6E9A5A", "ember": "F28C4A", "flame": "FFD27A",
+	# Cobre (hito 11): naranja tostado, más apagado que el rojo de peligro; pátina verde de acento
+	"copper_light": "F2B27E", "copper": "C9794A", "copper_dark": "8E4A35", "patina": "6FB59A",
 }
 
 var w: int

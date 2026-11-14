@@ -9,7 +9,8 @@ hito: 5
 > Hachas, picos y espadas fabricados con materiales con ADN, que se gastan y se reparan.
 
 ## Cómo funciona
-- Tipos: hacha, pico, espada y linterna. Nivel 1 (piedra/madera) y nivel 2 (hierro).
+- Tipos: hacha, pico, espada y linterna. Nivel 1 (piedra/madera), nivel 2 (cobre) y nivel 3 (hierro).
+- Pueden tener hasta 2 [[Rasgos raros|rasgos]] heredados de los materiales; reparar los conserva.
 - **Sin slots:** se usa sola la mejor herramienta de la mochila (mayor nivel, después más poder). Cargarla cuesta lugar y peso.
 - **Durabilidad:** 1 por golpe (herramienta) o por golpe que conecta (arma). Buena >60% · Desgastada 20-60% · Rota 0%: rota no sirve (como a mano) hasta repararla.
 - **Reparar** en la mesa: queda como nueva y consume 1 material (el peor) de su material principal.
@@ -27,5 +28,5 @@ hito: 5
 `data/items/*_axe.tres`, `*_pickaxe.tres`, `*_sword.tres` · `autoload/game_state.gd` (`best_tool`, `wear`) · `scripts/item_instance.gd`.
 
 ## Ideas y pendientes
-- El nivel 2 no desbloquea nada todavía: [[Tercer escalón - cristal]].
+- ✅ Hito 11: el pico de cobre (nivel 2) desbloquea la veta de hierro.
 - Herramientas con rasgos heredados: [[Rasgos raros]].

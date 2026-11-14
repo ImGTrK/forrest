@@ -219,6 +219,12 @@ func _build_result() -> void:
 				line += "  [color=%s](%s%s)[/color]" % ["#8fd16a" if better else "#f26b5b",
 					"+" if diff > 0 else "", _fmt(stat, diff)]
 		lines.append(line)
+	# Rasgos heredados (hito 11): los que entran y los que quedan afuera por el tope
+	var inh := Crafting.traits_for(_recipe, _selection)
+	for t: TraitData in inh.kept:
+		lines.append("[color=#%s]★ %s: %s[/color]" % [t.color().to_html(false), t.display_name, t.effects_text()])
+	for t: TraitData in inh.dropped:
+		lines.append("[color=gray]☆ %s no entra (máx. %d rasgos)[/color]" % [t.display_name, Traits.MAX_PER_ITEM])
 	if current:
 		lines.append("[color=gray]vs. la que tenés[/color]")
 	else:

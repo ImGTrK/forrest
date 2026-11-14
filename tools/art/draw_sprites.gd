@@ -40,6 +40,10 @@ func _items() -> void:
 	_save(_wood(), "items/wood.png")
 	_save(_stone_item(), "items/stone.png")
 	_save(_iron_item(), "items/iron.png")
+	_save(_ore_item("copper"), "items/copper.png")
+	_save(_axe("copper"), "items/copper_axe.png")
+	_save(_pickaxe("copper"), "items/copper_pickaxe.png")
+	_save(_sword_item("copper"), "items/copper_sword.png")
 	_save(_axe("stone"), "items/stone_axe.png")
 	_save(_axe("iron"), "items/iron_axe.png")
 	_save(_pickaxe("stone"), "items/stone_pickaxe.png")
@@ -115,7 +119,33 @@ func _handle(k: RefCounted, x: int, y0: int, y1: int) -> void:
 
 func _metal(mat: String) -> Array:
 	# [luz, medio, sombra, profunda]
-	return ["stone_light", "stone", "stone_dark", "plum"] if mat == "stone" else ["white", "iron_light", "iron", "ore_blue"]
+	match mat:
+		"stone":
+			return ["stone_light", "stone", "stone_dark", "plum"]
+		"copper":
+			return ["copper_light", "copper", "copper_dark", "brown_dark"]
+		"wood":
+			return ["cream", "wood_light", "bark", "brown"]
+	return ["white", "iron_light", "iron", "ore_blue"]
+
+
+## Mineral en bruto (cobre): piedra con vetas del metal y una manchita de pátina.
+func _ore_item(mat: String) -> RefCounted:
+	var c := _layer(16, 16, 17)
+	var k := _layer(16, 16, 18)
+	k.poly(PackedVector2Array([Vector2(2, 11), Vector2(3, 6), Vector2(7, 3), Vector2(12, 4), Vector2(14, 9), Vector2(12, 14), Vector2(4, 14)]), "stone_dark")
+	k.shade("stone", "stone_dark", "plum", "plum")
+	var m := _metal(mat)
+	for p in [Vector2i(4, 9), Vector2i(5, 8), Vector2i(5, 9), Vector2i(6, 8), Vector2i(8, 5), Vector2i(9, 5), Vector2i(9, 6), Vector2i(10, 6), Vector2i(7, 11), Vector2i(8, 11), Vector2i(8, 12), Vector2i(11, 9), Vector2i(12, 9)]:
+		k.px(p.x, p.y, m[1])
+	for p in [Vector2i(5, 8), Vector2i(8, 5), Vector2i(7, 11), Vector2i(11, 9)]:
+		k.px(p.x, p.y, m[0])
+	k.px(10, 6, m[2])
+	k.px(12, 11, "patina")
+	k.px(4, 10, "patina")
+	k.outline("ink")
+	c.stamp(k)
+	return c
 
 
 func _axe(mat: String) -> RefCounted:
@@ -127,6 +157,8 @@ func _axe(mat: String) -> RefCounted:
 	var head := _layer(16, 32, 23)
 	if mat == "stone":
 		head.poly(PackedVector2Array([Vector2(8, 3), Vector2(12, 2), Vector2(15, 5), Vector2(15, 10), Vector2(12, 12), Vector2(8, 11)]), m[1])
+	elif mat == "copper":  # hoja ancha y redondeada
+		head.poly(PackedVector2Array([Vector2(8, 4), Vector2(12, 3), Vector2(15, 4), Vector2(15, 12), Vector2(12, 11), Vector2(8, 10)]), m[1])
 	else:
 		head.poly(PackedVector2Array([Vector2(8, 4), Vector2(11, 4), Vector2(15, 1), Vector2(15, 13), Vector2(11, 10), Vector2(8, 10)]), m[1])
 	head.shade(m[0], m[1], m[2], m[3])
@@ -164,19 +196,20 @@ func _pickaxe(mat: String) -> RefCounted:
 func _sword_item(mat: String) -> RefCounted:
 	var c := _layer(16, 32, 41)
 	var k := _layer(16, 32, 42)
-	var m := ["cream", "wood_light", "bark", "brown"] if mat == "wood" else ["white", "iron_light", "iron", "ore_blue"]
+	var m := _metal(mat)
+	var metal := mat != "wood"
 	# hoja
 	k.poly(PackedVector2Array([Vector2(8, 1), Vector2(10, 3), Vector2(10, 20), Vector2(6, 20), Vector2(6, 3)]), m[1])
 	k.shade(m[0], m[1], m[2], m[3])
-	k.line(8, 3, 8, 19, m[0] if mat == "iron" else m[1])  # canal
+	k.line(8, 3, 8, 19, m[0] if metal else m[1])  # canal
 	k.line(9, 4, 9, 19, m[2])
 	# guarda y mango
-	k.rect(3, 20, 10, 2, "honey" if mat == "iron" else "brown")
-	k.px(3, 20, "gold_light" if mat == "iron" else "bark")
+	k.rect(3, 20, 10, 2, "honey" if metal else "brown")
+	k.px(3, 20, "gold_light" if metal else "bark")
 	k.rect(7, 22, 2, 6, "brown")
 	for y in range(22, 28, 2):
 		k.px(7, y, "bark")
-	k.rect(6, 28, 4, 2, "honey" if mat == "iron" else "bark")  # pomo
+	k.rect(6, 28, 4, 2, "honey" if metal else "bark")  # pomo
 	k.outline("ink")
 	c.stamp(k)
 	return c
@@ -226,6 +259,7 @@ func _props() -> void:
 	_save(_bench(), "world/bench.png")
 	_save(_board(), "world/board.png")
 	_save(_iron_vein(), "world/iron_vein.png")
+	_save(_iron_vein("copper"), "world/copper_vein.png")
 
 
 func _chest() -> RefCounted:
@@ -330,16 +364,21 @@ func _board() -> RefCounted:
 
 
 ## Veta de hierro: roca con cristales azules (sin el destello animado de la veta brillante).
-func _iron_vein() -> RefCounted:
+func _iron_vein(mat := "iron") -> RefCounted:
 	var c := _layer(16, 16, 111)
 	c.ground_shadow(8, 13.5, 6.5, 2.0)
 	var k := _layer(16, 16, 112)
 	k.poly(PackedVector2Array([Vector2(2, 13), Vector2(2, 9), Vector2(5, 5), Vector2(9, 4), Vector2(13, 7), Vector2(14, 13)]), "stone")
 	k.shade("stone_light", "stone", "stone_dark", "stone_dark", PC.col("stone").lerp(PC.col("stone_light"), 0.5))
+	var ore := "copper" if mat == "copper" else "ore_blue"
+	var glint := "copper_light" if mat == "copper" else "ore_glint"
 	for p in [Vector2i(5, 8), Vector2i(6, 8), Vector2i(6, 9), Vector2i(9, 6), Vector2i(10, 7), Vector2i(10, 8), Vector2i(8, 11), Vector2i(9, 11), Vector2i(12, 10)]:
-		k.px(p.x, p.y, "ore_blue")
+		k.px(p.x, p.y, ore)
 	for p in [Vector2i(6, 8), Vector2i(10, 7), Vector2i(9, 11)]:
-		k.px(p.x, p.y, "ore_glint")
+		k.px(p.x, p.y, glint)
+	if mat == "copper":
+		k.px(4, 11, "patina")
+		k.px(12, 9, "patina")
 	k.outline("plum")
 	c.stamp(k)
 	return c

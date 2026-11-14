@@ -7,7 +7,7 @@
 script = ExtResource("1_item")
 id = &"stone_pickaxe"
 display_name = "Pico de piedra"
-description = "Rompe rocas y permite picar vetas de hierro."
+description = "Rompe rocas y permite picar vetas de cobre."
 icon = ExtResource("2_icon")
 item_type = 1
 grid_size = Vector2i(1, 2)

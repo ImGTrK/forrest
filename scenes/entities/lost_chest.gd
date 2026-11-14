@@ -36,7 +36,9 @@ func _on_interact(_by: Node) -> void:
 		GameState.notify("El cofre está vacío")
 		return
 	var pool: Array[ItemData] = [load("res://data/items/wood.tres"), load("res://data/items/stone.tres")]
-	if depth + entry.loot_bonus >= 3:
+	if depth + entry.loot_bonus >= 2:
+		pool.append(load("res://data/items/copper.tres"))
+	if depth + entry.loot_bonus >= 4:
 		pool.append(load("res://data/items/iron.tres"))
 	while int(entity.loot) > 0:
 		var data := pool[ForestSession.rng.randi_range(0, pool.size() - 1)]

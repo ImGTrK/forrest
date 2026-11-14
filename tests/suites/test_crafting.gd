@@ -6,19 +6,19 @@ func run() -> void:
 	var gs: Node = GameState
 	var bag: GridInventory = gs.bag
 	var p := player()
-	var vein_entry := spawn_entry("iron_vein")
+	var vein_entry := spawn_entry("copper_vein")
 	var axe_recipe := recipe("stone_axe")
 	var pick_recipe := recipe("stone_pickaxe")
 	var sword_recipe := recipe("iron_sword")
 
-	# A mano: el árbol se puede, lento. La veta de hierro no.
+	# A mano: el árbol se puede, lento. La veta de cobre no.
 	var tree_node := spawn_harvestable(spawn_entry("tree"))
 	check(tree_node.hits_left() == 4, "a mano: árbol en 4 golpes (%d)" % tree_node.hits_left())
 	var vein := spawn_harvestable(vein_entry)
 	var e_vein: float = Energy.value
 	vein.interact(p)
 	check(vein._hp == vein_entry.hardness and Energy.value >= e_vein - 0.01,
-		"sin pico: la veta de hierro no se puede (ni gasta energía)")
+		"sin pico: la veta de cobre no se puede (ni gasta energía)")
 
 	# Materiales en mochila y almacén; auto-selección = los de mejor calidad
 	for i in 3:
@@ -65,11 +65,22 @@ func run() -> void:
 	tree_node.interact(p)
 	check(axe_item.durability == dur0 - 1, "cada golpe gasta 1 de durabilidad")
 
-	# Pico: habilita la veta de hierro
+	# Pico de piedra: habilita la veta de cobre (no la de hierro, que pide nivel 2)
 	var pick_item := Crafting.craft(pick_recipe, Crafting.auto_select(pick_recipe, gs.owned_items()))
 	check(pick_item != null and pick_item.data.tool_level == 1, "pico de piedra fabricado (nivel 1)")
 	vein.interact(p)
-	check(vein._hp < vein_entry.hardness, "con pico: la veta de hierro se puede picar")
+	check(vein._hp < vein_entry.hardness, "con pico de piedra: la veta de cobre se puede picar")
+	var iron_vein := spawn_harvestable(spawn_entry("iron_vein"))
+	iron_vein.interact(p)
+	check(iron_vein._hp == spawn_entry("iron_vein").hardness, "con pico de piedra: la veta de hierro todavía no")
+	var copper_pick := ItemInstance.new(item("copper_pickaxe"))
+	copper_pick.stats = {"poder": 4.0, "durabilidad": 60.0, "peso": 1.0}
+	copper_pick.repair_full()
+	gs.bag.add(copper_pick)
+	iron_vein.interact(p)
+	check(iron_vein._hp < spawn_entry("iron_vein").hardness, "con pico de cobre (nivel 2): la veta de hierro sí")
+	gs.bag.remove(copper_pick)
+	iron_vein.queue_free()
 
 	# Romper y reparar
 	axe_item.durability = 1

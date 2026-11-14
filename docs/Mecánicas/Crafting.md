@@ -9,7 +9,9 @@ hito: 5
 > En la mesa del pueblo, elegís qué ejemplares de material usar y eso define los stats de lo que fabricás.
 
 ## Cómo funciona
-- 8 recetas: hacha, pico y espada de piedra/madera y de hierro, linterna y aceite.
+- 11 recetas: hacha, pico y espada de piedra/madera, de cobre y de hierro, linterna y aceite.
+- **Hito 11:** la herramienta hereda los [[Rasgos raros|rasgos]] de los materiales elegidos (tope 2; los
+  malos entran primero). La vista previa muestra cuáles entran y cuáles quedan afuera.
 - Usa materiales de la mochila **y** del almacén. Auto-elige los mejores; clic para cambiar.
 - Fórmula: `stat = base × lerp(min, max, t)`, con `t` = promedio normalizado de un stat del material (ej. poder del hacha ← dureza de la piedra).
 - Vista previa comparada con la mejor herramienta del mismo tipo que ya tenés.

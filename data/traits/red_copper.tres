@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="TraitData" format=3]
+
+[ext_resource type="Script" path="res://data/trait_data.gd" id="1_trait"]
+[ext_resource type="Resource" path="res://data/items/copper.tres" id="2_mat"]
+
+[resource]
+script = ExtResource("1_trait")
+id = &"red_copper"
+display_name = "Cobre rojo"
+description = "Cobre muy puro, casi rojo."
+material = ExtResource("2_mat")
+negative = false
+weight = 2.0
+effects = {
+"poder": 1.15,
+"durabilidad": 1.1
+}

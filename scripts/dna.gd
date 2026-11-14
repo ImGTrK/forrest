@@ -6,7 +6,11 @@ extends RefCounted
 ## "Mejor" = más alto, salvo en stats invertidos (ej. peso), donde mejor = más bajo.
 
 
-static func generar_recurso(tipo: ItemData, depth: int, rng: RandomNumberGenerator) -> ItemInstance:
+## Hito 11: después de los stats se tira si sale un rasgo raro (Traits.roll).
+##   with_traits = false: sin rasgos (tests que necesitan stats exactos).
+##   guaranteed = true: rasgo bueno seguro (eventos especiales).
+static func generar_recurso(tipo: ItemData, depth: int, rng: RandomNumberGenerator,
+		with_traits := true, guaranteed := false) -> ItemInstance:
 	var rolls := clampi(1 + floori(depth / 3.0), 1, 3)
 	var item := ItemInstance.new(tipo)
 	var quality_sum := 0.0
@@ -22,4 +26,9 @@ static func generar_recurso(tipo: ItemData, depth: int, rng: RandomNumberGenerat
 		quality_sum += (1.0 - normalized) if inverted else normalized
 	item.quality = roundi(100.0 * quality_sum / maxi(tipo.stats.size(), 1))
 	item.depth = depth
+	if with_traits:
+		var t := Traits.roll(tipo, depth, rng, guaranteed)
+		if t:
+			item.traits.append(t)
+			Traits.apply(item, item.traits)  # ej. madera liviana: pesa menos ya en la mochila
 	return item

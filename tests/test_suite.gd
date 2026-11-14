@@ -44,7 +44,7 @@ func recipe(id: String) -> RecipeData:
 
 
 func roll(id: String, depth := 0) -> ItemInstance:
-	return DNA.generar_recurso(item(id), depth, GameState.rng)
+	return DNA.generar_recurso(item(id), depth, GameState.rng, false)  # sin rasgos: stats exactos
 
 
 ## Del pueblo al bosque (zona 0,0).

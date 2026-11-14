@@ -1,10 +1,13 @@
 ---
 tipo: idea
-estado: planeado
+estado: descartado
 version: 0.2
 hito: 11
 ---
 # Tercer escalón: cristal
+
+> **Descartado en el hito 11:** en su lugar se sumó el **cobre** como nivel 2 y el hierro pasó a nivel 3
+> (escalera piedra → cobre → hierro). El cristal "no parecía muy útil". Queda como idea por si vuelve.
 
 > Que fabricar el pico de hierro desbloquee algo nuevo en el bosque.
 

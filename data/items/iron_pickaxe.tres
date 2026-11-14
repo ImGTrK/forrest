@@ -7,10 +7,10 @@
 script = ExtResource("1_item")
 id = &"iron_pickaxe"
 display_name = "Pico de hierro"
-description = "Pica hierro rápido. Nivel 2."
+description = "Pica hierro rápido. Nivel 3."
 icon = ExtResource("2_icon")
 item_type = 1
 grid_size = Vector2i(1, 2)
 weight_stat = "peso"
 tool_type = &"pickaxe"
-tool_level = 2
+tool_level = 3

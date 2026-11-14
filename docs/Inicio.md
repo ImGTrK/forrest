@@ -31,7 +31,7 @@ Pueblo: guardar, fabricar, reclamar misiones, dormir
 
 ## Ideas y planes
 - Versiones: [[v0.1 - MVP]] · [[v0.2 - Un bosque que da ganas de volver]]
-- Planeado para 0.2: [[Plantillas de zona y eventos]] · [[Rasgos raros]] · [[Tercer escalón - cristal]]
+- Planeado para 0.2: [[Plantillas de zona y eventos]] · [[Rasgos raros]] · ~~[[Tercer escalón - cristal]]~~ (reemplazado por el cobre)
 - Abierto: [[Motor para volver al bosque]] · [[Ideas para la 0.3]]
 
 ## Referencia (documentos largos)

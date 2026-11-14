@@ -75,6 +75,7 @@ Filas: 0 quieto · 1 moverse · 2 amago (cols 0-1) + golpe (cols 2-3) · 3 muert
 | `tree.png` | **96×32** | 3 variantes de 32×32 (cerezo, ciprés, níspero). Árbol, da Madera (`data/spawns/tree.tres`, ocupa 2×2 tiles). El juego elige una por posición |
 | `rock.png` | **48×16** | 3 variantes de 16×16 (redonda, puntuda, chata con musgo). Roca, da Piedra (`data/spawns/rock.tres`) |
 | `iron_vein.png` | **16×16** | Veta, da Hierro (`data/spawns/iron_vein.tres`) |
+| `copper_vein.png` | **16×16** | Veta, da Cobre (`data/spawns/copper_vein.tres`) |
 | `bush.png` | **48×16** | 3 variantes de 16×16 (con flor, doble, con bayas). Arbusto decorativo, bloquea el paso (`data/spawns/bush.tres`) |
 | `board.png` | **32×32** | Tablón de misiones, 2×2 tiles; solo las patas (abajo) tienen colisión (`scenes/entities/board.gd`) |
 | `bench.png` | **32×16** | Mesa de trabajo (crafting), horizontal, 2×1 tiles (`scenes/entities/bench.gd`) |
@@ -89,9 +90,13 @@ El ícono mide **`grid_size` × 16 px** del ítem (lo que ocupa en la mochila). 
 | `wood.png` | **16×32** | Madera: ocupa **1×2 celdas** en la mochila (`data/items/wood.tres`) |
 | `stone.png` | **16×16** | Piedra |
 | `iron.png` | **16×16** | Hierro |
+| `copper.png` | **16×16** | Cobre (hito 11) |
 | `stone_axe.png` | **16×32** | Hacha de piedra (1×2 en la mochila). Equipo: **mango abajo, cabeza arriba** |
 | `stone_pickaxe.png` | **16×32** | Pico de piedra |
 | `wood_sword.png` | **16×32** | Espada de madera |
+| `copper_axe.png` | **16×32** | Hacha de cobre |
+| `copper_pickaxe.png` | **16×32** | Pico de cobre |
+| `copper_sword.png` | **16×32** | Espada de cobre |
 | `iron_axe.png` | **16×32** | Hacha de hierro |
 | `iron_pickaxe.png` | **16×32** | Pico de hierro |
 | `lantern.png` | **16×16** | Linterna (1×1 en la mochila) |

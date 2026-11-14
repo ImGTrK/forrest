@@ -32,6 +32,7 @@ const DIRS: Array[Vector2i] = [Vector2i.UP, Vector2i.DOWN, Vector2i.LEFT, Vector
 const SPAWN_TABLE := [
 	preload("res://data/spawns/tree.tres"),
 	preload("res://data/spawns/rock.tres"),
+	preload("res://data/spawns/copper_vein.tres"),
 	preload("res://data/spawns/iron_vein.tres"),
 	preload("res://data/spawns/enemy_basic.tres"),
 	preload("res://data/spawns/enemy_spitter.tres"),
